@@ -35,7 +35,7 @@ Fonctionnalité :
 Backlog : 
 
 	Package pour faire le labyrinthe
-	Objet personnage (sprite, déplacement + collision, éventuellement animation)
+	Objet personnage (sprint, déplacement + collision, éventuellement animation)
 	Images
 	Système d'affichage	
 
