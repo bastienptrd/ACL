@@ -9,9 +9,9 @@ Fonctionnalité :
 		- Déplacement Haut Bas Gauche Droite
 		- Collision avec l'environnement
 		- Le joueur a une barre de vie 
-		- Peut prendre des dégâts
+		- Peut prendre des dégâts au contacte des ennemis
 		- Le joueur peut mourir
-		- Lampe et cercle de lumière autour du joueur
+		- Le joueur possède une lampe et cercle de lumière autour de lui pour dévoiler les alentours
 		- Le joueur peut casser les obstacles avec des objets
 		- Le joueur peut tuer des ennemis avec des objets
 		- Le joueur peut se soigner avec des objets 
@@ -20,7 +20,7 @@ Fonctionnalité :
 		- Générer aléatoirement à partir d'une seed et d'une taille
 		- Le Labyrinthe possède un départ et une arrivée
 		- Des objets apparaissent aléatoirement dans le labyrinthe
-		- Des éléments peuvent bloquer le chemin
+		- Certains murs sont remplacer par des obstacles
 		
 	Ennemis : 
 		- Les ennemis se déplacent vers le joueur quand ils ne sont pas le faisceau de la lampe
