@@ -17,27 +17,22 @@ Fonctionnalité :
 		- Le joueur peut se soigner avec des objets 
 
 	Labyrinthe : 
-		- Générer aléatoirement à partir d'une seed et d'une taille
+		- Générer un labyrinthe aléatoirement à partir d'une seed et d'une taille
 		- Le Labyrinthe possède un départ et une arrivée
 		- Des objets apparaissent aléatoirement dans le labyrinthe
-		- Certains murs sont remplacer par des obstacles
+		- Certains murs sont remplacer par des obstacles destructible par le joueur
 		
 	Ennemis : 
 		- Les ennemis se déplacent vers le joueur quand ils ne sont pas le faisceau de la lampe
-		- Les ennemis font des dégâts au joueur 
-		- Les ennemis apparaissent aléatoirement à une fréquence/distance définit par le niveaux de difficulté
+		- Les ennemis font des dégâts au joueur lorsqu'il le touche
+		- Les ennemis apparaissent aléatoirement en fonction du niveaux de difficulté choisit par le joueur
+		- Les ennemis peuvent mourir à cause des attaques du joueur
+
 	Menus : 
 		- Menu de sélection de niveau/difficulté
 		- Menu de fin
 		- Menu de pause
-		- Menu de fin
-
-Backlog : 
-
-	Package pour faire le labyrinthe
-	Objet personnage (sprint, déplacement + collision, éventuellement animation)
-	Images
-	Système d'affichage	
+		- Menu de game over
 
 
 
