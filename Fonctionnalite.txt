@@ -33,6 +33,8 @@ Fonctionnalité :
 		- Menu de fin
 		- Menu de pause
 		- Menu de game over
+	
+	Objects :
 
 
 
