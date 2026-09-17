@@ -8,12 +8,13 @@ Fonctionnalité :
 	Héros :
 		- Déplacement Haut Bas Gauche Droite
 		- Collision avec l'environnement
+		- Le joueur a une barre de vie 
 		- Peut prendre des dégâts
 		- Le joueur peut mourir
 		- Lampe et cercle de lumière autour du joueur
 		- Le joueur peut casser les obstacles avec des objets
 		- Le joueur peut tuer des ennemis avec des objets
-
+		- Le joueur peut se soigner avec des objets 
 
 	Labyrinthe : 
 		- Générer aléatoirement à partir d'une seed et d'une taille
