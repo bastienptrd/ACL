@@ -1,0 +1,33 @@
+Jeu : 
+
+	labyrinthe
+
+
+Fonctionnalité : 
+
+	Héros :
+
+
+
+	La
+
+	Génération du labyrinthe : créer un labyrinthe à partir de deux paramètres longueur et hauteur
+	Déplacement personnage : Haut Bas Gauche Droite
+	Collision avec les murs : Le joueur ne peut passer à travers les murs
+	Personnage 2D avec animation : le joueur doit donner l'impression de marcher ne non de voler
+	Système de départ arrivé : le joueur part d'un point de départ et atteindre un objectif dans le labyrinthe
+	Menus : possibilité de lancer une partie (création de labyrinthe puis début au départ) de mettre en pause
+
+Backlog : 
+
+	Package pour faire le labyrinthe
+	Objet personnage (sprite, déplacement + collision, éventuellement animation)
+	Images
+	Système d'affichage	
+
+
+
+	
+
+
+
