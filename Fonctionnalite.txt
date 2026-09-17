@@ -25,6 +25,7 @@ Fonctionnalité :
 	Personnage 2D avec animation : le joueur doit donner l'impression de marcher ne non de voler
 	Système de départ arrivé : le joueur part d'un point de départ et atteindre un objectif dans le labyrinthe
 	Menus : possibilité de lancer une partie (création de labyrinthe puis début au départ) de mettre en pause
+			possibilité de choisir entre 3 niveaux de difficultés ( easy, médium, hard)
 
 Backlog : 
 
