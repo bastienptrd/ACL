@@ -6,10 +6,18 @@ Jeu :
 Fonctionnalité : 
 
 	Héros :
+		- Déplacement Haut Bas Gauche Droite
+		- Collision avec l'environnement
+		- Peut prendre des dégâts
+		- Lampe et cercle de lumière autour du joueur
 
+	Labyrinthe : 
+		- Générer aléatoirement à partir d'une seed et d'une taille
+		- Le Labyrinthe possède un départ et une arrivée
 
+	Ennemis : 
+		- Les ennemis se déplacent vers le joueur 
 
-	La
 
 	Génération du labyrinthe : créer un labyrinthe à partir de deux paramètres longueur et hauteur
 	Déplacement personnage : Haut Bas Gauche Droite
