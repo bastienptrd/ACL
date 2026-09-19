@@ -1,14 +1,7 @@
 ﻿# ACL
 
-Léo tu es où ?
+Commande à effectuer :
 
-Il est à coté de moi !!
-
-Yes
-
-Je serais là au cours de 8 h les gars
-
-整瑳琠獥⁴整瑳�
-
-https://discord.gg/j2rFZPM4p
-
+git clone https://github.com/TON_COMPTE/mon-projet.git
+cd mon-projet
+./install.sh
