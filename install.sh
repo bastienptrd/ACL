@@ -18,3 +18,5 @@ fi
 
 echo "Téléchargement terminé !"
 echo "Le jeu se trouve dans : bin/$EXE"
+
+./bin/$EXE
