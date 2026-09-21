@@ -19,8 +19,4 @@ fi
 echo "Téléchargement terminé !"
 echo "Le jeu se trouve dans : bin/$EXE"
 
-<<<<<<< HEAD
 ./bin/$EXE
-=======
-./bin/$EXE
->>>>>>> 3c4edf8 (correction chemin)
