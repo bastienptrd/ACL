@@ -29,7 +29,7 @@ jobs:
 
       - name: Construire le jeu
         run: |
-          pyinstaller --onefile --windowed --name mon-jeu src/main.py
+          pyinstaller --onefile --name mon-jeu src/main.py
 
       - name: Copier les assets
         shell: bash
