@@ -1,20 +1,20 @@
 #!/bin/bash
 
 REPO="bastienptrd/ACL"
-EXE="mon-programme.exe"
+EXE="mon-jeu.exe"
+
+URL="https://github.com/$REPO/releases/latest/download/$EXE"
+
+echo "Téléchargement de $EXE..."
 
 mkdir -p bin
 
-echo "Téléchargement..."
-
-curl -fL \
-    "https://github.com/$REPO/releases/latest/download/$EXE" \
-    -o "bin/$EXE"
+curl -fL "$URL" -o "bin/$EXE"
 
 if [ $? -ne 0 ]; then
-    echo "Erreur lors du téléchargement."
+    echo "Erreur : téléchargement impossible."
     exit 1
 fi
 
-echo "Lancement..."
-./bin/$EXE
+echo "Téléchargement terminé !"
+echo "Le jeu se trouve dans : bin/$EXE"
