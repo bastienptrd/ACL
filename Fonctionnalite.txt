@@ -35,7 +35,10 @@ Fonctionnalité :
 		- Menu de game over
 	
 	Objects :
-
+		- Bandages: Soignent les pv du joueurs
+		- Marteau: Permet au joueur de briser certains blocs 
+		- Pistolet: Permet au joueur de tuer les ennemis 
+		
 
 
 	
