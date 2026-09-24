@@ -2,8 +2,11 @@ Jeu :
 
 	labyrinthe
 
+__HC: quel est l'objectif du jeu?__
 
 Fonctionnalité : 
+
+__HC: manque les priorités__
 
 	Héros :
 		- Déplacement Haut Bas Gauche Droite
