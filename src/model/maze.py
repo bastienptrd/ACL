@@ -1,21 +1,17 @@
 import random
-
-mur = -1
-debut = -2
-fin = -3
-obstacle = -4
-apparitionEnemi = -5
-
+import config
 
 class Maze:
-    def __init__(self, tailleX : int = 11, tailleY : int = 11, graine : int = None, debut : tuple[int, int] = (1, 1), fin : tuple[int, int] = (1, 1)) -> None:
+    def __init__(self, tailleX : int = 11, tailleY : int = 11, graine : int = None, debut : tuple[int, int] = (1, 1), fin : tuple[int, int] = None) -> None:
         """
-        TailleX doit être impaire
-        TailleY doit être impaire
+        :param tailleX : TailleX doit être impaire
+        :param tailleY : TailleY doit être impaire
         La taille comprend la brodure extérieur du labyrinthe
         """
         if graine is None:
             graine = random.randint(0, 10000)
+        if fin is None:
+            fin = (tailleX - 2, tailleY - 2)
 
         self.__graine = graine
         self.__tailleX = tailleX
@@ -26,7 +22,7 @@ class Maze:
 
         self.grille = [[-1 for _ in range(self.__tailleY)] for _ in range(self.__tailleX)]
 
-        # On place le début et la fin dans la grille dans deux composantes différente
+        # On place le début et la fin dans la grille dans deux composantes différentes arbitraires
         debutX, debutY = self.__debut
         finX, finY = self.__fin
         self.grille[debutX][debutY] = 0
@@ -50,7 +46,12 @@ class Maze:
         self.__debut = debut
         self.__fin = fin
 
-    def fusionnerClasse(self, classe1 : int, classe2 : int):
+    def __fusionnerClasse(self, classe1 : int, classe2 : int) -> None:
+        """
+        Fusionne deux classes en prenant le nombre de classes le plus petit comme nouvelle classe
+        :param classe1:  à fusionner
+        :param classe2: classe à fusionner
+        """
         nouvelleClasse = min(classe1, classe2)
         ancienneClasse = max(classe1, classe2)
         for i in range(self.__tailleX):
@@ -94,13 +95,12 @@ class Maze:
                     if caseObserve >= 0:  # On observe une composante connexe
 
                         if dejaComposanteConnexe:
-                            if caseObserve != self.grille[i][
-                                j]:  # Si la case observée fait partie d'une autre composante connexe que la nôtre
+                            if caseObserve != self.grille[i][j]:  # Si la case observée fait partie d'une autre composante connexe que la nôtre
                                 # On supprime le mur entre les composantes connexes
                                 self.grille[i + deltaI // 2][j + deltaJ // 2] = caseObserve
 
                                 # On fusionne les deux composantes connexes
-                                self.fusionnerClasse(caseObserve, self.grille[i][j])
+                                self.__fusionnerClasse(caseObserve, self.grille[i][j])
 
                         else:  # On a pas de composante
                             dejaComposanteConnexe = True
@@ -115,30 +115,35 @@ class Maze:
                 self.grille[i][j] = nombreComposanteConnexe
                 nombreComposanteConnexe += 1
 
+        # On ajuste les valeurs des cases par rapport à la config
         for i in range(self.__tailleX):
             for j in range(self.__tailleY):
                 if self.grille[i][j] == -1:
-                    self.grille[i][j] = mur
-
+                    self.grille[i][j] = config.mur
         debutX, debutY = self.__debut
         finX, finY = self.__fin
-        self.grille[debutX][debutY] = debut
-        self.grille[finX][finY] = fin
+        self.grille[debutX][debutY] = config.debut
+        self.grille[finX][finY] = config.fin
 
     def remplacerMurObstacles(self, nombreObstacles : int = 1) -> None:
+        # On récupère ensemble des case qui peuvent accueillir une apparition d'obstacle
         ensembleCaseMur = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if self.grille[i][j] == -1]
         for _ in range(nombreObstacles):
+            # On choisit une case aléatoire
             caseI, caseJ = random.choice(ensembleCaseMur)
-            self.grille[caseI][caseJ] = obstacle
+            self.grille[caseI][caseJ] = config.obstacle
 
     def ajouterApparitionEnemi(self, nombreEnemi : int = 1) -> None:
+        # On récupère ensemble des case qui peuvent accueillir une apparition d'ennemi
         ensembleCaseMur = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if self.grille[i][j] == 0]
         for _ in range(nombreEnemi):
+            # On choisit une case aléatoire
             caseI, caseJ = random.choice(ensembleCaseMur)
-            self.grille[caseI][caseJ] = apparitionEnemi
+            self.grille[caseI][caseJ] = config.apparitionEnemi
 
 
 if __name__ == "__main__":
+    # Teste d'execution propre au fichier
     l = Maze(21,11, fin= (19,9))
     l.creerLabyrinthe()
     l.remplacerMurObstacles(10)
@@ -146,15 +151,15 @@ if __name__ == "__main__":
     for ligne in l.grille:
         txt = ""
         for elt in ligne:
-            if elt == mur:
+            if elt == config.mur:
                 txt += "###"
-            elif elt == debut:
+            elif elt == config.debut:
                 txt += " D "
-            elif elt == fin:
+            elif elt == config.fin:
                 txt += " F "
-            elif elt == obstacle:
+            elif elt == config.obstacle:
                 txt += "#O#"
-            elif elt == apparitionEnemi:
+            elif elt == config.apparitionEnemi:
                 txt += " E "
             else:
                 txt += "   "
