@@ -1,1 +1,5 @@
 commentaire
+
+Personnage principale de taille 40x40pixels fait à la main sur procreate par Deya BEN-DALI
+
+il est possible d'agrandir le personnage avec une meilleure netteté grâce à des commandes sur pygame (personnage = pygame.transform.scale(image, (120, 120)))
