@@ -1,3 +1,14 @@
+"""
+Fichier de test réalisé avec l'aide d'une IA.
+
+Sert uniquement à tester la classe Collisions (Collision.py).
+Il reprend le vrai labyrinthe généré par la classe Maze (model/maze.py),
+mais tout le reste est une version de test très simple :
+une fenêtre pygame basique, un dessin simple des cases
+et un carré bleu déplacé avec les flèches à la place du joueur.
+
+Ce n'est pas le vrai système de déplacement ni le vrai affichage du jeu.
+"""
 import pygame
 import config
 from model.maze import Maze
