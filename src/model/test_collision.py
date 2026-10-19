@@ -9,10 +9,16 @@ et un carré bleu déplacé avec les flèches à la place du joueur.
 
 Ce n'est pas le vrai système de déplacement ni le vrai affichage du jeu.
 """
+
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pygame
 import config
 from model.maze import Maze
-from Collision import Collisions
+from model.Collision import Collisions
 
 TAILLE_CASE = 40
 
