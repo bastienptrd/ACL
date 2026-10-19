@@ -72,20 +72,25 @@ class MenuView:
     def __init__(self, screen, sonClic):
         self.__screen = screen
 
-        self.__fondOriginal = pygame.image.load("foret_pixel.png").convert()
+        self.__fondOriginal = pygame.image.load("C:/Users/user/ACL/assets/images/Bouton/foret_pixel.png").convert()
         self.__fond = pygame.transform.scale(self.__fondOriginal, screen.get_size())
 
         self.__titreFont = pygame.font.SysFont(None, 110)
 
         # Boutons du menu principal
-        self.__boutonJouer = Bouton("Jouer", (0.5, 0.5), (260, 70), 48, "JOUER_1.png", sonClic)
-        self.__boutonQuitter = Bouton("Quitter", (0.5, 0.65), (260, 70), 48, "QUITTER_1.png", sonClic)
-        self.__boutonParametre = Bouton("Paramètres", (0.90, 0.90), (150, 70), 30, "bouton_parametre.png", sonClic)
+        self.__boutonJouer = Bouton("Jouer", (0.5, 0.5), (260, 70), 48, "C:/Users/user/ACL/assets/images/Bouton/JOUER_1.png", sonClic)
+        self.__boutonQuitter = Bouton("Quitter", (0.5, 0.65), (260, 70), 48,
+                "C:/Users/user/ACL/assets/images/Bouton/QUITTER_1.png", sonClic)
+        self.__boutonParametre = Bouton("Paramètres", (0.90, 0.90), (150, 70), 30,
+                            "C:/Users/user/ACL/assets/images/Bouton/bouton_parametre.png", sonClic)
 
         # Boutons des parametres
-        self.__boutonAudio = Bouton("Audio", (0.5, 0.5), (260, 70), 48, "bouton_audio.png", sonClic)
-        self.__boutonCommande = Bouton("Commande", (0.5, 0.65), (260, 70), 48, "bouton_commande.png", sonClic)
-        self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (260, 70), 48, "bouton_gameplay.png", sonClic)
+        self.__boutonAudio = Bouton("Audio", (0.5, 0.5), (260, 75), 48,
+                "C:/Users/user/ACL/assets/images/Bouton/AUDIO_1.png", sonClic)
+        self.__boutonCommande = Bouton("Commande", (0.5, 0.65), (270,75), 48,
+                    "C:/Users/user/ACL/assets/images/Bouton/COMMANDE_1.png", sonClic)
+        self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (270, 75), 48,
+            "C:/Users/user/ACL/assets/images/Bouton/GAMEPLAY_1.png", sonClic)
 
         self.__tousLesBoutons = [
             self.__boutonJouer, self.__boutonQuitter, self.__boutonParametre,
