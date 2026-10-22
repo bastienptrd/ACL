@@ -1,4 +1,5 @@
 import pygame
+import config
 
 couleurTexte = (240, 240, 240)
 couleurBouton = (94, 38, 38)

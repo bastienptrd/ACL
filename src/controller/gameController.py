@@ -3,6 +3,8 @@ import pygame
 from view.menuView import MenuView
 from view.gameView import GameView
 from controller.menuController import MenuController
+from model.Player import Player
+import config
 
 
 class GameController:
@@ -14,7 +16,7 @@ class GameController:
             return "menu"
         return etat
 
-    def player_mouvement(dt,player) :
+    def player_mouvement(self, dt, player):
         if pygame.key.get_pressed()[pygame.K_UP]:
             player.move("up", player.speed, dt)
         elif pygame.key.get_pressed()[pygame.K_DOWN]:
@@ -89,16 +91,6 @@ class GameController:
 
             dt = clock.tick(60) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
 
-
-
-
-
-
-
-
-
-
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -119,17 +111,13 @@ class GameController:
                 menuView.dessinerParametres()
             elif etat == "jeu":
                 gameView.dessiner()
-            gameController.player_mouvement(dt,player)
+                gameController.player_mouvement(dt, player)
+                screen.blit(player_img, player.position)
 
-            screen.fill((30, 30, 40))          # 1. effacer
-            screen.blit(player_img, player.position)  # 2. dessiner
-            pygame.display.flip()              # 3. affiche
-
+            pygame.display.flip()
 
         pygame.quit()
         sys.exit()
-from model.Player import Player
-import pygame
 
 
 

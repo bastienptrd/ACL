@@ -1,6 +1,4 @@
-import config
 import pygame
-
 from model.Character import Character
 
 
