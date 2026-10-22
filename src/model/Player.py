@@ -1,7 +1,7 @@
 import config
 import pygame
 
-from model.Character import Character
+from model.character import Character
 
 
 class Player(Character):
