@@ -1,9 +1,10 @@
 import sys
 import pygame
-
 from view.menuView import MenuView
 from view.gameView import GameView
 from controller.menuController import MenuController
+from model.Player import Player
+import config
 
 
 class GameController:
@@ -14,6 +15,16 @@ class GameController:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             return "menu"
         return etat
+
+    def player_mouvement(self, dt, player):
+        if pygame.key.get_pressed()[pygame.K_UP]:
+            player.move("up", player.speed, dt)
+        elif pygame.key.get_pressed()[pygame.K_DOWN]:
+            player.move("down", player.speed, dt)
+        elif pygame.key.get_pressed()[pygame.K_LEFT]:
+            player.move("left", player.speed, dt)
+        elif pygame.key.get_pressed()[pygame.K_RIGHT]:
+            player.move("right", player.speed, dt)
 
 
     def lancerJeu():
@@ -50,11 +61,11 @@ class GameController:
         # Initialisation de la musique et des sons
         pygame.mixer.init()
 
-        pygame.mixer.music.load("C:/Users/user/ACL/assets/sounds/Bruit_foret.mp3")
+        pygame.mixer.music.load(config.musique_foret_path)
         pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(-1)
 
-        sonClic = pygame.mixer.Sound("C:/Users/user/ACL/assets/sounds/clic_2.wav")
+        sonClic = pygame.mixer.Sound(config.son_clic_path)
         sonClic.set_volume(1)
 
         # Initialisation de la fenetre
@@ -68,11 +79,18 @@ class GameController:
         menuController = MenuController(menuView)
         gameController = GameController(gameView)
 
+        #initialisation du Player
+        player = Player("Player", 100, 200, (400, 300), config.player_img_path)
+        player_img = player.generate_image()
+
         # Boucle principale
         etat = "menu"
         running = True
 
         while running:
+
+            dt = clock.tick(60) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -93,9 +111,14 @@ class GameController:
                 menuView.dessinerParametres()
             elif etat == "jeu":
                 gameView.dessiner()
+                gameController.player_mouvement(dt, player)
+                screen.blit(player_img, player.position)
 
             pygame.display.flip()
-            clock.tick(60)
 
         pygame.quit()
         sys.exit()
+
+
+
+

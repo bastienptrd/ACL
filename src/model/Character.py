@@ -6,3 +6,5 @@ class Character :
         self.speed = speed
         self.position = position
         self.image_path = image_path
+
+
