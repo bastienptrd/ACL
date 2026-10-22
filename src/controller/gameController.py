@@ -1,6 +1,5 @@
 import sys
 import pygame
-
 from view.menuView import MenuView
 from view.gameView import GameView
 from controller.menuController import MenuController
@@ -14,6 +13,16 @@ class GameController:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             return "menu"
         return etat
+
+    def player_mouvement(dt,player) :
+        if pygame.key.get_pressed()[pygame.K_UP]:
+            player.move("up", player.speed, dt)
+        elif pygame.key.get_pressed()[pygame.K_DOWN]:
+            player.move("down", player.speed, dt)
+        elif pygame.key.get_pressed()[pygame.K_LEFT]:
+            player.move("left", player.speed, dt)
+        elif pygame.key.get_pressed()[pygame.K_RIGHT]:
+            player.move("right", player.speed, dt)
 
 
     def lancerJeu():
@@ -68,11 +77,28 @@ class GameController:
         menuController = MenuController(menuView)
         gameController = GameController(gameView)
 
+        #initialisation du Player
+        player = Player("Player", 100, 200, (400, 300), config.player_img_path)
+        player_img = player.generate_image()
+
         # Boucle principale
         etat = "menu"
         running = True
 
         while running:
+
+            dt = clock.tick(60) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
+
+
+
+
+
+
+
+
+
+
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -93,9 +119,18 @@ class GameController:
                 menuView.dessinerParametres()
             elif etat == "jeu":
                 gameView.dessiner()
+            gameController.player_mouvement(dt,player)
 
-            pygame.display.flip()
-            clock.tick(60)
+            screen.fill((30, 30, 40))          # 1. effacer
+            screen.blit(player_img, player.position)  # 2. dessiner
+            pygame.display.flip()              # 3. affiche
+
 
         pygame.quit()
         sys.exit()
+from model.Player import Player
+import pygame
+
+
+
+

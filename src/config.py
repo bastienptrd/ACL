@@ -1,6 +1,5 @@
-player_img_path = "assets\\images\\character\\test_img.png"
+player_img_path = "assets/images/character/test_img.png"
 #Constante
-
 # Labyrinthe
 # Case
 mur = -1
