@@ -61,11 +61,11 @@ class GameController:
         # Initialisation de la musique et des sons
         pygame.mixer.init()
 
-        pygame.mixer.music.load("C:/Users/user/ACL/assets/sounds/Bruit_foret.mp3")
+        pygame.mixer.music.load(config.musique_foret_path)
         pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(-1)
 
-        sonClic = pygame.mixer.Sound("C:/Users/user/ACL/assets/sounds/clic_2.wav")
+        sonClic = pygame.mixer.Sound(config.son_clic_path)
         sonClic.set_volume(1)
 
         # Initialisation de la fenetre

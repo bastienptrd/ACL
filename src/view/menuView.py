@@ -73,25 +73,25 @@ class MenuView:
     def __init__(self, screen, sonClic):
         self.__screen = screen
 
-        self.__fondOriginal = pygame.image.load("C:/Users/user/ACL/assets/images/Bouton/foret_pixel.png").convert()
+        self.__fondOriginal = pygame.image.load(config.fond_menu_path).convert()
         self.__fond = pygame.transform.scale(self.__fondOriginal, screen.get_size())
 
         self.__titreFont = pygame.font.SysFont(None, 110)
 
         # Boutons du menu principal
-        self.__boutonJouer = Bouton("Jouer", (0.5, 0.5), (260, 70), 48, "C:/Users/user/ACL/assets/images/Bouton/JOUER_1.png", sonClic)
+        self.__boutonJouer = Bouton("Jouer", (0.5, 0.5), (260, 70), 48, config.bouton_jouer_path, sonClic)
         self.__boutonQuitter = Bouton("Quitter", (0.5, 0.65), (260, 70), 48,
-                "C:/Users/user/ACL/assets/images/Bouton/QUITTER_1.png", sonClic)
+                config.bouton_quitter_path, sonClic)
         self.__boutonParametre = Bouton("Paramètres", (0.90, 0.90), (150, 70), 30,
-                            "C:/Users/user/ACL/assets/images/Bouton/bouton_parametre.png", sonClic)
+                            config.bouton_parametre_path, sonClic)
 
         # Boutons des parametres
         self.__boutonAudio = Bouton("Audio", (0.5, 0.5), (260, 75), 48,
-                "C:/Users/user/ACL/assets/images/Bouton/AUDIO_1.png", sonClic)
+                config.bouton_audio_path, sonClic)
         self.__boutonCommande = Bouton("Commande", (0.5, 0.65), (270,75), 48,
-                    "C:/Users/user/ACL/assets/images/Bouton/COMMANDE_1.png", sonClic)
+                    config.bouton_commande_path, sonClic)
         self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (270, 75), 48,
-            "C:/Users/user/ACL/assets/images/Bouton/GAMEPLAY_1.png", sonClic)
+            config.bouton_gameplay_path, sonClic)
 
         self.__tousLesBoutons = [
             self.__boutonJouer, self.__boutonQuitter, self.__boutonParametre,
