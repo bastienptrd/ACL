@@ -1,4 +1,4 @@
-﻿# ACL
+# ACL
 
 Ensemble des backlogs et autres détails dans le projet
 
@@ -6,14 +6,4 @@ Ensemble des backlogs et autres détails dans le projet
 
 Commande à effectuer :
 
-git clone https://github.com/TON_COMPTE/mon-projet.git
-
-cd ACL
-
-./install.sh
-
-# Solution de repli
-
-Si ne fonctionne pas faire (provisiorement):
-
-python3 src/main.py
+uv run src/main.py
