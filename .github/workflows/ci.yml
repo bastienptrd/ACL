@@ -1,0 +1,29 @@
+# Nom affiché dans l'onglet "Actions" de GitHub
+name: CI
+
+# Quand lancer la CI : à chaque push et à chaque pull request
+on: [push, pull_request]
+
+jobs:
+  check:
+    # Machine virtuelle Linux fournie gratuitement par GitHub
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Récupère le code du dépôt sur la machine
+      - uses: actions/checkout@v4
+
+      # 2. Installe uv (le gestionnaire Python du projet)
+      - uses: astral-sh/setup-uv@v6
+
+      # 3. Installe les dépendances puis vérifie que
+      #    tout le code de src/ compile (pas d'erreur de syntaxe)
+      - run: uv run python -m compileall -q src
+  pretty:
+    # Machine virtuelle Linux fournie gratuitement par GitHub
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Récupère le code (chaque job repart d'une machine vide)
+      - uses: actions/checkout@v4
+
+      # 2. Vérifie le formatage avec la commande du Makefile
+      - run: make prettier-check
