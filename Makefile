@@ -8,4 +8,4 @@ prettier-check:
 
 play:
 	@echo "The game is starting..."
-	.venv/bin/python src/main.py
+	uv run src/main.py
