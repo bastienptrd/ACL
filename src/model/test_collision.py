@@ -53,7 +53,7 @@ while en_cours:
     for x in range(tailleX):
         for y in range(tailleY):
             case = pygame.Rect(x * TAILLE_CASE, y * TAILLE_CASE, TAILLE_CASE, TAILLE_CASE)
-            if grille[x][y] == config.mur:
+            if grille[x][y] == config.caseMur:
                 pygame.draw.rect(ecran, (0, 0, 0), case)
             elif grille[x][y] == config.debut:
                 pygame.draw.rect(ecran, (0, 200, 0), case)
