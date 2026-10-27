@@ -1,7 +1,5 @@
 import os
 
-# Chemins des assets, calculés depuis l'emplacement de ce fichier
-# pour fonctionner sur n'importe quelle machine
 #region CHEMIN
 assets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
 images_path = os.path.join(assets_path, "images")
@@ -23,10 +21,25 @@ bouton_gameplay_path = os.path.join(boutons_path, "GAMEPLAY_1.png")
 #region SONS
 musique_foret_path = os.path.join(sounds_path, "Bruit_foret.mp3")
 son_clic_path = os.path.join(sounds_path, "clic_2.wav")
+
+volumeFond = 0.5
+volumeClic = 1
 #endregion
 
 
 #region CONSTANTE
+#region FENETRE
+screenSize = (1080, 720)
+imageParSeconde = 60
+
+#endregion
+
+
+#region PLAYER
+vitesseJoueur = 2
+vieJoueur = 100
+
+#endregion
 
 #region RENDU
 tailleCaseRendu = (500, 500)
@@ -34,6 +47,9 @@ tailleCharacter = (64, 50)
 #endregion
 
 #region MAZE
+nombreObstacle = 5
+nombreApparitionEnemi = 5
+
 # Case
 caseVide = 0
 caseMur = -1

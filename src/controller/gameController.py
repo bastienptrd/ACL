@@ -1,24 +1,26 @@
 import sys
 import pygame
 
+import config
 from model.maze import Maze
+from model.Player import Player
 from view.menuView import MenuView
 from view.gameView import GameView
 from controller.menuController import MenuController
-from model.Player import Player
-import config
 
 
 class GameController:
     def __init__(self, vue):
         self.__vue = vue
 
-    def gererEvenement(self, event, etat):  # Renvoie dans quel etat on se trouve (menu, jeu, parametre...)
+    @staticmethod
+    def gererEvenement(event, etat):  # Renvoie dans quel etat on se trouve (menu, jeu, parametre...)
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             return "menu"
         return etat
 
-    def player_mouvement(self, dt, player):
+    @staticmethod
+    def player_mouvement(dt, player):
         if pygame.key.get_pressed()[pygame.K_UP]:
             player.move("up", player.speed, dt)
         elif pygame.key.get_pressed()[pygame.K_DOWN]:
@@ -37,26 +39,29 @@ class GameController:
         pygame.mixer.init()
 
         pygame.mixer.music.load(config.musique_foret_path)
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(config.volumeFond)
         pygame.mixer.music.play(-1)
 
         sonClic = pygame.mixer.Sound(config.son_clic_path)
-        sonClic.set_volume(1)
+        sonClic.set_volume(config.volumeClic)
 
-        # Initialisation de la fenetre
-        screen = pygame.display.set_mode((1080, 720), pygame.RESIZABLE)
+        # Initialisation de la fenêtre
+        screen = pygame.display.set_mode(config.screenSize, pygame.RESIZABLE)
         pygame.display.set_caption("Interface Provisoire")
         clock = pygame.time.Clock()
 
-        #initialisation du Player
-        player = Player("Player", 100, 2, (1, 1), config.player_img_path)
-        player_img = player.generate_image()
-
-        #initialisation du Labyrinthe
+        # initialisation du Labyrinthe
         labyrinthe = Maze()
         labyrinthe.creerLabyrinthe()
-        labyrinthe.remplacerMurObstacles(5)
-        labyrinthe.ajouterApparitionEnemi(5)
+        labyrinthe.remplacerMurObstacles(config.nombreObstacle)
+        labyrinthe.ajouterApparitionEnemi(config.nombreApparitionEnemi)
+
+        #initialisation du Player
+        debutLabyrinthe = labyrinthe.recupDebut()
+        positionInitiale = (debutLabyrinthe[0] + 0.5, debutLabyrinthe[1] + 0.5)
+        player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path)
+
+
 
         # Appels des classes dans les autres fichiers
         menuView = MenuView(screen, sonClic)
@@ -70,7 +75,7 @@ class GameController:
 
         while running:
 
-            dt = clock.tick(60) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
+            dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -91,8 +96,12 @@ class GameController:
             elif etat == "parametre":
                 menuView.dessinerParametres()
             elif etat == "jeu":
+                # Si possible à déplacer dans gererEvenement()
                 gameController.player_mouvement(dt, player)
+
+                # Place la caméra sur le joueur
                 gameView.changePosition(player.position)
+                # Dessine le plateau de jeu avec les character
                 gameView.dessiner([player])
 
             pygame.display.flip()

@@ -2,8 +2,6 @@ import pygame
 import config
 from model.Character import Character
 
-couleurTexte = (240, 240, 240)
-
 class GameView:
     def __init__(self, screen : pygame.surface.Surface, grille : list[list[int]], position : tuple[float, float] = (0, 0), tailleRenduCase  : tuple[float, float] = (100, 100)):
         """
@@ -32,6 +30,7 @@ class GameView:
         surf4.fill((0, 200, 0))
         surf5 = pygame.surface.Surface((100, 100))
         surf5.fill((200, 0, 0))
+
         self.__imagesCaseLabyrinthe = {config.caseVide : surf1,
                                        config.caseMur : surf2,
                                        config.caseDebut : surf3,
@@ -93,16 +92,31 @@ class GameView:
             for j in range(len(self.__grille[0])):
                 self.__screen.blit(self.__imagesCaseLabyrinthe[self.__grille[i][j]], self.convertirCoordNumVersEcran((i, j)))
 
-    def dessinerCharacter(self, charactere : Character):
+    def dessinerCharacter(self, charactere : Character) -> None:
+        """
+        Dessine un charactère sur la grille en fonction de son image et de ses coordonnées
+        :param charactere: Character à dessiner
+        """
         imageCharacter = charactere.recupererImage()
-        imageCharacter = pygame.transform.scale(imageCharacter, config.tailleCharacter)
-        self.__screen.blit(imageCharacter, self.convertirCoordNumVersEcran(charactere.position))
+        tailleImageX, tailleImageY = imageCharacter.get_size()
+        coordScreenX, coordScreenY = self.convertirCoordNumVersEcran(charactere.position)
+        coordScreenX -= tailleImageX / 2
+        coordScreenY -= tailleImageY / 2
+        self.__screen.blit(imageCharacter, (coordScreenX, coordScreenY))
 
-    def dessinerListeCharacter(self, listCharacter : list[Character]):
+    def dessinerListeCharacter(self, listCharacter : list[Character]) -> None:
+        """
+        Dessine une liste de charactère sur la grille
+        :param listCharacter: Charactères à dessiner
+        """
         for character in listCharacter:
             self.dessinerCharacter(character)
 
-    def dessiner(self, listCharactere : list[Character] | None = None):
+    def dessiner(self, listCharactere : list[Character] | None = None) -> None:
+        """
+        Dessine l'ensemble de la fenêtre de jeu
+        :param listCharactere: Charactères à dessiner
+        """
         self.dessinerGrille()
         if listCharactere:
             self.dessinerListeCharacter(listCharactere)

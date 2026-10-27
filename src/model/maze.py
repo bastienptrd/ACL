@@ -46,6 +46,12 @@ class Maze:
         self.__debut = debut
         self.__fin = fin
 
+    def recupDebut(self) -> tuple[int, int]:
+        return self.__debut
+
+    def recupFin(self) -> tuple[int, int]:
+        return self.__fin
+
     def __fusionnerClasse(self, classe1 : int, classe2 : int) -> None:
         """
         Fusionne deux classes en prenant le nombre de classes le plus petit comme nouvelle classe

@@ -1,4 +1,5 @@
 import pygame
+import config
 
 class Character : 
     def __init__(self, name : str, health : int , speed : float, position :tuple[float, float], image_path :str):
@@ -14,5 +15,5 @@ class Character :
 
     def recupererImage(self):
         #Coder les animations ici
-        return self.generate_image()
+        return pygame.transform.scale(self.generate_image(), config.tailleCharacter)
 
