@@ -46,6 +46,12 @@ class Maze:
         self.__debut = debut
         self.__fin = fin
 
+    def recupDebut(self) -> tuple[int, int]:
+        return self.__debut
+
+    def recupFin(self) -> tuple[int, int]:
+        return self.__fin
+
     def __fusionnerClasse(self, classe1 : int, classe2 : int) -> None:
         """
         Fusionne deux classes en prenant le nombre de classes le plus petit comme nouvelle classe
@@ -119,11 +125,11 @@ class Maze:
         for i in range(self.__tailleX):
             for j in range(self.__tailleY):
                 if self.grille[i][j] == -1:
-                    self.grille[i][j] = config.mur
+                    self.grille[i][j] = config.caseMur
         debutX, debutY = self.__debut
         finX, finY = self.__fin
-        self.grille[debutX][debutY] = config.debut
-        self.grille[finX][finY] = config.fin
+        self.grille[debutX][debutY] = config.caseDebut
+        self.grille[finX][finY] = config.caseFin
 
     def remplacerMurObstacles(self, nombreObstacles : int = 1) -> None:
         # On récupère ensemble des case qui peuvent accueillir une apparition d'obstacle
@@ -131,7 +137,7 @@ class Maze:
         for _ in range(nombreObstacles):
             # On choisit une case aléatoire
             caseI, caseJ = random.choice(ensembleCaseMur)
-            self.grille[caseI][caseJ] = config.obstacle
+            self.grille[caseI][caseJ] = config.caseObstacle
 
     def ajouterApparitionEnemi(self, nombreEnemi : int = 1) -> None:
         # On récupère ensemble des case qui peuvent accueillir une apparition d'ennemi
@@ -139,7 +145,7 @@ class Maze:
         for _ in range(nombreEnemi):
             # On choisit une case aléatoire
             caseI, caseJ = random.choice(ensembleCaseMur)
-            self.grille[caseI][caseJ] = config.apparitionEnemi
+            self.grille[caseI][caseJ] = config.caseApparitionEnemi
 
 
 if __name__ == "__main__":
@@ -151,15 +157,15 @@ if __name__ == "__main__":
     for ligne in l.grille:
         txt = ""
         for elt in ligne:
-            if elt == config.mur:
+            if elt == config.caseMur:
                 txt += "###"
-            elif elt == config.debut:
+            elif elt == config.caseDebut:
                 txt += " D "
-            elif elt == config.fin:
+            elif elt == config.caseFin:
                 txt += " F "
-            elif elt == config.obstacle:
+            elif elt == config.caseObstacle:
                 txt += "#O#"
-            elif elt == config.apparitionEnemi:
+            elif elt == config.caseApparitionEnemi:
                 txt += " E "
             else:
                 txt += "   "
