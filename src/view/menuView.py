@@ -145,3 +145,8 @@ class MenuView:
         self.__boutonAudio.dessiner(self.__screen)
         self.__boutonCommande.dessiner(self.__screen)
         self.__boutonGameplay.dessiner(self.__screen)
+
+    def dessinerFin(self):
+        #Ici DEYA
+        self.__screen.fill((255, 0, 0))
+        self.__dessinerTitre("FIN")

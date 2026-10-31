@@ -99,7 +99,7 @@ class GameView:
         """
         imageCharacter = charactere.recupererImage()
         tailleImageX, tailleImageY = imageCharacter.get_size()
-        coordScreenX, coordScreenY = self.convertirCoordNumVersEcran(charactere.position)
+        coordScreenX, coordScreenY = self.convertirCoordNumVersEcran(charactere.getPosition())
         coordScreenX -= tailleImageX / 2
         coordScreenY -= tailleImageY / 2
         self.__screen.blit(imageCharacter, (coordScreenX, coordScreenY))
