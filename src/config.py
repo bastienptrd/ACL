@@ -38,6 +38,8 @@ imageParSeconde = 60
 #region PLAYER
 vitesseJoueur = 2
 vieJoueur = 100
+tailleCollisionJoueur = (0.2, 0.2)
+tailleCollisionFin = (0.1, 0.1)
 
 #endregion
 
