@@ -36,19 +36,3 @@ class Collisions:
                     joueur_rect.bottom = mur.top
                 elif dy < 0:
                     joueur_rect.top = mur.bottom
-
-
-if __name__ == "__main__":
-    grille = [
-        [-1, -1, -1, -1],
-        [-1, 0, 0, -1],
-        [-1, 0, -1, -1],
-        [-1, -1, -1, -1],
-    ]
-    collisions = Collisions()
-    collisions.murs_depuis_grille(grille, 40)
-
-    joueur = pygame.Rect(45, 45, 20, 20)
-    for i in range(20):
-        collisions.deplacer(joueur, 7, 0)
-    print(joueur.x)
