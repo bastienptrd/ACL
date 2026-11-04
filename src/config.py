@@ -59,12 +59,16 @@ vitesseJoueur = 2
 vieJoueur = 100
 tailleCollisionJoueur = (0.2, 0.2)
 tailleCollisionFin = (0.1, 0.1)
+#endregion
 
+#region BULLET
+vitesseBullet = 5
 #endregion
 
 #region RENDU
 tailleCaseRendu = (500, 500)
 tailleCharacter = (64, 50)
+tailleBullet =(100,100)
 #endregion
 
 #region MAZE

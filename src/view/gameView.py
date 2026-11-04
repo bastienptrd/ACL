@@ -2,9 +2,10 @@ import pygame
 import config
 import math
 from model.Character import Character
+from model.Bullet import Bullet
 
 class GameView:
-    def __init__(self, screen : pygame.surface.Surface, grille : list[list[int]], position : tuple[float, float] = (0, 0), tailleRenduCase  : tuple[float, float] = (100, 100)):
+    def __init__(self, screen : pygame.surface.Surface, grille : list[list[int]], position : pygame.Vector2 = (0, 0), tailleRenduCase  : tuple[float, float] = (100, 100)):
         """
         :param screen: fenêtre du jeu
         :param grille: grille généré par le labyrinthe
@@ -18,7 +19,7 @@ class GameView:
         # Grille du labyrinthe
         self.__grille = grille
         # Position du rendu
-        self.__position = position
+        self.__position = pygame.Vector2(position)
 
         # Changer les images du labyrinthe ici config.imagesMurs1 ...
         surf1 = pygame.surface.Surface((100, 100))
@@ -57,16 +58,14 @@ class GameView:
         for key, value in self.__imagesCaseLabyrinthe.items():
             self.__imagesCaseLabyrinthe[key] = pygame.transform.scale(value, self.__tailleRenduCase)
 
-
-
-    def changePosition(self, position : tuple[float, float]) -> None:
+    def changePosition(self, position : pygame.Vector2) -> None:
         """
         :param position: Nouvelle position de la caméra
         """
-        self.__position = position
+        self.__position = pygame.Vector2(position)
 
-    def recupererPosition(self) -> tuple[float, float]:
-        return self.__position
+    def recupererPosition(self) -> pygame.Vector2:
+        return pygame.Vector2(self.__position)
 
     def changeGrille(self, grille : list[list[int]]) -> None:
         """
@@ -77,7 +76,7 @@ class GameView:
     def recupererGrille(self) -> list[list[int]]:
         return self.__grille
 
-    def convertirCoordNumVersEcran(self, coord : tuple[float, float]) -> tuple[int, int]:
+    def convertirCoordNumVersEcran(self, coord : pygame.Vector2) -> tuple[int, int]:
         """
         :param coord: Coordonnées d'un point du labyrinthe
         :return: Coordonnées correspondantes sur l'écran
@@ -87,7 +86,7 @@ class GameView:
         positionEcranY = int(screenLargeur / 2 + (coord[1] - self.__position[1]) * (self.__tailleRenduCase[1] - 2))
         return positionEcranX, positionEcranY
 
-    def convertirCoordEcranVersNum(self, coord : tuple[int, int]) -> tuple[float, float]:
+    def convertirCoordEcranVersNum(self, coord : tuple[int, int]) -> pygame.Vector2:
         """
         :param coord: Coordonnées d'un point de l'écran
         :return: Coordonnées correspondantes dans le labyrinthe
@@ -95,7 +94,7 @@ class GameView:
         screenLongueur, screenLargeur = self.__screen.get_size()
         positionNumX = (coord[0] - screenLongueur / 2) / (self.__tailleRenduCase[0] - 2) + self.__position[0]
         positionNumY = (coord[1] - screenLargeur / 2) / (self.__tailleRenduCase[1] - 2) + self.__position[1]
-        return positionNumX, positionNumY
+        return pygame.Vector2(positionNumX, positionNumY)
 
     def dessinerGrille(self) -> None:
         self.__screen.fill((0, 0, 0))
@@ -115,6 +114,29 @@ class GameView:
         coordScreenX -= tailleImageX / 2
         coordScreenY -= tailleImageY / 2
         self.__screen.blit(imageCharacter, (coordScreenX, coordScreenY))
+
+    def rectBulletEcran(self, bullet : Bullet) -> pygame.Rect:
+        """
+        :param bullet: Bullet dont on veut la zone à l'écran
+        :return: Rectangle occupé par l'image de la bullet à l'écran, centré sur sa position
+        """
+        rectBullet = pygame.Rect((0, 0), config.tailleBullet)
+        rectBullet.center = self.convertirCoordNumVersEcran(bullet.getPosition())
+        return rectBullet
+
+    def dessinerBullet(self, bullet : Bullet) -> None:
+        """
+        Dessine une bullet centrée sur sa position
+        :param bullet: Bullet à dessiner
+        """
+        self.__screen.blit(bullet.recupererImage(), self.rectBulletEcran(bullet))
+
+    def estDansFenetre(self, bullet : Bullet) -> bool:
+        """
+        :param bullet: Bullet à tester
+        :return: True si au moins une partie de la bullet est visible dans la fenêtre
+        """
+        return self.__screen.get_rect().colliderect(self.rectBulletEcran(bullet))
 
     def dessinerListeCharacter(self, listCharacter : list[Character]) -> None:
         """
