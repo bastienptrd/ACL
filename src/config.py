@@ -8,7 +8,16 @@ sounds_path = os.path.join(assets_path, "sounds")
 #endregion
 
 #region IMAGES
-player_img_path = os.path.join(images_path, "character", "test_img.png")
+player_img_path = os.path.join(images_path, "Playercharacter", "test_img.png")
+# Images du personnage - direction bas
+player_bas_path = os.path.join(images_path, "Playercharacter", "persodevant.png")
+player_bas_marche1_path = os.path.join(images_path, "Playercharacter", "persodevantavance1.png")
+player_bas_marche2_path = os.path.join(images_path, "Playercharacter", "persodevantavance2.png")
+
+player_droite_path = os.path.join(images_path, "Playercharacter", "persodroite.png")
+player_droite_marche1_path = os.path.join(images_path, "Playercharacter", "persodroiteavance1.png")
+player_droite_marche2_path = os.path.join(images_path, "Playercharacter", "persodroiteavance2.png")
+
 fond_menu_path = os.path.join(boutons_path, "foret_pixel.png")
 bouton_jouer_path = os.path.join(boutons_path, "JOUER_1.png")
 bouton_quitter_path = os.path.join(boutons_path, "QUITTER_1.png")
