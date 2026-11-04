@@ -82,15 +82,15 @@ class MenuView:
         self.__boutonJouer = Bouton("Jouer", (0.5, 0.5), (260, 70), 48, config.bouton_jouer_path, sonClic)
         self.__boutonQuitter = Bouton("Quitter", (0.5, 0.65), (260, 70), 48,
                 config.bouton_quitter_path, sonClic)
-        self.__boutonParametre = Bouton("Paramètres", (0.90, 0.90), (150, 70), 30,
+        self.__boutonParametre = Bouton("Paramètres", (0.85, 0.85), (260, 70), 30,
                             config.bouton_parametre_path, sonClic)
 
         # Boutons des parametres
-        self.__boutonAudio = Bouton("Audio", (0.5, 0.5), (260, 75), 48,
+        self.__boutonAudio = Bouton("Audio", (0.5, 0.5), (260, 70), 48,
                 config.bouton_audio_path, sonClic)
-        self.__boutonCommande = Bouton("Commande", (0.5, 0.65), (270,75), 48,
+        self.__boutonCommande = Bouton("Commande", (0.5, 0.65), (260,70), 48,
                     config.bouton_commande_path, sonClic)
-        self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (270, 75), 48,
+        self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (260, 70), 48,
             config.bouton_gameplay_path, sonClic)
 
         self.__tousLesBoutons = [

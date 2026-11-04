@@ -1,5 +1,6 @@
 import pygame
 import config
+import math
 from model.Character import Character
 
 class GameView:
@@ -40,12 +41,23 @@ class GameView:
 
         self.remiseEchelle()
 
+        # Images de la barre de vie, mises à l'échelle une seule fois
+        self.__imagesBarreVie = {}
+
+        for palier, chemin in config.barre_vie_images.items():
+            img = pygame.image.load(chemin).convert_alpha()
+            ratio = config.barreVieLargeur / img.get_width()
+            taille = (config.barreVieLargeur, int(img.get_height() * ratio))
+            self.__imagesBarreVie[palier] = pygame.transform.smoothscale(img, taille)
+
     def remiseEchelle(self) -> None:
         """
         Remet les images des murs à l'échelle choisie
         """
         for key, value in self.__imagesCaseLabyrinthe.items():
             self.__imagesCaseLabyrinthe[key] = pygame.transform.scale(value, self.__tailleRenduCase)
+
+
 
     def changePosition(self, position : tuple[float, float]) -> None:
         """
@@ -112,7 +124,7 @@ class GameView:
         for character in listCharacter:
             self.dessinerCharacter(character)
 
-    def dessiner(self, listCharactere : list[Character] | None = None) -> None:
+    def dessiner(self, listCharactere=None, vie=None, vieMax=None) -> None:
         """
         Dessine l'ensemble de la fenêtre de jeu
         :param listCharactere: Charactères à dessiner
@@ -120,3 +132,12 @@ class GameView:
         self.dessinerGrille()
         if listCharactere:
             self.dessinerListeCharacter(listCharactere)
+        if vie is not None and vieMax:
+            self.dessinerBarreDeVie(vie, vieMax)
+
+    def dessinerBarreDeVie(self, vie: int, vieMax: int) -> None:
+        """Affiche l'image de la barre de vie correspondant à la vie restante"""
+        if vie <= 0:
+            return
+        palier = math.ceil(vie / vieMax * 4) * 25
+        self.__screen.blit(self.__imagesBarreVie[palier], config.barreViePosition)

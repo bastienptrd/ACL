@@ -1,5 +1,6 @@
 import sys
 import pygame
+import math
 
 import config
 from model.Character import Character
@@ -17,9 +18,18 @@ class GameController:
         self.__vue = vue
 
     @staticmethod
-    def gererEvenement(event, etat):  # Renvoie dans quel etat on se trouve (menu, jeu, parametre...)
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            return "menu"
+    def gererEvenement(event, etat, player):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return "menu"
+            if event.key == config.toucheTestDegats:
+                # La touche ne fait que poster l'événement : plus tard, un ennemi pourra
+                # poster exactement le même événement.
+                pygame.event.post(pygame.event.Event(config.EVENT_DEGATS, montant=config.degatsTest))
+        elif event.type == config.EVENT_DEGATS:
+            player.subirDegats(event.montant)
+            if player.estMort():
+                return "fin"
         return etat
 
     @staticmethod
@@ -101,7 +111,7 @@ class GameController:
                 if etat in ("menu", "parametre", "fin"):
                     etat = menuController.gererEvenement(event, etat)
                 elif etat == "jeu":
-                    etat = gameController.gererEvenement(event, etat)
+                    etat = gameController.gererEvenement(event, etat, player)
                 if etat == "quitter":
                     running = False
 
@@ -120,7 +130,7 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner([player, fin])
+                gameView.dessiner([player, fin], player.health, player.healthMax)
             elif etat == "fin":
                 menuView.dessinerFin()
 
