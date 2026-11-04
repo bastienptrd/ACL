@@ -27,6 +27,7 @@ degatsTest = 25
 #endregion
 
 #region IMAGES
+bulette_img_path = os.path.join(images_path, "bulette.jpg")
 player_img_path = os.path.join(images_path, "character", "test_img.png")
 fond_menu_path = os.path.join(boutons_path, "foret_pixel.png")
 bouton_jouer_path = os.path.join(boutons_path, "JOUER_1.png")

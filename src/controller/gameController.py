@@ -135,13 +135,12 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner([player, fin])
+                gameView.dessiner([player, fin], player.health, player.healthMax)
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
                 # Supprime les bullets sorties de la fenêtre
                 bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetre(bullet)]
-                gameView.dessiner([player, fin], player.health, player.healthMax)
             elif etat == "fin":
                 menuView.dessinerFin()
 
