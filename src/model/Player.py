@@ -4,9 +4,11 @@ from model.Character import Character
 
 
 class Player(Character):
-    def __init__(self, name : str, health : int, speed : float, position : pygame.Vector2, image_path :str, collisionRect,direction : pygame.Vector2):
-        super().__init__(name, health,speed,position = position,image_path=image_path, collisionRect=collisionRect,direction=direction)
-        self.healthMax = health
+    def __init__(self, position : pygame.Vector2):
+        collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
+        super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
+
+        self.healthMax = self.health
         self.__direction = "down"
         self.__enMouvement = False
         self.__debutAnimation = pygame.time.get_ticks()
@@ -44,16 +46,6 @@ class Player(Character):
             "right": droite,
             "left": gauche,
             "up": bas  }
-
-    def subirDegats(self, montant: int) -> None:
-        self.health = max(0, self.health - montant)
-
-    def estMort(self) -> bool:
-        return self.health <= 0
-
-    def reinitialiserVie(self) -> None:
-        self.health = self.healthMax
-
 
     def move(self, direction_input, speed, dt):
 
