@@ -10,12 +10,7 @@ sounds_path = os.path.join(assets_path, "sounds")
 
 #region BARRE DE VIE
 barre_vie_path = os.path.join(images_path, "Barre_de_vie")
-barre_vie_images = {
-    25:  os.path.join(barre_vie_path, "Barre_de_vie_25.png"),
-    50:  os.path.join(barre_vie_path, "Barre_de_vie_50.png"),
-    75:  os.path.join(barre_vie_path, "Barre_de_vie_75.png"),
-    100: os.path.join(barre_vie_path, "Barre_de_vie_100.png"),
-}
+barre_vie_images = os.path.join(barre_vie_path, "Barre_de_vie_creuse.png")
 barreVieLargeur = 300
 barreViePosition = (700, 600)
 #endregion
@@ -23,7 +18,7 @@ barreViePosition = (700, 600)
 #region EVENEMENTS
 EVENT_DEGATS = pygame.USEREVENT + 1   # événement personnalisé "le joueur prend des dégâts"
 toucheTestDegats = pygame.K_k         # touche de test
-degatsTest = 25
+degatsTest = 5
 #endregion
 
 #region IMAGES

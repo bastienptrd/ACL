@@ -42,14 +42,16 @@ class GameView:
 
         self.remiseEchelle()
 
-        # Images de la barre de vie, mises à l'échelle une seule fois
-        self.__imagesBarreVie = {}
+        imageBarre = pygame.image.load(config.barre_vie_images).convert()
+        ratio = imageBarre.get_height() / imageBarre.get_width()
+        imageBarre = pygame.transform.scale(
+            imageBarre,
+            (config.barreVieLargeur, int(config.barreVieLargeur * ratio))
+        )
+        imageBarre.set_colorkey((63, 72, 204))
+        self.__imagesBarreVie = imageBarre
 
-        for palier, chemin in config.barre_vie_images.items():
-            img = pygame.image.load(chemin).convert_alpha()
-            ratio = config.barreVieLargeur / img.get_width()
-            taille = (config.barreVieLargeur, int(img.get_height() * ratio))
-            self.__imagesBarreVie[palier] = pygame.transform.smoothscale(img, taille)
+
 
     def remiseEchelle(self) -> None:
         """
@@ -158,8 +160,22 @@ class GameView:
             self.dessinerBarreDeVie(vie, vieMax)
 
     def dessinerBarreDeVie(self, vie: int, vieMax: int) -> None:
-        """Affiche l'image de la barre de vie correspondant à la vie restante"""
+        """Affiche la barre de vie correspondant à la vie restante"""
         if vie <= 0:
             return
-        palier = math.ceil(vie / vieMax * 4) * 25
-        self.__screen.blit(self.__imagesBarreVie[palier], config.barreViePosition)
+
+        x, y = config.barreViePosition
+        largeur, hauteur = self.__imagesBarreVie.get_size()
+
+        marge = 8
+        xInt = x + marge
+        yInt = y + 10
+        largeurInt = largeur - marge
+        hauteurInt = hauteur - 20
+
+        pygame.draw.rect(self.__screen, (220, 162, 125), (xInt, yInt, largeurInt, hauteurInt))
+
+        largeurVie = int(largeurInt * vie / vieMax)
+        pygame.draw.rect(self.__screen, (0, 200, 0), (xInt, yInt, largeurVie, hauteurInt))
+
+        self.__screen.blit(self.__imagesBarreVie, (x, y))

@@ -24,8 +24,6 @@ class GameController:
             if event.key == pygame.K_ESCAPE:
                 return "menu"
             if event.key == config.toucheTestDegats:
-                # La touche ne fait que poster l'événement : plus tard, un ennemi pourra
-                # poster exactement le même événement.
                 pygame.event.post(pygame.event.Event(config.EVENT_DEGATS, montant=config.degatsTest))
         elif event.type == config.EVENT_DEGATS:
             player.subirDegats(event.montant)
