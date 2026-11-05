@@ -77,7 +77,8 @@ vitesseEnnemi = 1
 vieEnnemi = 100
 tailleCollisionEnnemi = (0.1, 0.1)
 degatEnnemi = 10
-reculEnnemi = 1
+tempsEntreDeuxAttaque = 1
+distanceVueEnnemi = 4
 #endregion
 
 #region BULLET
