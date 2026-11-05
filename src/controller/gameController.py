@@ -104,8 +104,8 @@ class GameController:
         collisionRectFin.centerx = positionFin.x * config.tailleCaseRendu[0]
         collisionRectFin.centery = positionFin.y * config.tailleCaseRendu[1]
 
-        player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur)
-        fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin)
+        player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
+        fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
 
         collision = Collisions()
         collision.murs_depuis_grille(labyrinthe.grille, config.tailleCaseRendu)
