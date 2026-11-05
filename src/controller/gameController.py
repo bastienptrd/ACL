@@ -5,6 +5,7 @@ import math
 import config
 from model.Character import Character
 from model.Bullet import Bullet
+from model.Ennemi import Ennemi
 from model.maze import Maze
 from model.Player import Player
 from model.Collision import Collisions
@@ -85,7 +86,7 @@ class GameController:
         labyrinthe = Maze()
         labyrinthe.creerLabyrinthe()
         labyrinthe.remplacerMurObstacles(config.nombreObstacle)
-        labyrinthe.ajouterApparitionEnemi(config.nombreApparitionEnemi)
+        labyrinthe.ajouterApparitionEnnemi(config.nombreApparitionEnemi)
 
         #initialisation du Player
         debutLabyrinthe = labyrinthe.recupDebut()
@@ -104,6 +105,15 @@ class GameController:
 
         player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
+
+        listEnnemi = []
+        for (x, y) in labyrinthe.recupCasesApparitionEnnemi():
+            x += 0.5
+            y += 0.5
+            collisionRectEnnemi = pygame.rect.Rect(0, 0, config.tailleCollisionEnnemi[0] * config.tailleCaseRendu[0], config.tailleCollisionEnnemi[1] * config.tailleCaseRendu[1])
+            collisionRectEnnemi.centerx = x * config.tailleCaseRendu[0]
+            collisionRectEnnemi.centery = y * config.tailleCaseRendu[1]
+            listEnnemi.append(Ennemi("Enemi", config.vieEnnemi, config.vitesseEnnemi, pygame.Vector2(x, y), config.ennemi_img_path, collisionRectEnnemi, pygame.Vector2(0,1)))
 
         collision = Collisions()
         collision.murs_depuis_grille(labyrinthe.grille, config.tailleCaseRendu)
@@ -143,6 +153,10 @@ class GameController:
                 gameController.player_mouvement(dt, player, collision)
                 if player.collisionRect.colliderect(fin.collisionRect):
                     etat = "fin"
+                for ennemi in listEnnemi:
+                    if ennemi.toucheCharacter(player):
+                        pygame.event.post(pygame.event.Event(config.EVENT_DEGATS, montant=config.degatEnnemi))
+                        player.setPosition(player.getPosition() - (ennemi.getPosition() - player.getPosition()) * config.reculEnnemi)
 
 
             # Gestion affichage
@@ -154,7 +168,7 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner([player, fin], player.health, player.healthMax)
+                gameView.dessiner([player, fin] + listEnnemi, player.health, player.healthMax)
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)

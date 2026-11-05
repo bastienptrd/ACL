@@ -22,7 +22,7 @@ degatsTest = 5
 #endregion
 
 #region IMAGES
-player_img_path = os.path.join(images_path, "Playercharacter", "test_img.png")
+ennemi_img_path = os.path.join(images_path, "character", "test_img.png")
 # Images du personnage - direction bas
 player_bas_path = os.path.join(images_path, "Playercharacter", "persodevant.png")
 player_bas_marche1_path = os.path.join(images_path, "Playercharacter", "persodevantavance1.png")
@@ -67,6 +67,14 @@ tailleCollisionJoueur = (0.2, 0.2)
 tailleCollisionFin = (0.1, 0.1)
 #endregion
 
+#region Ennemi (test)
+vitesseEnnemi = 1
+vieEnnemi = 100
+tailleCollisionEnnemi = (0.1, 0.1)
+degatEnnemi = 10
+reculEnnemi = 1
+#endregion
+
 #region BULLET
 vitesseBullet = 5
 #endregion
@@ -87,7 +95,7 @@ caseMur = -1
 caseDebut = -2
 caseFin = -3
 caseObstacle = -4
-caseApparitionEnemi = -5
+caseApparitionEnnemi = -5
 #endregion
 
 #endreion

@@ -38,7 +38,7 @@ class GameView:
                                        config.caseDebut : surf3,
                                        config.caseFin : surf3,
                                        config.caseObstacle : surf4,
-                                       config.caseApparitionEnemi : surf5}
+                                       config.caseApparitionEnnemi : surf5}
 
         self.remiseEchelle()
 
