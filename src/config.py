@@ -80,6 +80,14 @@ tempsEntreDeuxAttaque = 1
 distanceVueEnnemi = 1
 #endregion
 
+#region Ennemi (test)
+vitesseEnnemi = 1
+vieEnnemi = 100
+tailleCollisionEnnemi = (0.1, 0.1)
+degatEnnemi = 10
+reculEnnemi = 1
+#endregion
+
 #region BULLET
 vitesseBullet = 5
 #endregion
