@@ -4,28 +4,13 @@ from model.Character import Character
 
 
 class Player(Character):
-
-    def __init__(self, name: str, health: int, speed: float,
-                 position: tuple[float, float],
-                 image_path: str, collisionRect):
-
-        super().__init__(
-            name, health, speed,
-            position=position,
-            image_path=image_path,
-            collisionRect=collisionRect
-        )
-
-     
+    def __init__(self, name : str, health : int, speed : float, position : pygame.Vector2, image_path :str, collisionRect,direction : pygame.Vector2):
+        super().__init__(name, health,speed,position = position,image_path=image_path, collisionRect=collisionRect,direction=direction)
+        self.healthMax = health
         self.__direction = "down"
-
- 
         self.__enMouvement = False
-
-      
         self.__debutAnimation = pygame.time.get_ticks()
-
-    
+        
         def charger_image(chemin):
             image = pygame.image.load(chemin).convert_alpha()
 
@@ -59,6 +44,16 @@ class Player(Character):
             "right": droite,
             "left": gauche,
             "up": bas  }
+
+    def subirDegats(self, montant: int) -> None:
+        self.health = max(0, self.health - montant)
+
+    def estMort(self) -> bool:
+        return self.health <= 0
+
+    def reinitialiserVie(self) -> None:
+        self.health = self.healthMax
+
 
     def move(self, direction_input, speed, dt):
 

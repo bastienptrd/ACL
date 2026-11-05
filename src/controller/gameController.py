@@ -1,8 +1,10 @@
 import sys
 import pygame
+import math
 
 import config
 from model.Character import Character
+from model.Bullet import Bullet
 from model.maze import Maze
 from model.Player import Player
 from model.Collision import Collisions
@@ -17,9 +19,18 @@ class GameController:
         self.__vue = vue
 
     @staticmethod
-    def gererEvenement(event, etat):  # Renvoie dans quel etat on se trouve (menu, jeu, parametre...)
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            return "menu"
+    def gererEvenement(event, etat, player):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return "menu"
+            if event.key == config.toucheTestDegats:
+                # La touche ne fait que poster l'événement : plus tard, un ennemi pourra
+                # poster exactement le même événement.
+                pygame.event.post(pygame.event.Event(config.EVENT_DEGATS, montant=config.degatsTest))
+        elif event.type == config.EVENT_DEGATS:
+            player.subirDegats(event.montant)
+            if player.estMort():
+                return "fin"
         return etat
 
     @staticmethod
@@ -81,16 +92,17 @@ class GameController:
         #initialisation du Player
         debutLabyrinthe = labyrinthe.recupDebut()
         finLabytinthe = labyrinthe.recupFin()
-        positionInitiale = (debutLabyrinthe[0] + 0.5, debutLabyrinthe[1] + 0.5)
-        positionFin = (finLabytinthe[0] + 0.5, finLabytinthe[1] + 0.5)
+        # + 0.5 pour placer le personnage au centre de la case
+        positionInitiale = pygame.Vector2(debutLabyrinthe) + pygame.Vector2(0.5, 0.5)
+        positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
 
         # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
         collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
-        collisionRectJoueur.centerx = positionInitiale[0] * config.tailleCaseRendu[0]
-        collisionRectJoueur.centery = positionInitiale[1] * config.tailleCaseRendu[1]
+        collisionRectJoueur.centerx = positionInitiale.x * config.tailleCaseRendu[0]
+        collisionRectJoueur.centery = positionInitiale.y * config.tailleCaseRendu[1]
         collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
-        collisionRectFin.centerx = positionFin[0] * config.tailleCaseRendu[0]
-        collisionRectFin.centery = positionFin[1] * config.tailleCaseRendu[1]
+        collisionRectFin.centerx = positionFin.x * config.tailleCaseRendu[0]
+        collisionRectFin.centery = positionFin.y * config.tailleCaseRendu[1]
 
         player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur)
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin)
@@ -107,13 +119,16 @@ class GameController:
         # Boucle principale
         etat = "menu"
         running = True
-
+        bullet_list = []
         while running:
 
             dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
-
             # Gestion des event
             for event in pygame.event.get():
+                # Projectile
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                    bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet)
+                    bullet_list.append(bullet)
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.VIDEORESIZE:
@@ -122,7 +137,7 @@ class GameController:
                 if etat in ("menu", "parametre", "fin"):
                     etat = menuController.gererEvenement(event, etat)
                 elif etat == "jeu":
-                    etat = gameController.gererEvenement(event, etat)
+                    etat = gameController.gererEvenement(event, etat, player)
                 if etat == "quitter":
                     running = False
 
@@ -141,7 +156,12 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner([player, fin])
+                gameView.dessiner([player, fin], player.health, player.healthMax)
+                for bullet in bullet_list:
+                    bullet.deplacer(dt)
+                    gameView.dessinerBullet(bullet)
+                # Supprime les bullets sorties de la fenêtre
+                bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetre(bullet)]
             elif etat == "fin":
                 menuView.dessinerFin()
 
