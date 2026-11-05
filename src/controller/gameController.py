@@ -35,12 +35,33 @@ class GameController:
 
     @staticmethod
     def player_mouvement(dt, player, collision):
-        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:
+
+        deplacement = False
+
+        for key in [pygame.K_UP, pygame.K_DOWN,
+                pygame.K_LEFT, pygame.K_RIGHT]:
+
             anciennePosition = player.getPosition()
+
             if pygame.key.get_pressed()[key]:
-                player.move(pygame.key.name(key), player.speed, dt)
+
+                deplacement = True
+
+                player.move(
+                pygame.key.name(key),
+                player.speed,
+                dt
+            )
+
                 if collision.touche_un_mur(player.collisionRect):
                     player.setPosition(anciennePosition)
+                    player.arreter()
+
+    # Si aucune touche n'est pressée, le personnage s'arrête
+        if not deplacement:
+            player.arreter()
+
+
 
     @staticmethod
     def lancerJeu():
@@ -83,8 +104,8 @@ class GameController:
         collisionRectFin.centerx = positionFin.x * config.tailleCaseRendu[0]
         collisionRectFin.centery = positionFin.y * config.tailleCaseRendu[1]
 
-        player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur,pygame.Vector2(0,1))
-        fin = Character("Fin", 0, 0, positionFin, config.player_img_path, collisionRectFin,pygame.Vector2(0,1))
+        player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur)
+        fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin)
 
         collision = Collisions()
         collision.murs_depuis_grille(labyrinthe.grille, config.tailleCaseRendu)
