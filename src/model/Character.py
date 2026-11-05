@@ -32,3 +32,10 @@ class Character :
         # Renvoie une copie : un Vector2 est modifiable, on évite de changer la position par erreur
         return pygame.Vector2(self.__position)
 
+    def toucheCharacter(self, other : "Character") -> bool:
+        """
+        :param other: Deuxième character
+        :return: Bolléen relatif à la collision de leurs rectangles de collision
+        """
+        return self.collisionRect.colliderect(other.collisionRect)
+

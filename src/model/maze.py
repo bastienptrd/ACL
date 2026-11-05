@@ -20,6 +20,8 @@ class Maze:
         self.__debut = debut
         self.__fin = fin
 
+        self.__casesApparitionEnnemi = []
+
         self.grille = [[-1 for _ in range(self.__tailleY)] for _ in range(self.__tailleX)]
 
         # On place le début et la fin dans la grille dans deux composantes différentes arbitraires
@@ -51,6 +53,12 @@ class Maze:
 
     def recupFin(self) -> tuple[int, int]:
         return self.__fin
+
+    def recupCasesApparitionEnnemi(self) -> list[tuple[int, int]]:
+        return self.__casesApparitionEnnemi
+
+    def changeCasesApparitionEnnemi(self, casesApparitionEnnemi : list[tuple[int, int]]) -> None:
+        self.__casesApparitionEnnemi = casesApparitionEnnemi
 
     def __fusionnerClasse(self, classe1 : int, classe2 : int) -> None:
         """
@@ -139,13 +147,14 @@ class Maze:
             caseI, caseJ = random.choice(ensembleCaseMur)
             self.grille[caseI][caseJ] = config.caseObstacle
 
-    def ajouterApparitionEnemi(self, nombreEnemi : int = 1) -> None:
+    def ajouterApparitionEnnemi(self, nombreEnemi : int = 1) -> None:
         # On récupère ensemble des case qui peuvent accueillir une apparition d'ennemi
         ensembleCaseMur = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if self.grille[i][j] == 0]
         for _ in range(nombreEnemi):
             # On choisit une case aléatoire
             caseI, caseJ = random.choice(ensembleCaseMur)
-            self.grille[caseI][caseJ] = config.caseApparitionEnemi
+            self.__casesApparitionEnnemi.append((caseI, caseJ))
+            self.grille[caseI][caseJ] = config.caseApparitionEnnemi
 
 
 if __name__ == "__main__":
@@ -153,7 +162,7 @@ if __name__ == "__main__":
     l = Maze(21,11, fin= (19,9))
     l.creerLabyrinthe()
     l.remplacerMurObstacles(10)
-    l.ajouterApparitionEnemi(5)
+    l.ajouterApparitionEnnemi(5)
     for ligne in l.grille:
         txt = ""
         for elt in ligne:
@@ -165,7 +174,7 @@ if __name__ == "__main__":
                 txt += " F "
             elif elt == config.caseObstacle:
                 txt += "#O#"
-            elif elt == config.caseApparitionEnemi:
+            elif elt == config.caseApparitionEnnemi:
                 txt += " E "
             else:
                 txt += "   "
