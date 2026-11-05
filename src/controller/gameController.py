@@ -95,9 +95,14 @@ class GameController:
         positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
 
         # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
+        collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
+        collisionRectJoueur.centerx = positionInitiale.x * config.tailleCaseRendu[0]
+        collisionRectJoueur.centery = positionInitiale.y * config.tailleCaseRendu[1]
         collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
+        collisionRectFin.centerx = positionFin.x * config.tailleCaseRendu[0]
+        collisionRectFin.centery = positionFin.y * config.tailleCaseRendu[1]
 
-        player = Player(positionInitiale)
+        player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
 
         listEnnemi = []
