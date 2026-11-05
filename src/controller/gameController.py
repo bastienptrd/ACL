@@ -155,7 +155,7 @@ class GameController:
                         anciennePosition = ennemi.getPosition()
                         direction = player.getPosition() - ennemi.getPosition()
                         direction = direction * dt / math.sqrt(direction * direction)
-                        
+
                         ennemi.move(pygame.Vector2(direction[0], 0))
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
