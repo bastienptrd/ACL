@@ -49,6 +49,7 @@ class GameView:
         self.__majBarreVie()
 
 
+
     def __majBarreVie(self) -> None:
         """Redimensionne l'image de la barre si la taille de la fenêtre a changé"""
         tailleFenetre = self.__screen.get_size()
