@@ -96,4 +96,3 @@ class Player(Character):
             numeroImage = 1 + (temps // 150) % 2
 
         return images[int(numeroImage)]
-
