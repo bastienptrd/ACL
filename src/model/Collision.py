@@ -11,8 +11,8 @@ class Collisions:
         self.murs = []
         for x in range(len(grille)):
             for y in range(len(grille[x])):
-                if grille[x][y] == config.mur or grille[x][y] == config.obstacle:
-                    self.murs.append(pygame.Rect(x * taille_case, y * taille_case, taille_case, taille_case))
+                if grille[x][y] == config.caseMur or grille[x][y] == config.caseObstacle:
+                    self.murs.append(pygame.Rect(x * taille_case[0], y * taille_case[1], taille_case[0], taille_case[1]))
 
     def touche_un_mur(self, joueur_rect):
         for mur in self.murs:
@@ -36,19 +36,3 @@ class Collisions:
                     joueur_rect.bottom = mur.top
                 elif dy < 0:
                     joueur_rect.top = mur.bottom
-
-
-if __name__ == "__main__":
-    grille = [
-        [-1, -1, -1, -1],
-        [-1, 0, 0, -1],
-        [-1, 0, -1, -1],
-        [-1, -1, -1, -1],
-    ]
-    collisions = Collisions()
-    collisions.murs_depuis_grille(grille, 40)
-
-    joueur = pygame.Rect(45, 45, 20, 20)
-    for i in range(20):
-        collisions.deplacer(joueur, 7, 0)
-    print(joueur.x)

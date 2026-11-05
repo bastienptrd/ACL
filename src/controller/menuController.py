@@ -26,4 +26,8 @@ class MenuController:
             if self.__vue.getBoutonGameplay().gererEvenement(event):
                 pass
 
+        elif etat == "fin":
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return "menu"
+
         return etat

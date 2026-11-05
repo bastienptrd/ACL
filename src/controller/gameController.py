@@ -1,118 +1,169 @@
 import sys
 import pygame
+import math
+
+import config
+from model.Character import Character
+from model.Bullet import Bullet
+from model.maze import Maze
+from model.Player import Player
+from model.Collision import Collisions
 from view.menuView import MenuView
 from view.gameView import GameView
 from controller.menuController import MenuController
-from model.Player import Player
-import config
+
 
 
 class GameController:
     def __init__(self, vue):
         self.__vue = vue
 
-    def gererEvenement(self, event, etat):  # Renvoie dans quel etat on se trouve (menu, jeu, parametre...)
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            return "menu"
+    @staticmethod
+    def gererEvenement(event, etat, player):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                return "menu"
+            if event.key == config.toucheTestDegats:
+                # La touche ne fait que poster l'événement : plus tard, un ennemi pourra
+                # poster exactement le même événement.
+                pygame.event.post(pygame.event.Event(config.EVENT_DEGATS, montant=config.degatsTest))
+        elif event.type == config.EVENT_DEGATS:
+            player.subirDegats(event.montant)
+            if player.estMort():
+                return "fin"
         return etat
 
-    def player_mouvement(self, dt, player):
-        if pygame.key.get_pressed()[pygame.K_UP]:
-            player.move("up", player.speed, dt)
-        elif pygame.key.get_pressed()[pygame.K_DOWN]:
-            player.move("down", player.speed, dt)
-        elif pygame.key.get_pressed()[pygame.K_LEFT]:
-            player.move("left", player.speed, dt)
-        elif pygame.key.get_pressed()[pygame.K_RIGHT]:
-            player.move("right", player.speed, dt)
+    @staticmethod
+    def player_mouvement(dt, player, collision):
+
+        deplacement = False
+
+        for key in [pygame.K_UP, pygame.K_DOWN,
+                pygame.K_LEFT, pygame.K_RIGHT]:
+
+            anciennePosition = player.getPosition()
+
+            if pygame.key.get_pressed()[key]:
+
+                deplacement = True
+
+                player.move(
+                pygame.key.name(key),
+                player.speed,
+                dt
+            )
+
+                if collision.touche_un_mur(player.collisionRect):
+                    player.setPosition(anciennePosition)
+                    player.arreter()
+
+    # Si aucune touche n'est pressée, le personnage s'arrête
+        if not deplacement:
+            player.arreter()
 
 
+
+    @staticmethod
     def lancerJeu():
 
         pygame.init()
-
-        # Grille labyrinthe
-
-        grille = [[0 for _ in range(20)] for _ in range(15)]
-        for j in range(20):
-            grille[0][j] = 1
-            grille[14][j] = 1
-        for i in range(15):
-            grille[i][0] = 1
-            grille[i][19] = 1
-
-        murs = [
-            (1, 4), (1, 11),
-            (2, 2), (2, 4), (2, 6), (2, 7), (2, 8), (2, 9), (2, 11), (2, 13), (2, 14), (2, 15), (2, 16), (2, 17),
-            (3, 2), (3, 6), (3, 11),
-            (4, 2), (4, 3), (4, 4), (4, 5), (4, 6), (4, 8), (4, 9), (4, 10), (4, 11), (4, 13), (4, 14), (4, 15), (4, 16), (4, 17),
-            (5, 8), (5, 13),
-            (6, 2), (6, 3), (6, 4), (6, 5), (6, 6), (6, 8), (6, 10), (6, 11), (6, 13), (6, 15), (6, 16), (6, 17),
-            (7, 1), (7, 2), (7, 6), (7, 8), (7, 11), (7, 15),
-            (8, 2), (8, 4), (8, 6), (8, 8), (8, 9), (8, 10), (8, 11), (8, 13), (8, 14), (8, 15), (8, 16), (8, 18),
-            (9, 4), (9, 12),
-            (10, 2), (10, 3), (10, 4), (10, 6), (10, 7), (10, 8), (10, 9), (10, 10), (10, 11), (10, 12), (10, 14), (10, 15), (10, 16), (10, 17),
-            (11, 6), (11, 14),
-            (12, 2), (12, 3), (12, 4), (12, 5), (12, 6), (12, 8), (12, 9), (12, 10), (12, 11), (12, 12), (12, 14), (12, 15), (12, 16), (12, 17),
-        ]
-        for i, j in murs:
-            grille[i][j] = 1
 
         # Initialisation de la musique et des sons
         pygame.mixer.init()
 
         pygame.mixer.music.load(config.musique_foret_path)
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(config.volumeFond)
         pygame.mixer.music.play(-1)
 
         sonClic = pygame.mixer.Sound(config.son_clic_path)
-        sonClic.set_volume(1)
+        sonClic.set_volume(config.volumeClic)
 
-        # Initialisation de la fenetre
-        screen = pygame.display.set_mode((1080, 720), pygame.RESIZABLE)
+        # Initialisation de la fenêtre
+        screen = pygame.display.set_mode(config.screenSize, pygame.RESIZABLE)
         pygame.display.set_caption("Interface Provisoire")
         clock = pygame.time.Clock()
 
-        # Appels des classes dans les autres fichiers
-        menuView = MenuView(screen, sonClic)
-        gameView = GameView(screen, menuView, grille)
-        menuController = MenuController(menuView)
-        gameController = GameController(gameView)
+        # initialisation du Labyrinthe
+        labyrinthe = Maze()
+        labyrinthe.creerLabyrinthe()
+        labyrinthe.remplacerMurObstacles(config.nombreObstacle)
+        labyrinthe.ajouterApparitionEnemi(config.nombreApparitionEnemi)
 
         #initialisation du Player
-        player = Player("Player", 100, 200, (400, 300), config.player_img_path)
-        player_img = player.generate_image()
+        debutLabyrinthe = labyrinthe.recupDebut()
+        finLabytinthe = labyrinthe.recupFin()
+        # + 0.5 pour placer le personnage au centre de la case
+        positionInitiale = pygame.Vector2(debutLabyrinthe) + pygame.Vector2(0.5, 0.5)
+        positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
+
+        # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
+        collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
+        collisionRectJoueur.centerx = positionInitiale.x * config.tailleCaseRendu[0]
+        collisionRectJoueur.centery = positionInitiale.y * config.tailleCaseRendu[1]
+        collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
+        collisionRectFin.centerx = positionFin.x * config.tailleCaseRendu[0]
+        collisionRectFin.centery = positionFin.y * config.tailleCaseRendu[1]
+
+        player = Player("Player", config.vieJoueur, config.vitesseJoueur, positionInitiale, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
+        fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
+
+        collision = Collisions()
+        collision.murs_depuis_grille(labyrinthe.grille, config.tailleCaseRendu)
+
+        # Appels des classes dans les autres fichiers
+        menuView = MenuView(screen, sonClic)
+        gameView = GameView(screen, labyrinthe.grille, tailleRenduCase=config.tailleCaseRendu)
+        menuController = MenuController(menuView)
+        gameController = GameController(gameView)
 
         # Boucle principale
         etat = "menu"
         running = True
-
+        bullet_list = []
         while running:
 
-            dt = clock.tick(60) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
-
+            dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
+            # Gestion des event
             for event in pygame.event.get():
+                # Projectile
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                    bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet)
+                    bullet_list.append(bullet)
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.VIDEORESIZE:
                     menuView.redimensionner(event.w, event.h)
 
-                if etat in ("menu", "parametre"):
+                if etat in ("menu", "parametre", "fin"):
                     etat = menuController.gererEvenement(event, etat)
                 elif etat == "jeu":
-                    etat = gameController.gererEvenement(event, etat)
-
+                    etat = gameController.gererEvenement(event, etat, player)
                 if etat == "quitter":
                     running = False
 
+            if etat == "jeu":
+                gameController.player_mouvement(dt, player, collision)
+                if player.collisionRect.colliderect(fin.collisionRect):
+                    etat = "fin"
+
+
+            # Gestion affichage
             if etat == "menu":
                 menuView.dessinerMenu()
             elif etat == "parametre":
                 menuView.dessinerParametres()
             elif etat == "jeu":
-                gameView.dessiner()
-                gameController.player_mouvement(dt, player)
-                screen.blit(player_img, player.position)
+                # Place la caméra sur le joueur
+                gameView.changePosition(player.getPosition())
+                # Dessine le plateau de jeu avec les character
+                gameView.dessiner([player, fin], player.health, player.healthMax)
+                for bullet in bullet_list:
+                    bullet.deplacer(dt)
+                    gameView.dessinerBullet(bullet)
+                # Supprime les bullets sorties de la fenêtre
+                bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetre(bullet)]
+            elif etat == "fin":
+                menuView.dessinerFin()
 
             pygame.display.flip()
 
