@@ -2,12 +2,10 @@ import pygame
 import math
 import config
 
-
 def voisin(x, sens):
     if math.floor(x) == x:
         return int(x + sens)
     return math.floor(x) + int(sens > 0)
-
 
 class Character :
     def __init__(self, name : str, health : int , speed : float, position : pygame.Vector2, image_path :str, collisionRect : pygame.rect.Rect, direction : pygame.Vector2) :
@@ -20,10 +18,8 @@ class Character :
         self.collisionRect = collisionRect
         self.direction = pygame.Vector2(direction)
 
-
         # Assure de placer les collionsRest aux bons endroits
         self.setPosition(self.__position)
-
 
     def generate_image(self) -> pygame.surface.Surface :
         player_img = pygame.image.load(self.image_path).convert_alpha()

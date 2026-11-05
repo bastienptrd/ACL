@@ -121,8 +121,7 @@ class GameController:
         bullet_list = []
         while running:
 
-            dt = clock.tick(config.imageParSeconde) / 1000  # Temps écoulé depuis la dernière frame en secondes
-            print(clock.get_fps())
+            dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
@@ -145,7 +144,7 @@ class GameController:
                 gameController.player_mouvement(dt, player, collision)
                 if player.toucheCharacter(fin):
                     etat = "fin"
-                """for ennemi in listEnnemi:
+                for ennemi in listEnnemi:
                     if ennemi.toucheCharacter(player):
                         # Attaque de l'ennemi
                         ennemi.attaque(player)
@@ -162,7 +161,7 @@ class GameController:
                             ennemi.setPosition(anciennePosition)
                         ennemi.move(pygame.Vector2(0, direction[1]))
                         if collision.touche_un_mur(ennemi.collisionRect):
-                            ennemi.setPosition(anciennePosition)"""
+                            ennemi.setPosition(anciennePosition)
 
             # Gestion affichage
             if etat == "menu":
@@ -173,7 +172,7 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner([player, fin], player.health, player.healthMax)
+                gameView.dessiner([player, fin] + listEnnemi, player.health, player.healthMax)
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
