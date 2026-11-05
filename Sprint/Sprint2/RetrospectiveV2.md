@@ -11,7 +11,8 @@ Notre groupe est composé des membres suivants : Bastien Petrod, Alexis Cicurel,
 
 Pour ce second sprint, l'objectif était avant tout d'avoir une version fonctionnelle avec la première boucle du jeu
 
-Nos objectifs pour ce second sprint étaient les suivants : 
+Nos objectifs pour ce second sprint étaient les suivants :
+
 - Avoir un menus principale
 - Avoir une génération du labyrinthe
 - Pouvoir se déplacer dans 8 directions
@@ -29,8 +30,6 @@ La classe Enemi n'étant pas été codé par Ethan, l'ensemble des features auto
 Néanmoins l'ensemble de la boucle de jeu et des menus ont été mis en place.
 
 # IV. Retour du professeur et consignes
-
-
 
 # V. Ce qui a posé problème
 

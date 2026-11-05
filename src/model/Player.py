@@ -71,15 +71,20 @@ class Player(Character):
         x, y = self.getPosition()
 
         if direction_input == "up":
+            self.direction = pygame.Vector2(0, -1)
             y -= speed * dt
 
         elif direction_input == "down":
+            self.direction = pygame.Vector2(0, 1)
             y += speed * dt
 
         elif direction_input == "left":
+            self.direction = pygame.Vector2(-1, 0)
+
             x -= speed * dt
 
         elif direction_input == "right":
+            self.direction = pygame.Vector2(1, 0)
             x += speed * dt
 
         self.setPosition((x, y))
