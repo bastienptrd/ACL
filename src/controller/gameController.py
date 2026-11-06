@@ -136,6 +136,7 @@ class GameController:
                     running = False
                 elif event.type == pygame.VIDEORESIZE:
                     menuView.redimensionner(event.w, event.h)
+                    gameView.updateTailleFenetre()
 
                 if etat in ("menu", "parametre", "fin"):
                     etat = menuController.gererEvenement(event, etat)
@@ -151,7 +152,9 @@ class GameController:
                 for ennemi in listEnnemi:
                     if ennemi.toucheCharacter(player):
                         # Attaque de l'ennemi
-                        ennemi.attaque(player)
+                        if ennemi.attaque(player):
+                            gameView.dessinerDegat()
+                        gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
                         pygame.event.post(pygame.event.Event(config.EVENT_DEGATS))
 
                     elif ennemi.voit(player, labyrinthe.grille):
@@ -176,7 +179,7 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner(listCharacter, player.health, player.healthMax)
+                gameView.dessiner(listCharacter)
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)

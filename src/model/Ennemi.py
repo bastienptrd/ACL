@@ -17,10 +17,12 @@ class Ennemi(Character):
     def peutAttaquer(self):
         return (time.time() - self.tempsDerniereAttaque) > self.tempsEntreDeuxAttaque
 
-    def attaque(self, other : Character):
+    def attaque(self, other : Character) -> bool:
         if self.peutAttaquer():
             other.subirDegats(self.degatAttaque)
             self.tempsDerniereAttaque = time.time()
+            return True
+        return False
 
     def move(self, direction : pygame.Vector2):
         self.setPosition(self.getPosition() + direction * config.vitesseEnnemi)

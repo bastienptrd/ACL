@@ -51,12 +51,33 @@ class GameView:
             taille = (config.barreVieLargeur, int(img.get_height() * ratio))
             self.__imagesBarreVie[palier] = pygame.transform.smoothscale(img, taille)
 
+        self.imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
+        self.updateTailleFenetre()
+
+    def changerLongeurRayon(self, taille : float):
+        self.imageLampe.fill((0, 0, 0, 0))
+        for i in range(255):
+            pygame.draw.circle(self.imageLampe, (0, 0, 0, i), self.__screen.get_rect().center,
+                               taille * (255 - i) / 255)
+
+    def updateTailleFenetre(self):
+        self.imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
+        self.imageLampe.fill((0, 0, 0, 0))
+        for i in range(255):
+            pygame.draw.circle(self.imageLampe, (0, 0, 0, i), self.__screen.get_rect().center,
+                               config.longueurMaxRayon * (255 - i) / 255)
+
+    def dessinerDegat(self):
+        self.__screen.fill((255, 0, 0))
+        pygame.display.flip()
+
     def remiseEchelle(self) -> None:
         """
         Remet les images des murs à l'échelle choisie
         """
         for key, value in self.__imagesCaseLabyrinthe.items():
             self.__imagesCaseLabyrinthe[key] = pygame.transform.scale(value, self.__tailleRenduCase)
+
 
     def changePosition(self, position : pygame.Vector2) -> None:
         """
@@ -149,7 +170,7 @@ class GameView:
         for character in listCharacter:
             self.dessinerCharacter(character)
 
-    def dessiner(self, listCharactere=None, vie=None, vieMax=None) -> None:
+    def dessiner(self, listCharactere : list[Character] = None) -> None:
         """
         Dessine l'ensemble de la fenêtre de jeu
         :param listCharactere: Charactères à dessiner
@@ -157,8 +178,8 @@ class GameView:
         self.dessinerGrille()
         if listCharactere:
             self.dessinerListeCharacter(listCharactere)
-        if vie is not None and vieMax:
-            self.dessinerBarreDeVie(vie, vieMax)
+            self.dessinerNoirLampe(listCharactere[0], listCharactere[0].envoyerRayonLampe(self.__grille), (listCharactere[0].healthMax - listCharactere[0].health) / listCharactere[0].healthMax * config.opaciteFond)
+            self.dessinerBarreDeVie(listCharactere[0].health, listCharactere[0].healthMax)
 
     def dessinerBarreDeVie(self, vie: int, vieMax: int) -> None:
         """Affiche l'image de la barre de vie correspondant à la vie restante"""
@@ -166,3 +187,20 @@ class GameView:
             return
         palier = math.ceil(vie / vieMax * 4) * 25
         self.__screen.blit(self.__imagesBarreVie[palier], config.barreViePosition)
+
+    def dessinerNoirLampe(self, character : Character, rayons : list[tuple[float, float, float]], opacite) -> None:
+        ombre = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
+        mask = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
+        lampe = self.imageLampe.copy()
+        mask.fill((0, 0, 0, 0))
+        ombre.fill((0, 0, 0, config.opaciteFond))
+        pointLampe = [self.convertirCoordNumVersEcran(pygame.Vector2(x, y)) for _,x,y in rayons] + [self.convertirCoordNumVersEcran(character.getPosition())]
+        pygame.draw.circle(mask, (0, 0, 0, 100), self.convertirCoordNumVersEcran(character.getPosition()), config.rayonLumiereJoueur)
+        pygame.draw.polygon(mask, (0, 0, 0, 244), pointLampe, )
+        pygame.draw.polygon(mask, (0, 0, 0, 244), pointLampe, 30)
+        for point in pointLampe:
+            pygame.draw.circle(mask, (0, 0, 0, 244), point, 10)
+        lampe.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+        ombre.blit(lampe, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
+
+        self.__screen.blit(ombre, (0, 0))

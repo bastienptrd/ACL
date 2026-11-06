@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import config
 from model.Character import Character
@@ -7,6 +9,7 @@ class Player(Character):
     def __init__(self, position : pygame.Vector2):
         collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
         super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
+
 
         self.healthMax = self.health
         self.__direction = "down"
@@ -46,6 +49,9 @@ class Player(Character):
             "right": droite,
             "left": gauche,
             "up": bas  }
+
+        self.collisionRect = self.recupererImage().get_rect()
+        self.setPosition(self.getPosition())
 
     def move(self, direction_input, speed, dt):
 
@@ -97,3 +103,4 @@ class Player(Character):
             numeroImage = 1 + (temps // 150) % 2
 
         return images[int(numeroImage)]
+

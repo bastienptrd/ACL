@@ -100,3 +100,16 @@ class Character :
         distanceParcourue = math.sqrt((rayonX - self.__position[0]) ** 2 + (rayonY - self.__position[1]) ** 2)
         return distanceParcourue, rayonX, rayonY
 
+    def envoyerRayonLampe(self, grille) -> list[tuple[float, float, float]]:
+        x, y = self.direction
+        angle = 0
+        if x != 0:
+            angle = math.atan(y / x) + int(x > 0) * math.pi + math.pi
+        elif y > 0:
+            angle = math.pi / 2
+        elif y < 0:
+            angle = - math.pi / 2
+        res = []
+        for i in range(config.nombreRayon):
+            res.append(self.jeterRayon(grille, angle - config.largeurLampe / 2 + i * config.largeurLampe / config.nombreRayon))
+        return res
