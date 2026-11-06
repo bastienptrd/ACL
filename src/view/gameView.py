@@ -131,12 +131,20 @@ class GameView:
         """
         self.__screen.blit(bullet.recupererImage(), self.rectBulletEcran(bullet))
 
-    def estDansFenetre(self, bullet : Bullet) -> bool:
+    def estDansFenetreBullet(self, bullet : Bullet) -> bool:
         """
         :param bullet: Bullet à tester
         :return: True si au moins une partie de la bullet est visible dans la fenêtre
         """
         return self.__screen.get_rect().colliderect(self.rectBulletEcran(bullet))
+
+    def estDansFenetre(self, rect : pygame.rect.Rect) -> bool:
+        """
+        :param rect: rectangle à tester
+        :return: True si au moins une partie de la bullet est visible dans la fenêtre
+        """
+        return self.__screen.get_rect().colliderect(rect)
+
 
     def dessinerListeCharacter(self, listCharacter : list[Character]) -> None:
         """
@@ -144,7 +152,8 @@ class GameView:
         :param listCharacter: Charactères à dessiner
         """
         for character in listCharacter:
-            self.dessinerCharacter(character)
+            if self.estDansFenetre(character.collisionRect):
+                self.dessinerCharacter(character)
 
     def dessiner(self, listCharactere=None, vie=None, vieMax=None) -> None:
         """
