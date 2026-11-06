@@ -42,16 +42,25 @@ class GameView:
 
         self.remiseEchelle()
 
-        imageBarre = pygame.image.load(config.barre_vie_images).convert()
-        ratio = imageBarre.get_height() / imageBarre.get_width()
-        imageBarre = pygame.transform.scale(
-            imageBarre,
-            (config.barreVieLargeur, int(config.barreVieLargeur * ratio))
-        )
-        imageBarre.set_colorkey((63, 72, 204))
-        self.__imagesBarreVie = imageBarre
+        self.__barreOriginale = pygame.image.load(config.barre_vie_images).convert()
+        self.__barreOriginale.set_colorkey((63, 72, 204))
+        self.__imagesBarreVie = None
+        self.__tailleFenetreBarre = None
+        self.__majBarreVie()
 
 
+    def __majBarreVie(self) -> None:
+        """Redimensionne l'image de la barre si la taille de la fenêtre a changé"""
+        tailleFenetre = self.__screen.get_size()
+        if tailleFenetre == self.__tailleFenetreBarre:
+            return  # rien à refaire, on évite de rescaler à chaque frame
+
+        self.__tailleFenetreBarre = tailleFenetre
+        largeur = int(tailleFenetre[0] * config.barreVieLargeurRel)
+        ratio = self.__barreOriginale.get_height() / self.__barreOriginale.get_width()
+        image = pygame.transform.scale(self.__barreOriginale, (largeur, int(largeur * ratio)))
+        image.set_colorkey((63, 72, 204))
+        self.__imagesBarreVie = image
 
         self.__longueurRayon = config.longueurMaxRayon
         self.imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
@@ -165,14 +174,24 @@ class GameView:
         if vie <= 0:
             return
 
-        x, y = config.barreViePosition
+        self.__majBarreVie()
+
+        largeurEcran, hauteurEcran = self.__screen.get_size()
         largeur, hauteur = self.__imagesBarreVie.get_size()
 
-        marge = 8
+        # Position : en bas à gauche, avec une marge proportionnelle
+        x = int(largeurEcran - largeur - largeurEcran * config.barreVieMargeRel[0])
+        y = int(hauteurEcran - hauteur - hauteurEcran * config.barreVieMargeRel[1])
+
+        # Marges internes proportionnelles à la taille de la barre
+        # (avant : 8 et 10 px pour une barre de 300 px de large)
+        marge = int(largeur * 8 / 300)
+        decalageY = int(largeur * 10 / 300)
+
         xInt = x + marge
-        yInt = y + 10
+        yInt = y + decalageY
         largeurInt = largeur - marge
-        hauteurInt = hauteur - 20
+        hauteurInt = hauteur - 2 * decalageY
 
         pygame.draw.rect(self.__screen, (220, 162, 125), (xInt, yInt, largeurInt, hauteurInt))
 

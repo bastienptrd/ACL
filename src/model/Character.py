@@ -2,12 +2,13 @@ import pygame
 import math
 import config
 
+
 def voisin(x, sens):
     if math.floor(x) == x:
         return int(x + sens)
     return math.floor(x) + int(sens > 0)
 
-class Character :
+class Character : 
     def __init__(self, name : str, health : int , speed : float, position : pygame.Vector2, image_path :str, collisionRect : pygame.rect.Rect, direction : pygame.Vector2) :
         self.name = name
         self.health = health
