@@ -49,6 +49,18 @@ class GameView:
         self.__majBarreVie()
 
 
+    def __majBarreVie(self) -> None:
+        """Redimensionne l'image de la barre si la taille de la fenêtre a changé"""
+        tailleFenetre = self.__screen.get_size()
+        if tailleFenetre == self.__tailleFenetreBarre:
+            return  # rien à refaire, on évite de rescaler à chaque frame
+
+        self.__tailleFenetreBarre = tailleFenetre
+        largeur = int(tailleFenetre[0] * config.barreVieLargeurRel)
+        ratio = self.__barreOriginale.get_height() / self.__barreOriginale.get_width()
+        image = pygame.transform.scale(self.__barreOriginale, (largeur, int(largeur * ratio)))
+        image.set_colorkey((63, 72, 204))
+        self.__imagesBarreVie = image
 
     def __majBarreVie(self) -> None:
         """Redimensionne l'image de la barre si la taille de la fenêtre a changé"""
