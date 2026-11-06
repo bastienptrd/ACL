@@ -11,8 +11,8 @@ sounds_path = os.path.join(assets_path, "sounds")
 #region BARRE DE VIE
 barre_vie_path = os.path.join(images_path, "Barre_de_vie")
 barre_vie_images = os.path.join(barre_vie_path, "Barre_de_vie_creuse.png")
-barreVieLargeur = 300
-barreViePosition = (700, 600)
+barreVieLargeurRel = 0.28
+barreVieMargeRel = (0.02, 0.03)
 #endregion
 
 #region EVENEMENTS
