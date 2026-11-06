@@ -108,6 +108,8 @@ class GameController:
             y += 0.5
             listEnnemi.append(EnnemiTest(pygame.Vector2(x, y)))
 
+        listCharacter = [player, fin] + listEnnemi
+
         collision = Collisions()
         collision.murs_depuis_grille(labyrinthe.grille, config.tailleCaseRendu)
 
@@ -174,12 +176,12 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner([player, fin] + listEnnemi, player.health, player.healthMax)
+                gameView.dessiner(listCharacter, player.health, player.healthMax)
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
                 # Supprime les bullets sorties de la fenêtre
-                bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetre(bullet)]
+                bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetreBullet(bullet)]
             elif etat == "fin":
                 menuView.dessinerFin()
 
