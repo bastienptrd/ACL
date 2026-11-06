@@ -18,8 +18,10 @@ class Character :
         self.collisionRect = collisionRect
         self.direction = pygame.Vector2(direction)
 
+
         # Assure de placer les collionsRest aux bons endroits
         self.setPosition(self.__position)
+
 
     def generate_image(self) -> pygame.surface.Surface :
         player_img = pygame.image.load(self.image_path).convert_alpha()
