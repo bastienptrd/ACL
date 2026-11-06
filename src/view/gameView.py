@@ -174,22 +174,13 @@ class GameView:
         """
         return self.__screen.get_rect().colliderect(self.rectBulletEcran(bullet))
 
-    def estDansFenetre(self, rect : pygame.rect.Rect) -> bool:
-        """
-        :param rect: rectangle à tester
-        :return: True si au moins une partie de la bullet est visible dans la fenêtre
-        """
-        return self.__screen.get_rect().colliderect(rect)
-
-
     def dessinerListeCharacter(self, listCharacter : list[Character]) -> None:
         """
         Dessine une liste de charactère sur la grille
         :param listCharacter: Charactères à dessiner
         """
         for character in listCharacter:
-            if self.estDansFenetre(character.collisionRect):
-                self.dessinerCharacter(character)
+            self.dessinerCharacter(character)
 
     def dessinerBarreDeVie(self, vie: int, vieMax: int) -> None:
         """Affiche la barre de vie correspondant à la vie restante"""
