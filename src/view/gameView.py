@@ -108,12 +108,15 @@ class GameView:
         Dessine un charactère sur la grille en fonction de son image et de ses coordonnées
         :param charactere: Character à dessiner
         """
-        imageCharacter = charactere.recupererImage()
-        tailleImageX, tailleImageY = imageCharacter.get_size()
         coordScreenX, coordScreenY = self.convertirCoordNumVersEcran(charactere.getPosition())
-        coordScreenX -= tailleImageX / 2
-        coordScreenY -= tailleImageY / 2
-        self.__screen.blit(imageCharacter, (coordScreenX, coordScreenY))
+        tailleX, tailleY = charactere.collisionRect.size
+        coordScreenX -= tailleX / 2
+        coordScreenY -= tailleY / 2
+        rect = pygame.rect.Rect(coordScreenX, coordScreenY, tailleX, tailleY)
+        if rect.colliderect(self.__screen.get_rect()):
+            imageCharacter = charactere.recupererImage()
+            tailleImageX, tailleImageY = imageCharacter.get_size()
+            self.__screen.blit(imageCharacter, (coordScreenX, coordScreenY))
 
     def rectBulletEcran(self, bullet : Bullet) -> pygame.Rect:
         """
@@ -138,22 +141,13 @@ class GameView:
         """
         return self.__screen.get_rect().colliderect(self.rectBulletEcran(bullet))
 
-    def estDansFenetre(self, rect : pygame.rect.Rect) -> bool:
-        """
-        :param rect: rectangle à tester
-        :return: True si au moins une partie de la bullet est visible dans la fenêtre
-        """
-        return self.__screen.get_rect().colliderect(rect)
-
-
     def dessinerListeCharacter(self, listCharacter : list[Character]) -> None:
         """
         Dessine une liste de charactère sur la grille
         :param listCharacter: Charactères à dessiner
         """
         for character in listCharacter:
-            if self.estDansFenetre(character.collisionRect):
-                self.dessinerCharacter(character)
+            self.dessinerCharacter(character)
 
     def dessiner(self, listCharactere=None, vie=None, vieMax=None) -> None:
         """
