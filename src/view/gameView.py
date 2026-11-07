@@ -198,19 +198,21 @@ class GameView:
         # Lampe
         lampe = self.imageLampe.copy()
 
-        # On ajoute le cercle du joueur au mask
-        for i in range(0, config.opaciteCercleLumiereJoueur, 2):
-            pygame.draw.circle(mask, (0, 0, 0, i), self.convertirCoordNumVersEcran(character.getPosition()), max(config.rayonLumiereJoueur - i * config.vitesseDegradeCerlceLumiere, 0))
-
         # On ajoute la forme balayée par la lampe
         pointLampe = [self.convertirCoordNumVersEcran(pygame.Vector2(x, y)) for _,x,y in rayons] + [self.convertirCoordNumVersEcran(character.getPosition())]
+        for i in range(0, 20, 2):
+            pygame.draw.polygon(mask, (0, 0, 0, opacite * i / 20), pointLampe, config.epaisseurLumiereMur - i)
+            for point in pointLampe:
+                pygame.draw.circle(mask, (0, 0, 0, opacite * i / 20), point, config.epaisseurLumiereMur / 2 - 1 - i / 2)
         pygame.draw.polygon(mask, (0, 0, 0, opacite), pointLampe)
-        pygame.draw.polygon(mask, (0, 0, 0, opacite), pointLampe, config.epaisseurLumiereMur)
-        for point in pointLampe:
-            pygame.draw.circle(mask, (0, 0, 0, opacite), point, config.epaisseurLumiereMur / 2 - 1)
 
         # On découpe notre forme dans la lampe
         lampe.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+
+        # On ajoute le cercle du joueur à l'ombre
+        for i in range(0, config.opaciteCercleLumiereJoueur, 2):
+            pygame.draw.circle(ombre, (0, 0, 0, 255 - i), self.convertirCoordNumVersEcran(character.getPosition()),
+                                       max(config.rayonLumiereJoueur - i * config.vitesseDegradeCerlceLumiere, 0))
 
         # On soustrait la lampe à l'ombre
         ombre.blit(lampe, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
