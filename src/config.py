@@ -85,6 +85,7 @@ distanceVueEnnemi = 1
 #region BULLET
 vitesseBullet = 5
 barrilet_capacity = 6
+temps_de_recharge = 2000
 #endregion
 
 

@@ -123,6 +123,13 @@ class Player(Character):
 
 
     def recharger(self) :
+
+
+
+
+
+
+
         if self.munition_total >= config.barrilet_capacity - self.munition_barillet :
             self.munition_total -= config.barrilet_capacity - self.munition_barillet
             self.munition_barillet = config.barrilet_capacity

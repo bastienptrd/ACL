@@ -122,15 +122,23 @@ class GameController:
         etat = "menu"
         running = True
         bullet_list = []
+        reaload_input_press_time = 0
+        temps_de_recharge = 0
+        relaod_button_pressed = False
         while running:
-
             dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
+            if abs(reaload_input_press_time - pygame.time.get_ticks()) > temps_de_recharge and relaod_button_pressed:
+                player.recharger()
+                print(player.munition_barillet)
+                relaod_button_pressed = False
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
                 if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_r:
-                    player.recharger()
-                    print(player.munition_barillet)
+                    reaload_input_press_time = pygame.time.get_ticks()
+                    temps_de_recharge = config.temps_de_recharge
+                    relaod_button_pressed = True
+
 
                 if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
                     if player.munition_barillet != 0 :
