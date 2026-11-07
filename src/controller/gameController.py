@@ -88,7 +88,7 @@ class GameController:
         # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
         collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
 
-        player = Player(positionInitiale)
+        player = Player(positionInitiale,30,munition_barillet=6)
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
 
         listEnnemi : list[Ennemi] = []
@@ -128,9 +128,20 @@ class GameController:
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                    player.recharger()
+                    print(player.munition_barillet)
+
                 if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                    bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet)
-                    bullet_list.append(bullet)
+                    if player.munition_barillet != 0 :
+                        player.munition_barillet -= 1
+                        print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
+                        print(f"nombre de munitions de stockage :{player.munition_total} ")
+
+                        bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet)
+                        bullet_list.append(bullet)
+                    else :
+                        print("plus de munitions ! Recharger")
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.VIDEORESIZE:

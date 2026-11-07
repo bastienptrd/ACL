@@ -6,8 +6,10 @@ from model.Character import Character
 from model.Items import Items, TypeItem
 
 class Player(Character):
-    def __init__(self, position : pygame.Vector2):
+    def __init__(self, position : pygame.Vector2,munition_total : int,munition_barillet :int) -> None:
         collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
+        self.munition_total = munition_total
+        self.munition_barillet = munition_barillet
         super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
 
         self.healthMax = self.health
@@ -118,3 +120,9 @@ class Player(Character):
             numeroImage = 1 + (temps // 150) % 2
 
         return images[int(numeroImage)]
+
+
+    def recharger(self) :
+        if self.munition_total >= config.barrilet_capacity - self.munition_barillet :
+            self.munition_total -= config.barrilet_capacity - self.munition_barillet
+            self.munition_barillet = config.barrilet_capacity
