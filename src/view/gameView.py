@@ -51,23 +51,12 @@ class GameView:
             taille = (config.barreVieLargeur, int(img.get_height() * ratio))
             self.__imagesBarreVie[palier] = pygame.transform.smoothscale(img, taille)
 
+        self.__longueurRayon = config.longueurMaxRayon
         self.imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
         self.updateTailleFenetre()
 
-    def changerLongeurRayon(self, taille : float):
-        self.imageLampe.fill((0, 0, 0, 0))
-        for i in range(255):
-            pygame.draw.circle(self.imageLampe, (0, 0, 0, i), self.__screen.get_rect().center,
-                               taille * (255 - i) / 255)
-
-    def updateTailleFenetre(self):
-        self.imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
-        self.imageLampe.fill((0, 0, 0, 0))
-        for i in range(255):
-            pygame.draw.circle(self.imageLampe, (0, 0, 0, i), self.__screen.get_rect().center,
-                               config.longueurMaxRayon * (255 - i) / 255)
-
     def dessinerDegat(self):
+        # Rempli l'écran de rouge le temps d'une frame
         self.__screen.fill((255, 0, 0))
         pygame.display.flip()
 
@@ -77,7 +66,6 @@ class GameView:
         """
         for key, value in self.__imagesCaseLabyrinthe.items():
             self.__imagesCaseLabyrinthe[key] = pygame.transform.scale(value, self.__tailleRenduCase)
-
 
     def changePosition(self, position : pygame.Vector2) -> None:
         """
@@ -170,17 +158,6 @@ class GameView:
         for character in listCharacter:
             self.dessinerCharacter(character)
 
-    def dessiner(self, listCharactere : list[Character] = None) -> None:
-        """
-        Dessine l'ensemble de la fenêtre de jeu
-        :param listCharactere: Charactères à dessiner
-        """
-        self.dessinerGrille()
-        if listCharactere:
-            self.dessinerListeCharacter(listCharactere)
-            self.dessinerNoirLampe(listCharactere[0], listCharactere[0].envoyerRayonLampe(self.__grille), (listCharactere[0].healthMax - listCharactere[0].health) / listCharactere[0].healthMax * config.opaciteFond)
-            self.dessinerBarreDeVie(listCharactere[0].health, listCharactere[0].healthMax)
-
     def dessinerBarreDeVie(self, vie: int, vieMax: int) -> None:
         """Affiche l'image de la barre de vie correspondant à la vie restante"""
         if vie <= 0:
@@ -188,19 +165,81 @@ class GameView:
         palier = math.ceil(vie / vieMax * 4) * 25
         self.__screen.blit(self.__imagesBarreVie[palier], config.barreViePosition)
 
+    def changerLongeurRayon(self, taille: float) -> None:
+        self.__longueurRayon = taille
+        self.updateTailleFenetre()
+
+    def recupLongeurRayon(self) -> int:
+        return self.__longueurRayon
+
+    def updateRayon(self) -> None:
+        """
+        Refait l'image lampe en fonction de la longueur du rayon
+        """
+        self.imageLampe.fill((0, 0, 0, 0))
+        for i in range(255):
+            pygame.draw.circle(self.imageLampe, (0, 0, 0, i), self.__screen.get_rect().center,
+                               self.__longueurRayon * config.tailleCaseRendu[0] * (255 - i) / 255)
+
     def dessinerNoirLampe(self, character : Character, rayons : list[tuple[float, float, float]], opacite) -> None:
+        """
+        :param character: Point de départ de la lumiere
+        :param rayons: Liste des rayons envoyés par le joueur
+        :param opacite: Opacité de la lampe
+        """
+        # Ombre de fond
         ombre = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
-        mask = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
-        lampe = self.imageLampe.copy()
-        mask.fill((0, 0, 0, 0))
         ombre.fill((0, 0, 0, config.opaciteFond))
+
+        # Mask pour la lampe
+        mask = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
+        mask.fill((0, 0, 0, 0))
+
+        # Lampe
+        lampe = self.imageLampe.copy()
+
+        # On ajoute le cercle du joueur au mask
+        for i in range(0, config.opaciteCercleLumiereJoueur, 2):
+            pygame.draw.circle(mask, (0, 0, 0, i), self.convertirCoordNumVersEcran(character.getPosition()), max(config.rayonLumiereJoueur - i * config.vitesseDegradeCerlceLumiere, 0))
+
+        # On ajoute la forme balayée par la lampe
         pointLampe = [self.convertirCoordNumVersEcran(pygame.Vector2(x, y)) for _,x,y in rayons] + [self.convertirCoordNumVersEcran(character.getPosition())]
-        pygame.draw.circle(mask, (0, 0, 0, 100), self.convertirCoordNumVersEcran(character.getPosition()), config.rayonLumiereJoueur)
-        pygame.draw.polygon(mask, (0, 0, 0, 244), pointLampe, )
-        pygame.draw.polygon(mask, (0, 0, 0, 244), pointLampe, 30)
+        pygame.draw.polygon(mask, (0, 0, 0, opacite), pointLampe)
+        pygame.draw.polygon(mask, (0, 0, 0, opacite), pointLampe, config.epaisseurLumiereMur)
         for point in pointLampe:
-            pygame.draw.circle(mask, (0, 0, 0, 244), point, 10)
+            pygame.draw.circle(mask, (0, 0, 0, opacite), point, config.epaisseurLumiereMur / 2 - 1)
+
+        # On découpe notre forme dans la lampe
         lampe.blit(mask, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+
+        # On soustrait la lampe à l'ombre
         ombre.blit(lampe, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
 
+        # On dessine finalement l'ombre
         self.__screen.blit(ombre, (0, 0))
+
+    def dessiner(self, listCharactere : list[Character],  dessinerGrille : bool = True, dessinerChararcter : bool = True, dessinerOmbre : bool = True, dessinerBarreVie : bool = True) -> None:
+        """
+        Dessine l'ensemble de la fenêtre de jeu
+        :param dessinerGrille: Dessiner la grille (True par default)
+        :param dessinerBarreVie: Dessiner la barre de vie (True par default)
+        :param dessinerOmbre: Dessiner les ombres (True par default)
+        :param dessinerChararcter: Dessiner les character (True par default)
+        :param listCharactere: Charactères à dessiner
+        """
+        if dessinerGrille:
+            self.dessinerGrille()
+        if dessinerChararcter:
+            self.dessinerListeCharacter(listCharactere)
+        if dessinerOmbre:
+            # Remplacer le paramètre opacité par la puissance de la lampe (dépend de l'item piles)
+            self.dessinerNoirLampe(listCharactere[0], listCharactere[0].envoyerRayonLampe(self.__grille, config.nombreRayon, config.largeurLampe), 245)
+        if dessinerBarreVie:
+            self.dessinerBarreDeVie(listCharactere[0].health, listCharactere[0].healthMax)
+
+    def updateTailleFenetre(self) -> None:
+        """
+        Change les dispositions en fonction de lataille de la fenêtre
+        """
+        self.imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
+        self.updateRayon()

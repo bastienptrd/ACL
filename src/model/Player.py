@@ -53,11 +53,9 @@ class Player(Character):
         self.collisionRect = self.recupererImage().get_rect()
         self.setPosition(self.getPosition())
 
-    def move(self, direction_input, speed, dt):
-
+    def move(self, direction_input : str, dt : float) -> None:
         if direction_input not in self.__animations:
             return
-
        
         if not self.__enMouvement or direction_input != self.__direction:
             self.__debutAnimation = pygame.time.get_ticks()
@@ -70,36 +68,31 @@ class Player(Character):
 
         if direction_input == "up":
             self.direction = pygame.Vector2(0, -1)
-            y -= speed * dt
+            y -= self.speed * dt
 
         elif direction_input == "down":
             self.direction = pygame.Vector2(0, 1)
-            y += speed * dt
+            y += self.speed * dt
 
         elif direction_input == "left":
             self.direction = pygame.Vector2(-1, 0)
-
-            x -= speed * dt
+            x -= self.speed * dt
 
         elif direction_input == "right":
             self.direction = pygame.Vector2(1, 0)
-            x += speed * dt
+            x += self.speed * dt
 
-        self.setPosition((x, y))
+        self.setPosition(pygame.Vector2(x, y))
 
     def arreter(self):
         self.__enMouvement = False
 
     def recupererImage(self):
-
         images = self.__animations[self.__direction]
-
         if not self.__enMouvement:
             numeroImage = 0
-
         else:
             temps = pygame.time.get_ticks() - self.__debutAnimation
-
             numeroImage = 1 + (temps // 150) % 2
 
         return images[int(numeroImage)]

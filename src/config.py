@@ -94,11 +94,16 @@ tailleCaseRendu = (300, 300)
 tailleCharacter = (64, 50)
 tailleBullet =(100,100)
 
+#region OMBRE
 opaciteFond = 255
-opaciteRayonLumiereJoueur = 20
-rayonLumiereJoueur = 30
-longueurMaxRayon = 600
-longueurMinRayon = 100
+rayonLumiereJoueur = 40
+opaciteCercleLumiereJoueur = 100
+vitesseDegradeCerlceLumiere = 0.1
+
+longueurMaxRayon = 2
+longueurMinRayon = 0.3
+epaisseurLumiereMur = 40
+#endregion
 #endregion
 
 #region MAZE
