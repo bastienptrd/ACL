@@ -89,7 +89,7 @@ class Player(Character):
             self.soigner(config.soinBandage)
         elif item.typeItem ==TypeItem.PILE:
             pass #Comportement à voir avec Bastien
-        elif item.typeItem = TypeItem.MUNITION :
+        elif item.typeItem == TypeItem.MUNITION :
             pass #Comportement à voir avec Alexis
 
     def recupererImage(self):
