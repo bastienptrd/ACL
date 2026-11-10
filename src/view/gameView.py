@@ -200,7 +200,7 @@ class GameView:
             hauteurJauge = 6
             fond = pygame.Rect(rect.left, rect.top-hauteurJauge-4, largueur, hauteurJauge)
             pygame.draw.rect(self.__screen, (60, 60, 60), fond)
-            remplissage= pygame.Rect(fond.left, fond.top, int(largeur * progression), hauteurJauge)
+            remplissage= pygame.Rect(fond.left, fond.top, int(largueur * progression), hauteurJauge)
             pygame.draw.rect(self.__screen, (0, 200, 0), remplissage)
             pygame.draw.rect(self.__screen, (0, 0, 0), fond, width=1)
 

@@ -101,10 +101,10 @@ class GameController:
         #Création des items
         typesItems = ([TypeItem.BANDAGE]*config.nombreBandage +[TypeItem.PILE]*config.nombrePile + [TypeItem.MUNITION]*config.nombreMunition)
 
-        casesItems =labyrinthe.choisirCasesItems(len(typesItems))
+        casesItems =labyrinthe.choisirCaseItems(len(typesItems))
 
         listItems = []
-        for typeItems, (x, y) in zip(typesItems, casesItems):
+        for typeItem, (x, y) in zip(typesItems, casesItems):
             listItems.append(Items(typeItem, pygame.Vector2(x + 0.5, y + 0.5)))
 
 
@@ -174,7 +174,7 @@ class GameController:
 
                 for item in listItems[:]:
                     if item.mettreAJour(dt, item.toucheCharacter(player)):
-                        player.appliquerItem(item)
+                        player.AppliquerItem(item)
                         listItems.remove(item)
 
 

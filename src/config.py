@@ -96,7 +96,7 @@ vitesseBullet = 5
 
 #region ITEMS
 
-tempsRammassageItem = 5 #en seconde
+tempsRamassageItem = 5 #en seconde
 soinBandage = 15
 tailleCollisionItem = (0.3, 0.3)
 tailleItem = (40,40)
@@ -106,8 +106,8 @@ nombrePile = 2
 nombreMunition = 3
 
 couleurBandage = (255, 255, 255)    #Coueleurs temporaires avant ajout d'image
-couleurPile =(255, 255, 0)
-couleurMunition =(255, 0, 255)
+couleurPile =(0, 255, 0)
+couleurMunition =(0, 0, 0)
 
 
 #region RENDU
