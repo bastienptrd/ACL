@@ -179,6 +179,12 @@ class GameController:
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
 
+                for item in listItems[:]:
+                    if item.mettreAJour(dt, item.toucheCharacter(player)):
+                        player.appliquerItem(item)
+                        listItems.remove(item)
+
+
             # Gestion affichage
             if etat == "menu":
                 menuView.dessinerMenu()
