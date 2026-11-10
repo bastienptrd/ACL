@@ -187,8 +187,8 @@ class GameController:
             elif etat == "jeu":
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
-                # Dessine le plateau de jeu avec les character
-                gameView.dessiner(listCharacter, player.health, player.healthMax)
+                # Dessine le plateau de jeu avec les character et les items
+                gameView.dessiner(listCharacter, player.health, player.healthMax, listItems)
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
