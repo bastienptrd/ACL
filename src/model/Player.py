@@ -3,13 +3,12 @@ import math
 import pygame
 import config
 from model.Character import Character
-
+from model.Items import Items, TypeItem
 
 class Player(Character):
     def __init__(self, position : pygame.Vector2):
         collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
         super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
-
 
         self.healthMax = self.health
         self.__direction = "down"
@@ -56,6 +55,7 @@ class Player(Character):
     def move(self, direction_input : str, dt : float) -> None:
         if direction_input not in self.__animations:
             return
+
        
         if not self.__enMouvement or direction_input != self.__direction:
             self.__debutAnimation = pygame.time.get_ticks()
@@ -86,6 +86,14 @@ class Player(Character):
 
     def arreter(self):
         self.__enMouvement = False
+
+    def AppliquerItem(self, item :Items)->None:
+        if item.typeItem == TypeItem.BANDAGE:
+            self.soigner(config.soinBandage)
+        elif item.typeItem ==TypeItem.PILE:
+            pass #Comportement à voir avec Bastien
+        elif item.typeItem = TypeItem.MUNITION :
+            pass #Comportement à voir avec Alexis
 
     def recupererImage(self):
         images = self.__animations[self.__direction]
