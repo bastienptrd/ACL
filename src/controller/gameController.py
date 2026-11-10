@@ -158,6 +158,7 @@ class GameController:
 
             if etat == "jeu":
                 gameController.player_mouvement(dt, player, collision)
+                player.mettreAJourOpacite(dt)
                 if player.toucheCharacter(fin):
                     etat = "fin"
                 for ennemi in listEnnemi:

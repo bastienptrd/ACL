@@ -97,6 +97,11 @@ couleurPile =(0, 255, 0)
 couleurMunition =(0, 0, 0)
 
 
+opaciteMax = 244                #ICI BASTIEN -> Modifie comme bon te semble
+tempsReductionOpacite = 30      #En gros : on diminue toute les 30 sec, d'un montant de 40 et on augmente de 40 si on recup une pile
+montantReductionOpacite = 40
+montantAugmentationOpacite = 40
+
 #region RENDU
 tailleCaseRendu = (500, 500)
 tailleCharacter = (64, 50)
