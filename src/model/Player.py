@@ -1,7 +1,7 @@
 import pygame
 import config
 from model.Character import Character
-
+from model.Items import Items, TypeItem
 
 class Player(Character):
     def __init__(self, position : pygame.Vector2):
@@ -12,7 +12,7 @@ class Player(Character):
         self.__direction = "down"
         self.__enMouvement = False
         self.__debutAnimation = pygame.time.get_ticks()
-        
+
         def charger_image(chemin):
             image = pygame.image.load(chemin).convert_alpha()
 
@@ -34,13 +34,13 @@ class Player(Character):
             charger_image(config.player_droite_marche2_path)
         ]
 
-        
+
         gauche = [
             pygame.transform.flip(image, True, False)
             for image in droite
         ]
 
-       
+
         self.__animations = {
             "down": bas,
             "right": droite,
@@ -52,7 +52,7 @@ class Player(Character):
         if direction_input not in self.__animations:
             return
 
-       
+
         if not self.__enMouvement or direction_input != self.__direction:
             self.__debutAnimation = pygame.time.get_ticks()
 
@@ -83,6 +83,14 @@ class Player(Character):
 
     def arreter(self):
         self.__enMouvement = False
+
+    def AppliquerItem(self, item :Items)->None:
+        if item.typeItem == TypeItem.BANDAGE:
+            self.soigner(config.soinBandage)
+        elif item.typeItem ==TypeItem.PILE:
+            pass #Comportement à voir avec Bastien
+        elif item.typeItem = TypeItem.MUNITION :
+            pass #Comportement à voir avec Alexis
 
     def recupererImage(self):
 
