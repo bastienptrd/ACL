@@ -3,6 +3,7 @@ import config
 import math
 from model.Character import Character
 from model.Bullet import Bullet
+from model.Items import Items
 
 class GameView:
     def __init__(self, screen : pygame.surface.Surface, grille : list[list[int]], position : pygame.Vector2 = (0, 0), tailleRenduCase  : tuple[float, float] = (100, 100)):
@@ -181,6 +182,46 @@ class GameView:
         """
         for character in listCharacter:
             self.dessinerCharacter(character)
+
+    def dessinerItem(self,item:Items)->None:
+        largueur, hauteur = config.tailleItem
+        centreX, centreY = self.convertirCoordNumVersEcran(item.getPosition())
+        rect = pygame.Rect(0, 0, largueur, hauteur)
+        rect.center = (centreX, centreY)
+
+        if not rect.colliderect(self.__screen.get_rect()):
+            return
+
+        pygame.draw.rect(self.__screen, item.getCouleur(), rect)
+        pygame.draw.rect(self.__screen, (0, 0, 0), rect, width=2)
+
+        progression = item.progression()
+        if progression >0 :
+            hauteurJauge = 6
+            fond = pygame.Rect(rect.left, rect.top-hauteurJauge-4, largueur, hauteurJauge)
+            pygame.draw.rect(self.__screen, (60, 60, 60), fond)
+            remplissage= pygame.Rect(fond.left, fond.top, int(largeur * progression), hauteurJauge)
+            pygame.draw.rect(self.__screen, (0, 200, 0), remplissage)
+            pygame.draw.rect(self.__screen, (0, 0, 0), fond, width=1)
+
+
+    def dessinerListeItems(self, listItems : list[Items]) -> None:
+        for item in listItems:
+            self.dessinerItem(item)
+
+    def dessiner(self, listCharactere=None, vie=None, vieMax=None,listItems=None) -> None:
+        """
+        Dessine l'ensemble de la fenêtre de jeu
+        :param listCharactere: Charactères à dessiner
+        :param listItems: Items à dessiner
+        """
+        self.dessinerGrille()
+        if listItems:
+            self.dessinerListeItems(listItems)
+        if listCharactere:
+            self.dessinerListeCharacter(listCharactere)
+        if vie is not None and vieMax:
+            self.dessinerBarreDeVie(vie, vieMax)
 
     def dessinerBarreDeVie(self, vie: int, vieMax: int) -> None:
         """Affiche la barre de vie correspondant à la vie restante"""
