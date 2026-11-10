@@ -156,6 +156,10 @@ class Maze:
             self.__casesApparitionEnnemi.append((caseI, caseJ))
             self.grille[caseI][caseJ] = config.caseApparitionEnnemi
 
+    def choisirCaseItems(self,nombreItems : int =1)->list[tuple[int, int]]:
+        casesLibres = [(i,j) for i in range (1, self.__taileX-1) for j in range(1,self.__tailleY-1) if self.grille[i][j ==config.caseVide]]
+        nombreItems = min(nombreItems, len(casesLibres))
+        return random.sample(casesLibres, nombreItems)
 
 if __name__ == "__main__":
     # Teste d'execution propre au fichier
