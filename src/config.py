@@ -80,6 +80,23 @@ distanceVueEnnemi = 4
 vitesseBullet = 5
 #endregion
 
+
+#region ITEMS
+
+tempsRammassageItem = 5 #en seconde
+soinBandage = 15
+tailleCollisionItem = (0.3, 0.3)
+tailleItem = (40,40)
+
+nombreBandage = 3
+nombrePile = 2
+nombreMunition = 3
+
+couleurBandage = (255, 255, 255)    #Coueleurs temporaires avant ajout d'image
+couleurPile =(255, 255, 0)
+couleurMunition =(255, 0, 255)
+
+
 #region RENDU
 tailleCaseRendu = (500, 500)
 tailleCharacter = (64, 50)
