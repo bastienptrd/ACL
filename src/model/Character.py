@@ -38,6 +38,9 @@ class Character :
     def reinitialiserVie(self) -> None:
         self.health = self.healthMax
 
+    def soigner(self, montant: int)->None:
+        self.health = min(self.healthMax, self.health+montant)
+
     def recupererImage(self):
         #Coder les animations ici
         return pygame.transform.scale(self.generate_image(), config.tailleCharacter)
