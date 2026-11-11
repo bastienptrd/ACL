@@ -88,19 +88,12 @@ class Player(Character):
         self.__enMouvement = False
 
     def mettreAJourOpacite(self, dt : float) -> None:
-        """
-        Fait baisser l'opacité d'un niveau chaque fois que le délai est écoulé
-        :param dt: temps écoulé depuis la dernière frame (en secondes)
-        """
         self.__tempsDepuisReductionOpacite += dt
         if self.__tempsDepuisReductionOpacite >= config.tempsReductionOpacite:
             self.opacite = max(0, self.opacite - config.montantReductionOpacite)
             self.__tempsDepuisReductionOpacite = 0.0
 
     def augmenterOpacite(self) -> None:
-        """
-        Remonte l'opacité (sans dépasser le maximum) et relance le délai avant la prochaine baisse
-        """
         self.opacite = min(config.opaciteMax, self.opacite + config.montantAugmentationOpacite)
         self.__tempsDepuisReductionOpacite = 0.0
 
