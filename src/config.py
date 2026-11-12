@@ -84,6 +84,10 @@ distanceVueEnnemi = 1
 
 #region BULLET
 vitesseBullet = 5
+barrilet_capacity = 6
+temps_de_recharge = 2000
+bullet_damage = 25
+tailleCollisionBullet = (0.05, 0.05)
 #endregion
 
 

@@ -88,7 +88,7 @@ class GameController:
         # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
         collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
 
-        player = Player(positionInitiale)
+        player = Player(positionInitiale,30,munition_barillet=6)
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
 
         listEnnemi : list[Ennemi] = []
@@ -122,15 +122,34 @@ class GameController:
         etat = "menu"
         running = True
         bullet_list = []
+        reaload_input_press_time = 0
+        temps_de_recharge = 0
+        relaod_button_pressed = False
         while running:
-
             dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
+            if abs(reaload_input_press_time - pygame.time.get_ticks()) > temps_de_recharge and relaod_button_pressed:
+                player.recharger()
+                print(player.munition_barillet)
+                relaod_button_pressed = False
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                    reaload_input_press_time = pygame.time.get_ticks()
+                    temps_de_recharge = config.temps_de_recharge
+                    relaod_button_pressed = True
+
+
                 if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
-                    bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet)
-                    bullet_list.append(bullet)
+                    if player.munition_barillet != 0 :
+                        player.munition_barillet -= 1
+                        print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
+                        print(f"nombre de munitions de stockage :{player.munition_total} ")
+                        taille_rect_bullet = pygame.rect.Rect(0, 0, config.tailleCollisionBullet[0] * config.tailleCaseRendu[0], config.tailleCollisionBullet[1] * config.tailleCaseRendu[1])
+                        bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet, collisionRect=taille_rect_bullet)
+                        bullet_list.append(bullet)
+                    else :
+                        print("plus de munitions ! Recharger")
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.VIDEORESIZE:
@@ -169,7 +188,11 @@ class GameController:
                         ennemi.move(pygame.Vector2(0, direction[1]), dt)
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
-
+                    for bullet in bullet_list[:]:
+                        if bullet.toucheEnnemi(ennemi) :
+                            ennemi.subirDegats(config.bullet_damage)
+                            bullet_list.remove(bullet)
+                            print(ennemi.health)
                 for item in listItems[:]:
                     if item.mettreAJour(dt, item.toucheCharacter(player)):
                         player.AppliquerItem(item)
@@ -186,11 +209,13 @@ class GameController:
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
                 gameView.dessiner(listCharacter, listItems)
-                for bullet in bullet_list:
+                for bullet in bullet_list[:]:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
+                    if collision.bullet_touche_mur(bullet.collisionRect) :
+                        bullet_list.remove(bullet)
                 # Supprime les bullets sorties de la fenêtre
-                bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetreBullet(bullet)]
+                #bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetreBullet(bullet)]
             elif etat == "fin":
                 menuView.dessinerFin()
 
