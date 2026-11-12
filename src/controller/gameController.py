@@ -212,8 +212,11 @@ class GameController:
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
+                    if collision.bullet_touche_mur(bullet.collisionRect) :
+                        bullet_list.remove(bullet)
+                        print("touch wall")
                 # Supprime les bullets sorties de la fenêtre
-                bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetreBullet(bullet)]
+                #bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetreBullet(bullet)]
             elif etat == "fin":
                 menuView.dessinerFin()
 
