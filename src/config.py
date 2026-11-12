@@ -80,13 +80,6 @@ tempsEntreDeuxAttaque = 1
 distanceVueEnnemi = 1
 #endregion
 
-#region Ennemi (test)
-vitesseEnnemi = 1
-vieEnnemi = 100
-tailleCollisionEnnemi = (0.1, 0.1)
-degatEnnemi = 10
-tempsEntreDeuxAttaque = 1
-distanceVueEnnemi = 4
 #endregion
 
 #region BULLET
@@ -115,6 +108,8 @@ tempsReductionOpacite = 10      #En gros : on diminue toute les 30 sec, d'un mon
 montantReductionOpacite = 10
 montantAugmentationOpacite = 100
 
+hauteurOmbreItem = 20
+
 #region RENDU
 tailleCaseRendu = (300, 300)
 tailleCharacter = (64, 50)
@@ -129,6 +124,9 @@ vitesseDegradeCerlceLumiere = 0.1
 longueurMaxRayon = 2
 longueurMinRayon = 0.3
 epaisseurLumiereMur = 40
+
+amplitudeOcsilations = 5
+vitesseOcsilation = 3
 #endregion
 #endregion
 

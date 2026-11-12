@@ -1,3 +1,5 @@
+import time
+
 import pygame
 import config
 import math
@@ -187,7 +189,13 @@ class GameView:
         largueur, hauteur = config.tailleItem
         centreX, centreY = self.convertirCoordNumVersEcran(item.getPosition())
         rect = pygame.Rect(0, 0, largueur, hauteur)
-        rect.center = (centreX, centreY)
+        rect.center = (centreX, centreY + math.sin(time.time() * config.vitesseOcsilation) * config.amplitudeOcsilations)
+
+        rectOmbre = pygame.Rect(0, 0, largueur + 2 * math.sin(time.time() * config.vitesseOcsilation), config.hauteurOmbreItem)
+        surfaceOmbre = pygame.surface.Surface(rectOmbre.size, pygame.SRCALPHA)
+        pygame.draw.ellipse(surfaceOmbre, (0, 0, 0, 50), rectOmbre)
+        rectOmbre.center = (centreX, centreY + 30)
+        self.__screen.blit(surfaceOmbre, (rectOmbre.x, rectOmbre.y))
 
         if not rect.colliderect(self.__screen.get_rect()):
             return
