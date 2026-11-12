@@ -100,3 +100,24 @@ class Character :
         distanceParcourue = math.sqrt((rayonX - self.__position[0]) ** 2 + (rayonY - self.__position[1]) ** 2)
         return distanceParcourue, rayonX, rayonY
 
+    def envoyerRayonLampe(self, grille : list[list[int]], nombreRayon : int, fov : float) -> list[tuple[float, float, float]]:
+        """
+        :param grille: Grille des murs
+        :param nombreRayon: Nombre de rayons envoyé
+        :param fov: Ecartement des rayons
+        :return: liste des poinr de collision avec leurs disances respectives
+        """
+        # Calcul de la direction du joueur en radian
+        x, y = self.direction
+        angle = 0
+        if x != 0:
+            angle = math.atan(y / x) + int(x > 0) * math.pi + math.pi
+        elif y > 0:
+            angle = math.pi / 2
+        elif y < 0:
+            angle = - math.pi / 2
+
+        # Envoient des rayons dans toutes les directions du champ de vision
+        res = [self.jeterRayon(grille, angle - fov / 2 + i * fov / nombreRayon) for i in range(nombreRayon)]
+
+        return res

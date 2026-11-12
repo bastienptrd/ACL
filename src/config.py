@@ -1,3 +1,4 @@
+import math
 import os
 import pygame
 
@@ -70,6 +71,9 @@ vitesseJoueur = 2
 vieJoueur = 100
 tailleCollisionJoueur = (0.2, 0.2)
 tailleCollisionFin = (0.1, 0.1)
+largeurLampe = math.pi  * 3 / 4
+nombreRayon = 50
+distanceRayonMur = 0.1
 #endregion
 
 #region Ennemi (test)
@@ -78,7 +82,7 @@ vieEnnemi = 100
 tailleCollisionEnnemi = (0.1, 0.1)
 degatEnnemi = 10
 tempsEntreDeuxAttaque = 1
-distanceVueEnnemi = 4
+distanceVueEnnemi = 1
 #endregion
 
 #region BULLET
@@ -86,9 +90,20 @@ vitesseBullet = 5
 #endregion
 
 #region RENDU
-tailleCaseRendu = (500, 500)
+tailleCaseRendu = (300, 300)
 tailleCharacter = (64, 50)
 tailleBullet =(100,100)
+
+#region OMBRE
+opaciteFond = 255
+rayonLumiereJoueur = 40
+opaciteCercleLumiereJoueur = 100
+vitesseDegradeCerlceLumiere = 0.1
+
+longueurMaxRayon = 2
+longueurMinRayon = 0.3
+epaisseurLumiereMur = 40
+#endregion
 #endregion
 
 #region MAZE

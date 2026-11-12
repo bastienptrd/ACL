@@ -5,7 +5,7 @@ import math
 import config
 from model.Character import Character
 from model.Bullet import Bullet
-from model.Ennemi import EnnemiTest
+from model.Ennemi import EnnemiTest, Ennemi
 from model.maze import Maze
 from model.Player import Player
 from model.Collision import Collisions
@@ -35,29 +35,19 @@ class GameController:
 
     @staticmethod
     def player_mouvement(dt, player, collision):
-
         deplacement = False
-
-        for key in [pygame.K_UP, pygame.K_DOWN,
-                pygame.K_LEFT, pygame.K_RIGHT]:
-
+        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:
             anciennePosition = player.getPosition()
 
             if pygame.key.get_pressed()[key]:
-
                 deplacement = True
 
-                player.move(
-                pygame.key.name(key),
-                player.speed,
-                dt
-            )
-
+                player.move(pygame.key.name(key), dt)
                 if collision.touche_un_mur(player.collisionRect):
                     player.setPosition(anciennePosition)
                     player.arreter()
 
-    # Si aucune touche n'est pressée, le personnage s'arrête
+        # Si aucune touche n'est pressée, le personnage s'arrête
         if not deplacement:
             player.arreter()
 
@@ -102,7 +92,7 @@ class GameController:
         player = Player(positionInitiale)
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
 
-        listEnnemi = []
+        listEnnemi : list[Ennemi] = []
         for (x, y) in labyrinthe.recupCasesApparitionEnnemi():
             x += 0.5
             y += 0.5
@@ -136,6 +126,7 @@ class GameController:
                     running = False
                 elif event.type == pygame.VIDEORESIZE:
                     menuView.redimensionner(event.w, event.h)
+                    gameView.updateTailleFenetre()
 
                 if etat in ("menu", "parametre", "fin"):
                     etat = menuController.gererEvenement(event, etat)
@@ -151,19 +142,21 @@ class GameController:
                 for ennemi in listEnnemi:
                     if ennemi.toucheCharacter(player):
                         # Attaque de l'ennemi
-                        ennemi.attaque(player)
+                        if ennemi.attaque(player):
+                            gameView.dessinerDegat()
+                        gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
                         pygame.event.post(pygame.event.Event(config.EVENT_DEGATS))
 
                     elif ennemi.voit(player, labyrinthe.grille):
                         # Déplacement de l'ennemi
                         anciennePosition = ennemi.getPosition()
                         direction = player.getPosition() - ennemi.getPosition()
-                        direction = direction * dt / math.sqrt(direction * direction)
+                        direction = direction / math.sqrt(direction * direction)
 
-                        ennemi.move(pygame.Vector2(direction[0], 0))
+                        ennemi.move(pygame.Vector2(direction[0], 0), dt)
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
-                        ennemi.move(pygame.Vector2(0, direction[1]))
+                        ennemi.move(pygame.Vector2(0, direction[1]), dt)
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
 
@@ -176,7 +169,7 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner(listCharacter, player.health, player.healthMax)
+                gameView.dessiner(listCharacter)
                 for bullet in bullet_list:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
