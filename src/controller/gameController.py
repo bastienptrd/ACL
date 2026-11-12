@@ -111,14 +111,11 @@ class GameController:
         #Création des items
         typesItems = ([TypeItem.BANDAGE]*config.nombreBandage +[TypeItem.PILE]*config.nombrePile + [TypeItem.MUNITION]*config.nombreMunition)
 
-        casesItems =labyrinthe.choisirCaseItems(len(typesItems))
+        casesItems = labyrinthe.choisirCaseItems(len(typesItems))
 
         listItems = []
         for typeItem, (x, y) in zip(typesItems, casesItems):
             listItems.append(Items(typeItem, pygame.Vector2(x + 0.5, y + 0.5)))
-
-
-
 
         listCharacter = [player, fin] + listEnnemi
 
