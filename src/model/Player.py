@@ -105,7 +105,7 @@ class Player(Character):
         if item.typeItem == TypeItem.BANDAGE:
             self.soigner(config.soinBandage)
         elif item.typeItem ==TypeItem.PILE:
-            pass #Comportement à voir avec Bastien
+            self.augmenterOpacite()
         elif item.typeItem == TypeItem.MUNITION :
             pass #Comportement à voir avec Alexis
 

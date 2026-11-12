@@ -309,7 +309,7 @@ class GameView:
         # On dessine finalement l'ombre
         self.__screen.blit(ombre, (0, 0))
 
-    def dessiner(self, listCharactere : list[Character],  dessinerGrille : bool = True, dessinerChararcter : bool = True, dessinerOmbre : bool = True, dessinerBarreVie : bool = True) -> None:
+    def dessiner(self, listCharactere : list[Character], listItem : list[Items],  dessinerGrille : bool = True, dessinerChararcter : bool = True, dessinerOmbre : bool = True, dessinerBarreVie : bool = True) -> None:
         """
         Dessine l'ensemble de la fenêtre de jeu
         :param dessinerGrille: Dessiner la grille (True par default)
@@ -320,13 +320,15 @@ class GameView:
         """
         if dessinerGrille:
             self.dessinerGrille()
+        self.dessinerListeItems(listItem)
         if dessinerChararcter:
             self.dessinerListeCharacter(listCharactere)
         if dessinerOmbre:
             # Remplacer le paramètre opacité par la puissance de la lampe (dépend de l'item piles)
-            self.dessinerNoirLampe(listCharactere[0], listCharactere[0].envoyerRayonLampe(self.__grille, config.nombreRayon, config.largeurLampe), 245)
+            self.dessinerNoirLampe(listCharactere[0], listCharactere[0].envoyerRayonLampe(self.__grille, config.nombreRayon, config.largeurLampe), listCharactere[0].opacite)
         if dessinerBarreVie:
             self.dessinerBarreDeVie(listCharactere[0].health, listCharactere[0].healthMax)
+
 
     def updateTailleFenetre(self) -> None:
         """
