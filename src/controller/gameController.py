@@ -145,7 +145,7 @@ class GameController:
                         player.munition_barillet -= 1
                         print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
                         print(f"nombre de munitions de stockage :{player.munition_total} ")
-                        taille_rect_bullet = pygame.rect.Rect(0, 0, config.tailleBullet[0],config.tailleBullet[1])
+                        taille_rect_bullet = pygame.rect.Rect(0, 0, config.tailleCollisionBullet[0] * config.tailleCaseRendu[0], config.tailleCollisionBullet[1] * config.tailleCaseRendu[1])
                         bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet, collisionRect=taille_rect_bullet)
                         bullet_list.append(bullet)
                     else :
@@ -188,9 +188,9 @@ class GameController:
                         ennemi.move(pygame.Vector2(0, direction[1]), dt)
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
-                    for bullet in bullet_list:
+                    for bullet in bullet_list[:]:
                         if bullet.toucheEnnemi(ennemi) :
-                            ennemi.health -= config.bullet_damage
+                            ennemi.subirDegats(config.bullet_damage)
                             bullet_list.remove(bullet)
                             print(ennemi.health)
                 for item in listItems[:]:
@@ -209,7 +209,7 @@ class GameController:
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
                 gameView.dessiner(listCharacter, listItems)
-                for bullet in bullet_list:
+                for bullet in bullet_list[:]:
                     bullet.deplacer(dt)
                     gameView.dessinerBullet(bullet)
                     if collision.bullet_touche_mur(bullet.collisionRect) :
