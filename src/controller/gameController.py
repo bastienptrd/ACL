@@ -145,8 +145,8 @@ class GameController:
                         player.munition_barillet -= 1
                         print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
                         print(f"nombre de munitions de stockage :{player.munition_total} ")
-
-                        bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet)
+                        taille_rect_bullet = pygame.rect.Rect(0, 0, config.tailleBullet[0],config.tailleBullet[1])
+                        bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet, collisionRect=taille_rect_bullet)
                         bullet_list.append(bullet)
                     else :
                         print("plus de munitions ! Recharger")
@@ -188,7 +188,11 @@ class GameController:
                         ennemi.move(pygame.Vector2(0, direction[1]), dt)
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
-
+                    for bullet in bullet_list:
+                        if bullet.toucheEnnemi(ennemi) :
+                            ennemi.health -= 10
+                            bullet_list.remove(bullet)
+                            print(ennemi.health)
                 for item in listItems[:]:
                     if item.mettreAJour(dt, item.toucheCharacter(player)):
                         player.AppliquerItem(item)
