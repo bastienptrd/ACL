@@ -157,7 +157,7 @@ class Maze:
             self.grille[caseI][caseJ] = config.caseApparitionEnnemi
 
     def choisirCaseItems(self,nombreItems : int =1)->list[tuple[int, int]]:
-        casesLibres = [(i,j) for i in range (1, self.__tailleX-1) for j in range(1,self.__tailleY-1) if self.grille[i][j ==config.caseVide]]
+        casesLibres = [(i,j) for i in range (1, self.__tailleX-1) for j in range(1,self.__tailleY-1) if self.grille[i][j] == config.caseVide]
         nombreItems = min(nombreItems, len(casesLibres))
         return random.sample(casesLibres, nombreItems)
 
