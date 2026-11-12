@@ -190,7 +190,7 @@ class GameController:
                             ennemi.setPosition(anciennePosition)
                     for bullet in bullet_list:
                         if bullet.toucheEnnemi(ennemi) :
-                            ennemi.health -= 10
+                            ennemi.health -= config.bullet_damage
                             bullet_list.remove(bullet)
                             print(ennemi.health)
                 for item in listItems[:]:
@@ -214,7 +214,6 @@ class GameController:
                     gameView.dessinerBullet(bullet)
                     if collision.bullet_touche_mur(bullet.collisionRect) :
                         bullet_list.remove(bullet)
-                        print("touch wall")
                 # Supprime les bullets sorties de la fenêtre
                 #bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetreBullet(bullet)]
             elif etat == "fin":
