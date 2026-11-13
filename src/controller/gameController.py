@@ -194,11 +194,11 @@ class GameController:
                         if bullet.toucheEnnemi(ennemi) :
                             ennemi.subirDegats(config.bullet_damage)
                             bullet_list.remove(bullet)
-                            print(ennemi.health)
                 for item in listItems[:]:
                     if item.mettreAJour(dt, item.toucheCharacter(player)):
                         player.AppliquerItem(item)
                         listItems.remove(item)
+                        gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
 
 
             # Gestion affichage
