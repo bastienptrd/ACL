@@ -317,7 +317,7 @@ class GameView:
         # On dessine finalement l'ombre
         self.__screen.blit(ombre, (0, 0))
 
-    def dessiner(self, listCharactere : list[Character], listItem : list[Items],  dessinerGrille : bool = True, dessinerChararcter : bool = True, dessinerOmbre : bool = True, dessinerBarreVie : bool = True) -> None:
+    def dessiner(self, listCharactere : list[Character], listItem : list[Items], listBullet : list[Bullet],  dessinerGrille : bool = True, dessinerChararcter : bool = True, dessinerOmbre : bool = True, dessinerBarreVie : bool = True) -> None:
         """
         Dessine l'ensemble de la fenêtre de jeu
         :param dessinerGrille: Dessiner la grille (True par default)
@@ -329,6 +329,8 @@ class GameView:
         if dessinerGrille:
             self.dessinerGrille()
         self.dessinerListeItems(listItem)
+        for bullet in listBullet:
+            self.dessinerBullet(bullet)
         if dessinerChararcter:
             self.dessinerListeCharacter(listCharactere)
         if dessinerOmbre:

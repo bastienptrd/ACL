@@ -24,6 +24,7 @@ degatsTest = 5
 
 #region IMAGES
 ennemi_img_path = os.path.join(images_path, "character", "test_img.png")
+ennemi_imgMort_path = os.path.join(images_path, "character", "test_img_mort.png")
 # Images du personnage - direction bas
 player_bas_path = os.path.join(images_path, "Playercharacter", "persodevant.png")
 player_bas_marche1_path = os.path.join(images_path, "Playercharacter", "persodevantavance1.png")
@@ -85,6 +86,7 @@ distanceVueEnnemi = 1
 #region BULLET
 vitesseBullet = 5
 barrilet_capacity = 6
+nombreMaxBalles = 18
 temps_de_recharge = 2000
 bullet_damage = 25
 tailleCollisionBullet = (0.05, 0.05)
@@ -111,6 +113,8 @@ opaciteMax = 244                #ICI BASTIEN -> Modifie comme bon te semble
 tempsReductionOpacite = 10      #En gros : on diminue toute les 30 sec, d'un montant de 40 et on augmente de 40 si on recup une pile
 montantReductionOpacite = 10
 montantAugmentationOpacite = 100
+
+nombreBallesAjouterItem = 6
 
 hauteurOmbreItem = 20
 

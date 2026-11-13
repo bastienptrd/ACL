@@ -88,7 +88,7 @@ class GameController:
         # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
         collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
 
-        player = Player(positionInitiale,30,munition_barillet=6)
+        player = Player(positionInitiale)
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
 
         listEnnemi : list[Ennemi] = []
@@ -169,6 +169,8 @@ class GameController:
                 if player.toucheCharacter(fin):
                     etat = "fin"
                 for ennemi in listEnnemi:
+                    if ennemi.health <= 0:
+                        continue
                     if ennemi.toucheCharacter(player):
                         # Attaque de l'ennemi
                         if ennemi.attaque(player):
@@ -208,14 +210,11 @@ class GameController:
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
                 # Dessine le plateau de jeu avec les character
-                gameView.dessiner(listCharacter, listItems)
+                gameView.dessiner(listCharacter, listItems, bullet_list)
                 for bullet in bullet_list[:]:
                     bullet.deplacer(dt)
-                    gameView.dessinerBullet(bullet)
                     if collision.bullet_touche_mur(bullet.collisionRect) :
                         bullet_list.remove(bullet)
-                # Supprime les bullets sorties de la fenêtre
-                #bullet_list = [bullet for bullet in bullet_list if gameView.estDansFenetreBullet(bullet)]
             elif etat == "fin":
                 menuView.dessinerFin()
 

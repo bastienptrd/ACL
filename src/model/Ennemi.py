@@ -2,12 +2,21 @@ import time
 from model.Character import *
 
 class Ennemi(Character):
-    def __init__(self, name : str, health : int , speed : float, position : pygame.Vector2, image_path :str, collisionRect : pygame.rect.Rect, direction : pygame.Vector2, degatAttaque : int, tempsEntreDeuxAttaque : float, dinstanceVue : float):
+    def __init__(self, name : str, health : int , speed : float, position : pygame.Vector2, image_path :str, imageMort_path :str, collisionRect : pygame.rect.Rect, direction : pygame.Vector2, degatAttaque : int, tempsEntreDeuxAttaque : float, dinstanceVue : float):
         super().__init__(name, health, speed, position, image_path, collisionRect, direction)
+        self.imageMort_path = imageMort_path
         self.degatAttaque = degatAttaque
         self.tempsDerniereAttaque = 0
         self.tempsEntreDeuxAttaque = tempsEntreDeuxAttaque
         self.distanceVue = dinstanceVue
+
+    def generate_image(self) -> pygame.surface.Surface :
+        if self.health > 0:
+            player_img = pygame.image.load(self.image_path).convert_alpha()
+        else:
+            player_img = pygame.image.load(self.imageMort_path).convert_alpha()
+
+        return player_img
 
     def voit(self, other : Character, grille : list[list[int]]) -> bool:
         """
@@ -50,4 +59,4 @@ class Ennemi(Character):
 
 class EnnemiTest(Ennemi):
     def __init__(self, position : pygame.Vector2):
-        super().__init__("Ennemi1", config.vieEnnemi, config.vitesseEnnemi, position, config.ennemi_img_path, pygame.rect.Rect(0, 0, config.tailleCollisionEnnemi[0] * config.tailleCaseRendu[0], config.tailleCollisionEnnemi[1] * config.tailleCaseRendu[1]), pygame.Vector2(0, 1), config.degatEnnemi, config.tempsEntreDeuxAttaque, config.distanceVueEnnemi)
+        super().__init__("Ennemi1", config.vieEnnemi, config.vitesseEnnemi, position, config.ennemi_img_path, config.ennemi_imgMort_path, pygame.rect.Rect(0, 0, config.tailleCollisionEnnemi[0] * config.tailleCaseRendu[0], config.tailleCollisionEnnemi[1] * config.tailleCaseRendu[1]), pygame.Vector2(0, 1), config.degatEnnemi, config.tempsEntreDeuxAttaque, config.distanceVueEnnemi)

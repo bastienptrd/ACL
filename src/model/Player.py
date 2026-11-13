@@ -6,10 +6,10 @@ from model.Character import Character
 from model.Items import Items, TypeItem
 
 class Player(Character):
-    def __init__(self, position : pygame.Vector2,munition_total : int,munition_barillet :int) -> None:
+    def __init__(self, position : pygame.Vector2) -> None:
         collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
-        self.munition_total = munition_total
-        self.munition_barillet = munition_barillet
+        self.munition_total = config.nombreMaxBalles
+        self.munition_barillet = config.barrilet_capacity
         super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
 
         self.healthMax = self.health
@@ -109,7 +109,7 @@ class Player(Character):
         elif item.typeItem ==TypeItem.PILE:
             self.augmenterOpacite()
         elif item.typeItem == TypeItem.MUNITION :
-            pass #Comportement à voir avec Alexis
+            self.munition_total = min(self.munition_total + config.nombreBallesAjouterItem, config.nombreMaxBalles)
 
     def recupererImage(self):
         images = self.__animations[self.__direction]
