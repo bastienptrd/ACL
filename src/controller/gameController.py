@@ -115,7 +115,7 @@ class GameController:
         # Appels des classes dans les autres fichiers
         menuView = MenuView(screen, sonClic)
         gameView = GameView(screen, labyrinthe.grille, tailleRenduCase=config.tailleCaseRendu)
-        menuController = MenuController(menuView)
+        menuController = MenuController(menuView, sonClic)
         gameController = GameController(gameView)
 
         # Boucle principale
@@ -156,7 +156,8 @@ class GameController:
                     menuView.redimensionner(event.w, event.h)
                     gameView.updateTailleFenetre()
 
-                if etat in ("menu", "parametre", "fin"):
+
+                if etat in ("menu", "parametre", "audio", "fin"):
                     etat = menuController.gererEvenement(event, etat)
                 elif etat == "jeu":
                     etat = gameController.gererEvenement(event, etat, player)
@@ -204,6 +205,8 @@ class GameController:
             # Gestion affichage
             if etat == "menu":
                 menuView.dessinerMenu()
+            elif etat == "audio":
+                menuView.dessinerAudio()
             elif etat == "parametre":
                 menuView.dessinerParametres()
             elif etat == "jeu":
