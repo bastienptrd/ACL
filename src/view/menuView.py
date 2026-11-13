@@ -178,14 +178,29 @@ class MenuView:
         self.__placerBoutons()
         self.__screen.blit(self.__fond, (0, 0))
         self.__dessinerTitre("Audio")
+
+        # On transforme le volume (entre 0 et 1) en pourcentage
         pourcentageMusique = round(config.volumeFond * 100)
         pourcentageSons = round(config.volumeClic * 100)
+
         self.__dessinerTexte("Musique : " + str(pourcentageMusique) + " %", 0.5, 0.5)
         self.__dessinerTexte("Sons : " + str(pourcentageSons) + " %", 0.5, 0.7)
+
         self.__boutonMusiqueMoins.dessiner(self.__screen)
         self.__boutonMusiquePlus.dessiner(self.__screen)
         self.__boutonSonsMoins.dessiner(self.__screen)
         self.__boutonSonsPlus.dessiner(self.__screen)
+
+    def dessinerCommande(self):
+        self.__screen.blit(self.__fond, (0, 0))
+        self.__dessinerTitre("Commandes")
+
+        self.__dessinerTexte("Haut : fleche du haut", 0.5, 0.42)
+        self.__dessinerTexte("Bas : fleche du bas", 0.5, 0.51)
+        self.__dessinerTexte("Gauche : fleche de gauche", 0.5, 0.60)
+        self.__dessinerTexte("Droite : fleche de droite", 0.5, 0.69)
+        self.__dessinerTexte("Tirer : E", 0.5, 0.78)
+        self.__dessinerTexte("Recharger : R", 0.5, 0.87)
 
     def dessinerFin(self):
         #Ici DEYA

@@ -32,14 +32,16 @@ class MenuController:
                 return "menu"
             if self.__vue.getBoutonAudio().gererEvenement(event):
                 return "audio"
-            # Pour l'instant ces boutons ne menent a rien
             if self.__vue.getBoutonCommande().gererEvenement(event):
-                pass
+                return "commande"
+            # Pour l'instant ces boutons ne menent a rien
             if self.__vue.getBoutonGameplay().gererEvenement(event):
                 pass
+
         elif etat == "audio":
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return "parametre"
+
             # Volume de la musique de fond
             if self.__vue.getBoutonMusiqueMoins().gererEvenement(event):
                 config.volumeFond = changerVolume(config.volumeFond, -0.1)
@@ -47,13 +49,19 @@ class MenuController:
             if self.__vue.getBoutonMusiquePlus().gererEvenement(event):
                 config.volumeFond = changerVolume(config.volumeFond, 0.1)
                 pygame.mixer.music.set_volume(config.volumeFond)
-            # Volume des bruitages
+
+            # Volume des bruitages (le clic des boutons)
             if self.__vue.getBoutonSonsMoins().gererEvenement(event):
                 config.volumeClic = changerVolume(config.volumeClic, -0.1)
                 self.__sonClic.set_volume(config.volumeClic)
             if self.__vue.getBoutonSonsPlus().gererEvenement(event):
                 config.volumeClic = changerVolume(config.volumeClic, 0.1)
                 self.__sonClic.set_volume(config.volumeClic)
+
+        elif etat == "commande":
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return "parametre"
+
         elif etat == "fin":
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return "menu"

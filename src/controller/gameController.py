@@ -156,8 +156,7 @@ class GameController:
                     menuView.redimensionner(event.w, event.h)
                     gameView.updateTailleFenetre()
 
-
-                if etat in ("menu", "parametre", "audio", "fin"):
+                if etat in ("menu", "parametre", "audio", "commande", "fin"):
                     etat = menuController.gererEvenement(event, etat)
                 elif etat == "jeu":
                     etat = gameController.gererEvenement(event, etat, player)
@@ -205,10 +204,12 @@ class GameController:
             # Gestion affichage
             if etat == "menu":
                 menuView.dessinerMenu()
-            elif etat == "audio":
-                menuView.dessinerAudio()
             elif etat == "parametre":
                 menuView.dessinerParametres()
+            elif etat == "audio":
+                menuView.dessinerAudio()
+            elif etat == "commande":
+                menuView.dessinerCommande()
             elif etat == "jeu":
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
@@ -225,7 +226,3 @@ class GameController:
 
         pygame.quit()
         sys.exit()
-
-
-
-
