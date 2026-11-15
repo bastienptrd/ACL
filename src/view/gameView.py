@@ -150,8 +150,13 @@ class GameView:
         coordScreenY -= tailleY / 2
         rect = pygame.rect.Rect(coordScreenX, coordScreenY, tailleX, tailleY)
         if rect.colliderect(self.__screen.get_rect()):
+            if config.debug:
+                pygame.draw.rect(self.__screen, (255, 0, 255), rect)
             imageCharacter = charactere.recupererImage()
-            tailleImageX, tailleImageY = imageCharacter.get_size()
+            coordScreenX, coordScreenY = self.convertirCoordNumVersEcran(charactere.getPosition())
+            tailleX, tailleY = imageCharacter.get_rect().size
+            coordScreenX -= tailleX / 2
+            coordScreenY -= tailleY / 2
             self.__screen.blit(imageCharacter, (coordScreenX, coordScreenY))
 
     def rectBulletEcran(self, bullet : Bullet) -> pygame.Rect:
@@ -185,6 +190,32 @@ class GameView:
         for character in listCharacter:
             self.dessinerCharacter(character)
 
+            if config.debug and character.name != "Player" and character.name != "Fin":
+
+                # Affichage barre de vie
+                progression = character.health / character.healthMax
+                if progression > 0:
+                    largueur = character.collisionRect.w
+                    coordX, coordY = self.convertirCoordNumVersEcran(character.getPosition())
+                    coordX -= character.collisionRect.w / 2
+                    coordY -= character.collisionRect.h / 2
+                    hauteurJauge = 6
+
+                    fond = pygame.Rect(coordX, coordY - hauteurJauge - 4, largueur, hauteurJauge)
+                    pygame.draw.rect(self.__screen, (60, 60, 60), fond)
+
+                    remplissage = pygame.Rect(fond.left, fond.top, int(largueur * progression), hauteurJauge)
+                    pygame.draw.rect(self.__screen, (0, 200, 0), remplissage)
+                    pygame.draw.rect(self.__screen, (0, 0, 0), fond, width=1)
+
+                #affichage du rayon tiré vers le joueur
+                _, pointX, pointY = character.jeterRayon(self.__grille, listCharacter[0].getPosition())
+                pygame.draw.circle(self.__screen, (255, 255 * int(character.voit(listCharacter[0], self.__grille)), 255),
+                                   self.convertirCoordNumVersEcran(pygame.Vector2(pointX, pointY)), 5)
+                pygame.draw.line(self.__screen, (100, 100, 100),
+                                 self.convertirCoordNumVersEcran(pygame.Vector2(pointX, pointY)),
+                                 self.convertirCoordNumVersEcran(character.getPosition()), 2)
+
     def dessinerItem(self,item:Items)->None:
         largueur, hauteur = config.tailleItem
         centreX, centreY = self.convertirCoordNumVersEcran(item.getPosition())
@@ -216,20 +247,6 @@ class GameView:
     def dessinerListeItems(self, listItems : list[Items]) -> None:
         for item in listItems:
             self.dessinerItem(item)
-
-    def dessiner(self, listCharactere=None, vie=None, vieMax=None,listItems=None) -> None:
-        """
-        Dessine l'ensemble de la fenêtre de jeu
-        :param listCharactere: Charactères à dessiner
-        :param listItems: Items à dessiner
-        """
-        self.dessinerGrille()
-        if listItems:
-            self.dessinerListeItems(listItems)
-        if listCharactere:
-            self.dessinerListeCharacter(listCharactere)
-        if vie is not None and vieMax:
-            self.dessinerBarreDeVie(vie, vieMax)
 
     def dessinerBarreDeVie(self, vie: int, vieMax: int) -> None:
         """Affiche la barre de vie correspondant à la vie restante"""
@@ -315,7 +332,11 @@ class GameView:
         ombre.blit(lampe, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
 
         # On dessine finalement l'ombre
-        self.__screen.blit(ombre, (0, 0))
+        if config.debug:
+            # On affiche seulement le contour
+            pygame.draw.polygon(self.__screen, (0, 255, 255, 255), pointLampe, 3)
+        else :
+            self.__screen.blit(ombre, (0, 0))
 
     def dessiner(self, listCharactere : list[Character], listItem : list[Items], listBullet : list[Bullet],  dessinerGrille : bool = True, dessinerChararcter : bool = True, dessinerOmbre : bool = True, dessinerBarreVie : bool = True) -> None:
         """

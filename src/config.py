@@ -2,6 +2,10 @@ import math
 import os
 import pygame
 
+debug = False
+combinaisonToucheDebug = [pygame.K_LALT, pygame.K_d]
+toucheValiderDebug = 0
+
 #region CHEMIN
 assets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
 images_path = os.path.join(assets_path, "images")
@@ -65,8 +69,8 @@ imageParSeconde = 60
 #region PLAYER
 vitesseJoueur = 2
 vieJoueur = 100
-tailleCollisionJoueur = (0.2, 0.2)
-tailleCollisionFin = (0.1, 0.1)
+tailleCollisionJoueur = (0.13, 0.15)
+tailleCollisionFin = (0.2, 0.2)
 largeurLampe = math.pi  * 3 / 4
 nombreRayon = 50
 distanceRayonMur = 0.1
@@ -75,7 +79,7 @@ distanceRayonMur = 0.1
 #region Ennemi (test)
 vitesseEnnemi = 1
 vieEnnemi = 100
-tailleCollisionEnnemi = (0.1, 0.1)
+tailleCollisionEnnemi = (0.2, 0.17)
 degatEnnemi = 10
 tempsEntreDeuxAttaque = 1
 distanceVueEnnemi = 1
