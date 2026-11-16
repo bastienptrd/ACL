@@ -5,7 +5,7 @@ import math
 import config
 from model.Character import Character
 from model.Bullet import Bullet
-from model.Ennemi import EnnemiTest, Ennemi
+from model.EnnemiAnime import EnnemiAnime
 from model.maze import Maze
 from model.Player import Player
 from model.Collision import Collisions
@@ -91,11 +91,37 @@ class GameController:
         player = Player(positionInitiale)
         fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
 
-        listEnnemi : list[Ennemi] = []
-        for (x, y) in labyrinthe.recupCasesApparitionEnnemi():
+        listEnnemi: list[Ennemi] = []
+        
+        for i, (x, y) in enumerate(labyrinthe.recupCasesApparitionEnnemi()):
+            print("TOTAL ENNEMIS :", len(listEnnemi))
             x += 0.5
             y += 0.5
-            listEnnemi.append(EnnemiTest(pygame.Vector2(x, y)))
+
+            position = pygame.Vector2(x, y)
+
+            if i % 2 == 0:
+                ennemi = EnnemiAnime(
+                    position,
+                    "Fantome",
+                    [
+                        config.fantome_img1_path,
+                        config.fantome_img2_path,
+                        config.fantome_img3_path
+                    ]
+                )
+            else:
+                ennemi = EnnemiAnime(
+                position,
+                "Monstre vert",
+                [   
+                    config.monstre_vert_img1_path,
+                    config.monstre_vert_img2_path,
+                    config.monstre_vert_img3_path
+                ]
+            )
+            listEnnemi.append(ennemi)
+        print("Ennemi créé :", ennemi.name if hasattr(ennemi, "name") else ennemi)
 
 
         #Création des items
