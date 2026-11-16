@@ -23,6 +23,14 @@ degatsTest = 5
 #endregion
 
 #region IMAGES
+fantome_img1_path = os.path.join(images_path, "monsters", "fantome", "monstre f 1.png")
+fantome_img2_path = os.path.join(images_path, "monsters", "fantome", "monstre f 2.png")
+fantome_img3_path = os.path.join(images_path, "monsters", "fantome", "monstre f 3.png")
+
+monstre_vert_img1_path = os.path.join(images_path, "monsters", "monstre vert", "monstre vert 1.png")
+monstre_vert_img2_path = os.path.join(images_path, "monsters", "monstre vert", "monstre vert 2.png")
+monstre_vert_img3_path = os.path.join(images_path, "monsters", "monstre vert", "monstre vert 3.png")
+
 ennemi_img_path = os.path.join(images_path, "character", "test_img.png")
 ennemi_imgMort_path = os.path.join(images_path, "character", "test_img_mort.png")
 # Images du personnage - direction bas
