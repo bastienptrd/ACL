@@ -24,6 +24,9 @@ class Bouton:
             nouvelleTaille = (int(img.get_width() * ratio), int(img.get_height() * ratio))
             self.__image = pygame.transform.smoothscale(img, nouvelleTaille)
 
+    def changerTexte(self, texte):
+        self.__texte = texte
+
     def placer(self, largeur, hauteur):  # Fonction qui recentre le bouton si on bouge la fenetre
         self.__rect.center = (
             int(largeur * self.__centreRelatif[0]),
@@ -99,12 +102,20 @@ class MenuView:
         self.__boutonSonsMoins = Bouton("-", (0.3, 0.7), (70, 70), 60, None, sonClic)
         self.__boutonSonsPlus = Bouton("+", (0.7, 0.7), (70, 70), 60, None, sonClic)
 
+        self.__boutonsCommande = {}
+        y = 0.38
+        for action in config.touches:
+            self.__boutonsCommande[action] = Bouton(action, (0.5, y), (400, 50), 40, None, sonClic)
+            y = y + 0.09
+
         self.__tousLesBoutons = [
             self.__boutonJouer, self.__boutonQuitter, self.__boutonParametre,
             self.__boutonAudio, self.__boutonCommande, self.__boutonGameplay,
             self.__boutonMusiqueMoins, self.__boutonMusiquePlus,
             self.__boutonSonsMoins, self.__boutonSonsPlus,
         ]
+        for action in self.__boutonsCommande:
+            self.__tousLesBoutons.append(self.__boutonsCommande[action])
 
     # Accesseurs
     def getBoutonJouer(self):
@@ -136,6 +147,9 @@ class MenuView:
 
     def getBoutonSonsPlus(self):
         return self.__boutonSonsPlus
+
+    def getBoutonsCommande(self):
+        return self.__boutonsCommande
 
     def redimensionner(self, largeur, hauteur):
         self.__fond = pygame.transform.scale(self.__fondOriginal, (largeur, hauteur))
@@ -191,16 +205,19 @@ class MenuView:
         self.__boutonSonsMoins.dessiner(self.__screen)
         self.__boutonSonsPlus.dessiner(self.__screen)
 
-    def dessinerCommande(self):
+    def dessinerCommande(self, actionEnAttente):
+        self.__placerBoutons()
         self.__screen.blit(self.__fond, (0, 0))
         self.__dessinerTitre("Commandes")
 
-        self.__dessinerTexte("Haut : fleche du haut", 0.5, 0.42)
-        self.__dessinerTexte("Bas : fleche du bas", 0.5, 0.51)
-        self.__dessinerTexte("Gauche : fleche de gauche", 0.5, 0.60)
-        self.__dessinerTexte("Droite : fleche de droite", 0.5, 0.69)
-        self.__dessinerTexte("Tirer : E", 0.5, 0.78)
-        self.__dessinerTexte("Recharger : R", 0.5, 0.87)
+        for action in self.__boutonsCommande:
+            bouton = self.__boutonsCommande[action]
+            if action == actionEnAttente:
+                bouton.changerTexte(action + " : nouvelle touche ?")
+            else:
+                nomTouche = pygame.key.name(config.touches[action])
+                bouton.changerTexte(action + " : " + nomTouche)
+            bouton.dessiner(self.__screen)
 
     def dessinerFin(self):
         #Ici DEYA

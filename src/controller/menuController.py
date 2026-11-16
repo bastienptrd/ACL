@@ -16,6 +16,10 @@ class MenuController:
     def __init__(self, vue, sonClic):
         self.__vue = vue
         self.__sonClic = sonClic
+        self.__actionEnAttente = None
+
+    def getActionEnAttente(self):
+        return self.__actionEnAttente
 
     def gererEvenement(self, event, etat):  # Renvoie dans quel etat on se retrouve
 
@@ -59,8 +63,19 @@ class MenuController:
                 self.__sonClic.set_volume(config.volumeClic)
 
         elif etat == "commande":
+            if self.__actionEnAttente != None:
+                if event.type == pygame.KEYDOWN:
+                    if event.key != pygame.K_ESCAPE:
+                        config.touches[self.__actionEnAttente] = event.key
+                    self.__actionEnAttente = None
+                return "commande"
+
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return "parametre"
+            boutons = self.__vue.getBoutonsCommande()
+            for action in boutons:
+                if boutons[action].gererEvenement(event):
+                    self.__actionEnAttente = action
 
         elif etat == "fin":
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:

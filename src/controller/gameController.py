@@ -35,13 +35,15 @@ class GameController:
     @staticmethod
     def player_mouvement(dt, player, collision):
         deplacement = False
-        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:
+        mouvements = [("Haut", "up"), ("Bas", "down"), ("Gauche", "left"), ("Droite", "right")]
+        for action, direction in mouvements:
+            key = config.touches[action]
             anciennePosition = player.getPosition()
 
             if pygame.key.get_pressed()[key]:
                 deplacement = True
 
-                player.move(pygame.key.name(key), dt)
+                player.move(direction, dt)
                 if collision.touche_un_mur(player.collisionRect):
                     player.setPosition(anciennePosition)
                     player.arreter()
@@ -134,13 +136,13 @@ class GameController:
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
-                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Recharger"]:
                     reaload_input_press_time = pygame.time.get_ticks()
                     temps_de_recharge = config.temps_de_recharge
                     relaod_button_pressed = True
 
 
-                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Tirer"]:
                     if player.munition_barillet != 0 :
                         player.munition_barillet -= 1
                         print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
@@ -209,7 +211,7 @@ class GameController:
             elif etat == "audio":
                 menuView.dessinerAudio()
             elif etat == "commande":
-                menuView.dessinerCommande()
+                menuView.dessinerCommande(menuController.getActionEnAttente())
             elif etat == "jeu":
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
