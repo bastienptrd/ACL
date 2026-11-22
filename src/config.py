@@ -61,6 +61,17 @@ volumeFond = 0.5
 volumeClic = 1
 #endregion
 
+#region TOUCHES
+touches = {
+    "Haut": pygame.K_UP,
+    "Bas": pygame.K_DOWN,
+    "Gauche": pygame.K_LEFT,
+    "Droite": pygame.K_RIGHT,
+    "Tirer": pygame.K_e,
+    "Recharger": pygame.K_r,
+}
+#endregion
+
 
 #region CONSTANTE
 #region FENETRE

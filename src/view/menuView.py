@@ -24,6 +24,9 @@ class Bouton:
             nouvelleTaille = (int(img.get_width() * ratio), int(img.get_height() * ratio))
             self.__image = pygame.transform.smoothscale(img, nouvelleTaille)
 
+    def changerTexte(self, texte):
+        self.__texte = texte
+
     def placer(self, largeur, hauteur):  # Fonction qui recentre le bouton si on bouge la fenetre
         self.__rect.center = (
             int(largeur * self.__centreRelatif[0]),
@@ -93,10 +96,26 @@ class MenuView:
         self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (260, 70), 48,
             config.bouton_gameplay_path, sonClic)
 
+        # Boutons de l'ecran Audio (un "-" et un "+" pour chaque volume)
+        self.__boutonMusiqueMoins = Bouton("-", (0.3, 0.5), (70, 70), 60, None, sonClic)
+        self.__boutonMusiquePlus = Bouton("+", (0.7, 0.5), (70, 70), 60, None, sonClic)
+        self.__boutonSonsMoins = Bouton("-", (0.3, 0.7), (70, 70), 60, None, sonClic)
+        self.__boutonSonsPlus = Bouton("+", (0.7, 0.7), (70, 70), 60, None, sonClic)
+
+        self.__boutonsCommande = {}
+        y = 0.38
+        for action in config.touches:
+            self.__boutonsCommande[action] = Bouton(action, (0.5, y), (400, 50), 40, None, sonClic)
+            y = y + 0.09
+
         self.__tousLesBoutons = [
             self.__boutonJouer, self.__boutonQuitter, self.__boutonParametre,
             self.__boutonAudio, self.__boutonCommande, self.__boutonGameplay,
+            self.__boutonMusiqueMoins, self.__boutonMusiquePlus,
+            self.__boutonSonsMoins, self.__boutonSonsPlus,
         ]
+        for action in self.__boutonsCommande:
+            self.__tousLesBoutons.append(self.__boutonsCommande[action])
 
     # Accesseurs
     def getBoutonJouer(self):
@@ -117,6 +136,21 @@ class MenuView:
     def getBoutonGameplay(self):
         return self.__boutonGameplay
 
+    def getBoutonMusiqueMoins(self):
+        return self.__boutonMusiqueMoins
+
+    def getBoutonMusiquePlus(self):
+        return self.__boutonMusiquePlus
+
+    def getBoutonSonsMoins(self):
+        return self.__boutonSonsMoins
+
+    def getBoutonSonsPlus(self):
+        return self.__boutonSonsPlus
+
+    def getBoutonsCommande(self):
+        return self.__boutonsCommande
+
     def redimensionner(self, largeur, hauteur):
         self.__fond = pygame.transform.scale(self.__fondOriginal, (largeur, hauteur))
 
@@ -124,6 +158,14 @@ class MenuView:
         largeur, hauteur = self.__screen.get_size()
         for b in self.__tousLesBoutons:
             b.placer(largeur, hauteur)
+
+    def __dessinerTexte(self, texte, xRelatif, yRelatif):
+        police = pygame.font.SysFont(None, 50)
+        largeur, hauteur = self.__screen.get_size()
+        image = police.render(texte, True, couleurTexte)
+        x = int(largeur * xRelatif)
+        y = int(hauteur * yRelatif)
+        self.__screen.blit(image, image.get_rect(center=(x, y)))
 
     def __dessinerTitre(self, texte):
         largeur, hauteur = self.__screen.get_size()
@@ -145,6 +187,37 @@ class MenuView:
         self.__boutonAudio.dessiner(self.__screen)
         self.__boutonCommande.dessiner(self.__screen)
         self.__boutonGameplay.dessiner(self.__screen)
+
+    def dessinerAudio(self):
+        self.__placerBoutons()
+        self.__screen.blit(self.__fond, (0, 0))
+        self.__dessinerTitre("Audio")
+
+        # On transforme le volume (entre 0 et 1) en pourcentage
+        pourcentageMusique = round(config.volumeFond * 100)
+        pourcentageSons = round(config.volumeClic * 100)
+
+        self.__dessinerTexte("Musique : " + str(pourcentageMusique) + " %", 0.5, 0.5)
+        self.__dessinerTexte("Sons : " + str(pourcentageSons) + " %", 0.5, 0.7)
+
+        self.__boutonMusiqueMoins.dessiner(self.__screen)
+        self.__boutonMusiquePlus.dessiner(self.__screen)
+        self.__boutonSonsMoins.dessiner(self.__screen)
+        self.__boutonSonsPlus.dessiner(self.__screen)
+
+    def dessinerCommande(self, actionEnAttente):
+        self.__placerBoutons()
+        self.__screen.blit(self.__fond, (0, 0))
+        self.__dessinerTitre("Commandes")
+
+        for action in self.__boutonsCommande:
+            bouton = self.__boutonsCommande[action]
+            if action == actionEnAttente:
+                bouton.changerTexte(action + " : nouvelle touche ?")
+            else:
+                nomTouche = pygame.key.name(config.touches[action])
+                bouton.changerTexte(action + " : " + nomTouche)
+            bouton.dessiner(self.__screen)
 
     def dessinerFin(self):
         #Ici DEYA

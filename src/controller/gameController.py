@@ -35,13 +35,15 @@ class GameController:
     @staticmethod
     def player_mouvement(dt, player, collision):
         deplacement = False
-        for key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:
+        mouvements = [("Haut", "up"), ("Bas", "down"), ("Gauche", "left"), ("Droite", "right")]
+        for action, direction in mouvements:
+            key = config.touches[action]
             anciennePosition = player.getPosition()
 
             if pygame.key.get_pressed()[key]:
                 deplacement = True
 
-                player.move(pygame.key.name(key), dt)
+                player.move(direction, dt)
                 if collision.touche_un_mur(player.collisionRect):
                     player.setPosition(anciennePosition)
                     player.arreter()
@@ -141,7 +143,7 @@ class GameController:
         # Appels des classes dans les autres fichiers
         menuView = MenuView(screen, sonClic)
         gameView = GameView(screen, labyrinthe.grille, tailleRenduCase=config.tailleCaseRendu)
-        menuController = MenuController(menuView)
+        menuController = MenuController(menuView, sonClic)
         gameController = GameController(gameView)
 
         # Boucle principale
@@ -160,13 +162,13 @@ class GameController:
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
-                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Recharger"]:
                     reaload_input_press_time = pygame.time.get_ticks()
                     temps_de_recharge = config.temps_de_recharge
                     relaod_button_pressed = True
 
 
-                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Tirer"]:
                     if player.munition_barillet != 0 :
                         player.munition_barillet -= 1
                         print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
@@ -182,7 +184,7 @@ class GameController:
                     menuView.redimensionner(event.w, event.h)
                     gameView.updateTailleFenetre()
 
-                if etat in ("menu", "parametre", "fin"):
+                if etat in ("menu", "parametre", "audio", "commande", "fin"):
                     etat = menuController.gererEvenement(event, etat)
                 elif etat == "jeu":
                     etat = gameController.gererEvenement(event, etat, player)
@@ -232,6 +234,10 @@ class GameController:
                 menuView.dessinerMenu()
             elif etat == "parametre":
                 menuView.dessinerParametres()
+            elif etat == "audio":
+                menuView.dessinerAudio()
+            elif etat == "commande":
+                menuView.dessinerCommande(menuController.getActionEnAttente())
             elif etat == "jeu":
                 # Place la caméra sur le joueur
                 gameView.changePosition(player.getPosition())
@@ -248,7 +254,3 @@ class GameController:
 
         pygame.quit()
         sys.exit()
-
-
-
-
