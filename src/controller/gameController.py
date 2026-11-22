@@ -27,6 +27,16 @@ class GameController:
                 return "menu"
             if event.key == config.toucheTestDegats:
                 pygame.event.post(pygame.event.Event(config.EVENT_DEGATS, montant=config.degatsTest))
+            if event.key == config.combinaisonToucheDebug[config.toucheValiderDebug]:
+                if config.toucheValiderDebug + 1 == len(config.combinaisonToucheDebug):
+                    config.debug = not config.debug
+                else :
+                    config.toucheValiderDebug += 1
+            else :
+                config.toucheValiderDebug = 0
+        elif event.type == pygame.KEYUP:
+            config.toucheValiderDebug = 0
+
         elif event.type == config.EVENT_DEGATS:
             if player.estMort():
                 return "fin"

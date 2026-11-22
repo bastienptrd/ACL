@@ -54,9 +54,6 @@ class Player(Character):
             "left": gauche,
             "up": bas  }
 
-        self.collisionRect = self.recupererImage().get_rect()
-        self.setPosition(self.getPosition())
-
     def move(self, direction_input : str, dt : float) -> None:
         if direction_input not in self.__animations:
             return
