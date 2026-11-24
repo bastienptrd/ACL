@@ -3,6 +3,7 @@ import pygame
 import math
 
 import config
+import sons
 from model.Character import Character
 from model.Bullet import Bullet
 from model.EnnemiAnime import EnnemiAnime
@@ -39,6 +40,7 @@ class GameController:
 
         elif event.type == config.EVENT_DEGATS:
             if player.estMort():
+                sons.jouer("mort")
                 return "fin"
         return etat
 
@@ -61,6 +63,8 @@ class GameController:
         # Si aucune touche n'est pressée, le personnage s'arrête
         if not deplacement:
             player.arreter()
+        else:
+            sons.repeter("pas")
 
 
 
@@ -72,12 +76,13 @@ class GameController:
         # Initialisation de la musique et des sons
         pygame.mixer.init()
 
-        pygame.mixer.music.load(config.musique_foret_path)
+        pygame.mixer.music.load(config.musique_fond_path)
         pygame.mixer.music.set_volume(config.volumeFond)
         pygame.mixer.music.play(-1)
 
         sonClic = pygame.mixer.Sound(config.son_clic_path)
         sonClic.set_volume(config.volumeClic)
+        sons.charger()
 
         # Initialisation de la fenêtre
         screen = pygame.display.set_mode(config.screenSize, pygame.RESIZABLE)
@@ -176,6 +181,7 @@ class GameController:
                     reaload_input_press_time = pygame.time.get_ticks()
                     temps_de_recharge = config.temps_de_recharge
                     relaod_button_pressed = True
+                    sons.jouer("recharge" if player.munition_total > 0 else "vide")
 
 
                 if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Tirer"]:
@@ -186,8 +192,12 @@ class GameController:
                         taille_rect_bullet = pygame.rect.Rect(0, 0, config.tailleCollisionBullet[0] * config.tailleCaseRendu[0], config.tailleCollisionBullet[1] * config.tailleCaseRendu[1])
                         bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet, collisionRect=taille_rect_bullet)
                         bullet_list.append(bullet)
+                        sons.jouer("tir")
+                        if player.munition_barillet == 0:
+                            sons.jouer("dernier_tir")
                     else :
                         print("plus de munitions ! Recharger")
+                        sons.jouer("vide")
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.VIDEORESIZE:
@@ -204,7 +214,9 @@ class GameController:
             if etat == "jeu":
                 gameController.player_mouvement(dt, player, collision)
                 player.mettreAJourOpacite(dt)
+                sons.jouerSonsJeu(player, listEnnemi, fin)
                 if player.toucheCharacter(fin):
+                    sons.jouer("victoire")
                     etat = "fin"
                 for ennemi in listEnnemi:
                     if ennemi.health <= 0:
@@ -213,11 +225,13 @@ class GameController:
                         # Attaque de l'ennemi
                         if ennemi.attaque(player):
                             gameView.dessinerDegat()
+                            sons.jouer("degat", 1, sons.cote(player, ennemi))
                         gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
                         pygame.event.post(pygame.event.Event(config.EVENT_DEGATS))
 
                     elif ennemi.voit(player, labyrinthe.grille):
                         # Déplacement de l'ennemi
+                        sons.repeter("poursuite", 1, sons.cote(player, ennemi))
                         anciennePosition = ennemi.getPosition()
                         direction = player.getPosition() - ennemi.getPosition()
                         direction = direction / math.sqrt(direction * direction)
@@ -231,12 +245,16 @@ class GameController:
                     for bullet in bullet_list[:]:
                         if bullet.toucheEnnemi(ennemi) :
                             ennemi.subirDegats(config.bullet_damage)
+                            sons.jouer("monstre_mort" if ennemi.estMort() else "monstre_touche", 1, sons.cote(player, ennemi))
                             bullet_list.remove(bullet)
                 for item in listItems[:]:
                     if item.mettreAJour(dt, item.toucheCharacter(player)):
+                        sons.jouer(item.typeItem.value)
                         player.AppliquerItem(item)
                         listItems.remove(item)
                         gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
+                    elif item.progression() > 0:
+                        sons.repeter("ramassage")
 
 
             # Gestion affichage
@@ -256,6 +274,7 @@ class GameController:
                 for bullet in bullet_list[:]:
                     bullet.deplacer(dt)
                     if collision.bullet_touche_mur(bullet.collisionRect) :
+                        sons.jouer("impact")
                         bullet_list.remove(bullet)
             elif etat == "fin":
                 menuView.dessinerFin()
