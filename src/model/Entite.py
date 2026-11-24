@@ -18,9 +18,9 @@ class Entite:
         player_img = pygame.image.load(self.image_path).convert_alpha()
         return player_img
 
-    def recupererImage(self):
+    def recupererImage(self) -> pygame.surface.Surface:
         #Coder les animations ici
-        return pygame.transform.scale(self.generate_image(), config.tailleCharacter)
+        return self.generate_image()
 
     def setPosition(self, position : pygame.Vector2) -> None:
         """

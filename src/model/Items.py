@@ -15,7 +15,7 @@ class Items(Entite):
     def __init__(self, typeItem : TypeItem, position : pygame.Vector2)->None:
         self.typeItem = typeItem
         self.__tempsSurItem = 0.0
-        super().__init__("Item", position, "", pygame.rect.Rect(0, 0, config.tailleCollisionItem[0] * config.tailleCaseRendu[0], config.tailleCollisionItem[1] * config.tailleCaseRendu[1]))
+        super().__init__("Item", position, config.ennemi_imgMort_path, pygame.rect.Rect(0, 0, config.tailleCollisionItem[0] * config.tailleCaseRendu[0], config.tailleCollisionItem[1] * config.tailleCaseRendu[1]))
 
     def getCouleur(self) ->tuple[int, int, int]:
         return Items.__couleurs[self.typeItem]

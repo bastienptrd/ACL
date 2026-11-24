@@ -1,5 +1,6 @@
 import sys
 
+import config
 from controller.menuController import MenuController
 from model.Bullet import Bullet
 from model.Character import Character
@@ -97,25 +98,19 @@ class GameController:
         collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
 
         player = Player(positionInitiale)
-        fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
+        fin = Entite("Fin", positionFin, config.player_bas_path, collisionRectFin)
 
         listEnnemi: list[Ennemi] = []
         
         for i, (x, y) in enumerate(labyrinthe.recupCasesApparitionEnnemi()):
-            print("TOTAL ENNEMIS :", len(listEnnemi))
             x += 0.5
             y += 0.5
-
             position = pygame.Vector2(x, y)
-
             if i % 2 == 0:
                 ennemi = Fantome(position)
             else:
                 ennemi = MonstreVert(position)
-
             listEnnemi.append(ennemi)
-        print("Ennemi créé :", ennemi.name if hasattr(ennemi, "name") else ennemi)
-
 
         #Création des items
         typesItems = ([TypeItem.BANDAGE]*config.nombreBandage +[TypeItem.PILE]*config.nombrePile + [TypeItem.MUNITION]*config.nombreMunition)
@@ -146,10 +141,9 @@ class GameController:
         relaod_button_pressed = False
         while running:
             dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
-            if abs(reaload_input_press_time - pygame.time.get_ticks()) > temps_de_recharge and relaod_button_pressed:
-                player.recharger()
-                print(player.munition_barillet)
-                relaod_button_pressed = False
+
+            print(clock.get_fps())
+
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
@@ -181,11 +175,19 @@ class GameController:
                 if etat == "quitter":
                     running = False
 
+            # Gestion Update
             if etat == "jeu":
+                if abs(reaload_input_press_time - pygame.time.get_ticks()) > temps_de_recharge and relaod_button_pressed:
+                    player.recharger()
+                    print(player.munition_barillet)
+                    relaod_button_pressed = False
+
                 gameController.player_mouvement(dt, player, collision)
                 player.mettreAJourOpacite(dt)
+
                 if player.toucheEntite(fin):
                     etat = "fin"
+
                 for ennemi in listEnnemi:
                     if ennemi.health <= 0:
                         continue
@@ -212,6 +214,7 @@ class GameController:
                         if bullet.toucheEnnemi(ennemi) :
                             ennemi.subirDegats(config.bullet_damage)
                             bullet_list.remove(bullet)
+
                 for item in listItems[:]:
                     if item.mettreAJour(dt, item.toucheEntite(player)):
                         player.appliquerItem(item)

@@ -153,7 +153,7 @@ hauteurOmbreItem = 20
 
 #region RENDU
 tailleCaseRendu = (300, 300)
-tailleCharacter = (64, 50)
+tailleCharacter = (64, 64)
 tailleBullet =(100,100)
 
 #region OMBRE

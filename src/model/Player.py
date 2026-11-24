@@ -98,7 +98,6 @@ class Player(Character):
         self.opacite = min(config.opaciteMax, self.opacite + config.montantAugmentationOpacite)
         self.__tempsDepuisReductionOpacite = 0.0
 
-
     def appliquerItem(self, item : Items) -> None:
         if item.typeItem == TypeItem.BANDAGE:
             self.soigner(config.soinBandage)
