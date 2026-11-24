@@ -147,12 +147,13 @@ class GameView:
 
                 tailleX += 20
 
-            # On dessine l'ombre sous l'entité
-            rectOmbre = pygame.Rect(0, 0, tailleX - 20 + 2 * math.sin(time.time() * config.vitesseOcsilation), config.hauteurOmbreItem)
-            surfaceOmbre = pygame.surface.Surface(rectOmbre.size, pygame.SRCALPHA)
-            pygame.draw.ellipse(surfaceOmbre, (0, 0, 0, 50), rectOmbre)
-            rectOmbre.center = (coordScreenX, coordScreenY + 30)
-            self.__screen.blit(surfaceOmbre, (rectOmbre.x, rectOmbre.y))
+            if not isinstance(entite, Bullet):
+                # On dessine l'ombre sous l'entité
+                rectOmbre = pygame.Rect(0, 0, tailleX - 20 + 2 * math.sin(time.time() * config.vitesseOcsilation), config.hauteurOmbreItem)
+                surfaceOmbre = pygame.surface.Surface(rectOmbre.size, pygame.SRCALPHA)
+                pygame.draw.ellipse(surfaceOmbre, (0, 0, 0, 50), rectOmbre)
+                rectOmbre.center = (coordScreenX, coordScreenY + 30)
+                self.__screen.blit(surfaceOmbre, (rectOmbre.x, rectOmbre.y))
 
             # On dessine l'entité
             self.__screen.blit(imageCharacter, (rectImage.x, rectImage.y))
