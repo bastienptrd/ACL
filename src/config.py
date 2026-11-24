@@ -1,5 +1,10 @@
+import math
 import os
 import pygame
+
+debug = False
+combinaisonToucheDebug = [pygame.K_LALT, pygame.K_d]
+toucheValiderDebug = 0
 
 #region CHEMIN
 assets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
@@ -10,24 +15,28 @@ sounds_path = os.path.join(assets_path, "sounds")
 
 #region BARRE DE VIE
 barre_vie_path = os.path.join(images_path, "Barre_de_vie")
-barre_vie_images = {
-    25:  os.path.join(barre_vie_path, "Barre_de_vie_25.png"),
-    50:  os.path.join(barre_vie_path, "Barre_de_vie_50.png"),
-    75:  os.path.join(barre_vie_path, "Barre_de_vie_75.png"),
-    100: os.path.join(barre_vie_path, "Barre_de_vie_100.png"),
-}
-barreVieLargeur = 300
-barreViePosition = (700, 600)
+barre_vie_images = os.path.join(barre_vie_path, "Barre_de_vie_creuse.png")
+barreVieLargeurRel = 0.28
+barreVieMargeRel = (0.02, 0.03)
 #endregion
 
 #region EVENEMENTS
 EVENT_DEGATS = pygame.USEREVENT + 1   # événement personnalisé "le joueur prend des dégâts"
 toucheTestDegats = pygame.K_k         # touche de test
-degatsTest = 25
+degatsTest = 5
 #endregion
 
 #region IMAGES
-player_img_path = os.path.join(images_path, "Playercharacter", "test_img.png")
+fantome_img1_path = os.path.join(images_path, "monsters", "fantome", "monstre f 1.png")
+fantome_img2_path = os.path.join(images_path, "monsters", "fantome", "monstre f 2.png")
+fantome_img3_path = os.path.join(images_path, "monsters", "fantome", "monstre f 3.png")
+
+monstre_vert_img1_path = os.path.join(images_path, "monsters", "monstre vert", "monstre vert 1.png")
+monstre_vert_img2_path = os.path.join(images_path, "monsters", "monstre vert", "monstre vert 2.png")
+monstre_vert_img3_path = os.path.join(images_path, "monsters", "monstre vert", "monstre vert 3.png")
+
+ennemi_img_path = os.path.join(images_path, "character", "test_img.png")
+ennemi_imgMort_path = os.path.join(images_path, "character", "test_img_mort.png")
 # Images du personnage - direction bas
 player_bas_path = os.path.join(images_path, "Playercharacter", "persodevant.png")
 player_bas_marche1_path = os.path.join(images_path, "Playercharacter", "persodevantavance1.png")
@@ -56,6 +65,17 @@ volumeFond = 0.5
 volumeClic = 1
 #endregion
 
+#region TOUCHES
+touches = {
+    "Haut": pygame.K_UP,
+    "Bas": pygame.K_DOWN,
+    "Gauche": pygame.K_LEFT,
+    "Droite": pygame.K_RIGHT,
+    "Tirer": pygame.K_e,
+    "Recharger": pygame.K_r,
+}
+#endregion
+
 
 #region CONSTANTE
 #region FENETRE
@@ -68,18 +88,77 @@ imageParSeconde = 60
 #region PLAYER
 vitesseJoueur = 2
 vieJoueur = 100
-tailleCollisionJoueur = (0.2, 0.2)
-tailleCollisionFin = (0.1, 0.1)
+tailleCollisionJoueur = (0.13, 0.15)
+tailleCollisionFin = (0.2, 0.2)
+largeurLampe = math.pi  * 3 / 4
+nombreRayon = 50
+distanceRayonMur = 0.1
+#endregion
+
+#region Ennemi (test)
+vitesseEnnemi = 1
+vieEnnemi = 100
+tailleCollisionEnnemi = (0.2, 0.17)
+degatEnnemi = 10
+tempsEntreDeuxAttaque = 1
+distanceVueEnnemi = 1
+#endregion
+
 #endregion
 
 #region BULLET
 vitesseBullet = 5
+barrilet_capacity = 6
+nombreMaxBalles = 18
+temps_de_recharge = 2000
+bullet_damage = 25
+tailleCollisionBullet = (0.05, 0.05)
 #endregion
 
+
+#region ITEMS
+
+tempsRamassageItem = 5 #en seconde
+soinBandage = 15
+tailleCollisionItem = (0.3, 0.3)
+tailleItem = (40,40)
+
+nombreBandage = 3
+nombrePile = 2
+nombreMunition = 3
+
+couleurBandage = (255, 255, 255)    #Coueleurs temporaires avant ajout d'image
+couleurPile =(0, 255, 0)
+couleurMunition =(0, 0, 0)
+
+
+opaciteMax = 244                #ICI BASTIEN -> Modifie comme bon te semble
+tempsReductionOpacite = 10      #En gros : on diminue toute les 30 sec, d'un montant de 40 et on augmente de 40 si on recup une pile
+montantReductionOpacite = 10
+montantAugmentationOpacite = 100
+
+nombreBallesAjouterItem = 6
+
+hauteurOmbreItem = 20
+
 #region RENDU
-tailleCaseRendu = (500, 500)
+tailleCaseRendu = (300, 300)
 tailleCharacter = (64, 50)
 tailleBullet =(100,100)
+
+#region OMBRE
+opaciteFond = 255
+rayonLumiereJoueur = 40
+opaciteCercleLumiereJoueur = 100
+vitesseDegradeCerlceLumiere = 0.1
+
+longueurMaxRayon = 2
+longueurMinRayon = 0.3
+epaisseurLumiereMur = 40
+
+amplitudeOcsilations = 5
+vitesseOcsilation = 3
+#endregion
 #endregion
 
 #region MAZE
@@ -92,7 +171,7 @@ caseMur = -1
 caseDebut = -2
 caseFin = -3
 caseObstacle = -4
-caseApparitionEnemi = -5
+caseApparitionEnnemi = -5
 #endregion
 
 #endreion

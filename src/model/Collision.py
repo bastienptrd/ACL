@@ -19,6 +19,11 @@ class Collisions:
             if joueur_rect.colliderect(mur):
                 return True
         return False
+    def bullet_touche_mur(self, bullet_rect):
+        for mur in self.murs:
+            if bullet_rect.colliderect(mur):
+                return True
+        return False
 
     def deplacer(self, joueur_rect, dx, dy):
         joueur_rect.x += dx
