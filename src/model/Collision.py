@@ -1,5 +1,7 @@
 import pygame
+
 import config
+
 
 class Collisions:
     def __init__(self, murs=None):

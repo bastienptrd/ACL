@@ -1,11 +1,13 @@
+import math
 import time
 
 import pygame
+
 import config
-import math
-from model.Character import Character
 from model.Bullet import Bullet
+from model.Character import Character
 from model.Items import Items
+
 
 class GameView:
     def __init__(self, screen : pygame.surface.Surface, grille : list[list[int]], position : pygame.Vector2 = (0, 0), tailleRenduCase  : tuple[float, float] = (100, 100)):

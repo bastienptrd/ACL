@@ -1,19 +1,15 @@
 import sys
-import pygame
-import math
 
-import config
-from model.Character import Character
-from model.Bullet import Bullet
-from model.EnnemiAnime import EnnemiAnime
-from model.maze import Maze
-from model.Player import Player
-from model.Collision import Collisions
-from view.menuView import MenuView
-from view.gameView import GameView
 from controller.menuController import MenuController
+from model.Bullet import Bullet
+from model.Character import Character
+from model.Collision import Collisions
+from model.Ennemi import *
 from model.Items import Items, TypeItem
-
+from model.Player import Player
+from model.maze import Maze
+from view.gameView import GameView
+from view.menuView import MenuView
 
 
 class GameController:
@@ -113,25 +109,10 @@ class GameController:
             position = pygame.Vector2(x, y)
 
             if i % 2 == 0:
-                ennemi = EnnemiAnime(
-                    position,
-                    "Fantome",
-                    [
-                        config.fantome_img1_path,
-                        config.fantome_img2_path,
-                        config.fantome_img3_path
-                    ]
-                )
+                ennemi = Fantome(position)
             else:
-                ennemi = EnnemiAnime(
-                position,
-                "Monstre vert",
-                [   
-                    config.monstre_vert_img1_path,
-                    config.monstre_vert_img2_path,
-                    config.monstre_vert_img3_path
-                ]
-            )
+                ennemi = MonstreVert(position)
+
             listEnnemi.append(ennemi)
         print("Ennemi créé :", ennemi.name if hasattr(ennemi, "name") else ennemi)
 
@@ -183,8 +164,7 @@ class GameController:
                         player.munition_barillet -= 1
                         print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
                         print(f"nombre de munitions de stockage :{player.munition_total} ")
-                        taille_rect_bullet = pygame.rect.Rect(0, 0, config.tailleCollisionBullet[0] * config.tailleCaseRendu[0], config.tailleCollisionBullet[1] * config.tailleCaseRendu[1])
-                        bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet, collisionRect=taille_rect_bullet)
+                        bullet = Bullet(player.getPosition(), player.direction)
                         bullet_list.append(bullet)
                     else :
                         print("plus de munitions ! Recharger")
@@ -204,12 +184,12 @@ class GameController:
             if etat == "jeu":
                 gameController.player_mouvement(dt, player, collision)
                 player.mettreAJourOpacite(dt)
-                if player.toucheCharacter(fin):
+                if player.toucheEntite(fin):
                     etat = "fin"
                 for ennemi in listEnnemi:
                     if ennemi.health <= 0:
                         continue
-                    if ennemi.toucheCharacter(player):
+                    if ennemi.toucheEntite(player):
                         # Attaque de l'ennemi
                         if ennemi.attaque(player):
                             gameView.dessinerDegat()
@@ -233,8 +213,8 @@ class GameController:
                             ennemi.subirDegats(config.bullet_damage)
                             bullet_list.remove(bullet)
                 for item in listItems[:]:
-                    if item.mettreAJour(dt, item.toucheCharacter(player)):
-                        player.AppliquerItem(item)
+                    if item.mettreAJour(dt, item.toucheEntite(player)):
+                        player.appliquerItem(item)
                         listItems.remove(item)
                         gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
 

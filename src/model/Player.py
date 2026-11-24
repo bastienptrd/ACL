@@ -1,21 +1,23 @@
-import math
-
 import pygame
+
 import config
 from model.Character import Character
 from model.Items import Items, TypeItem
 
+
 class Player(Character):
     def __init__(self, position : pygame.Vector2) -> None:
+
         collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
-        self.munition_total = config.nombreMaxBalles
-        self.munition_barillet = config.barrilet_capacity
         super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
 
-        self.healthMax = self.health
+        self.munition_total = config.nombreMaxBalles
+        self.munition_barillet = config.barrilet_capacity
+
         self.__direction = "down"
         self.__enMouvement = False
         self.__debutAnimation = pygame.time.get_ticks()
+
         self.opacite = config.opaciteMax
         self.__tempsDepuisReductionOpacite = 0.0
 
@@ -41,12 +43,10 @@ class Player(Character):
             charger_image(config.player_droite_marche2_path)
         ]
 
-
         gauche = [
             pygame.transform.flip(image, True, False)
             for image in droite
         ]
-
 
         self.__animations = {
             "down": bas,
@@ -57,7 +57,6 @@ class Player(Character):
     def move(self, direction_input : str, dt : float) -> None:
         if direction_input not in self.__animations:
             return
-
 
         if not self.__enMouvement or direction_input != self.__direction:
             self.__debutAnimation = pygame.time.get_ticks()
@@ -100,10 +99,10 @@ class Player(Character):
         self.__tempsDepuisReductionOpacite = 0.0
 
 
-    def AppliquerItem(self, item :Items)->None:
+    def appliquerItem(self, item : Items) -> None:
         if item.typeItem == TypeItem.BANDAGE:
             self.soigner(config.soinBandage)
-        elif item.typeItem ==TypeItem.PILE:
+        elif item.typeItem == TypeItem.PILE:
             self.augmenterOpacite()
         elif item.typeItem == TypeItem.MUNITION :
             self.munition_total = min(self.munition_total + config.nombreBallesAjouterItem, config.nombreMaxBalles)
@@ -117,7 +116,6 @@ class Player(Character):
             numeroImage = 1 + (temps // 150) % 2
 
         return images[int(numeroImage)]
-
 
     def recharger(self) :
         besoin = config.barrilet_capacity - self.munition_barillet

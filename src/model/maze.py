@@ -1,5 +1,7 @@
 import random
+
 import config
+
 
 class Maze:
     def __init__(self, tailleX : int = 11, tailleY : int = 11, graine : int = None, debut : tuple[int, int] = (1, 1), fin : tuple[int, int] = None) -> None:

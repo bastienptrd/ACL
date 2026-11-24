@@ -1,5 +1,6 @@
 import math
 import os
+
 import pygame
 
 debug = False
@@ -46,7 +47,7 @@ player_droite_path = os.path.join(images_path, "Playercharacter", "persodroite.p
 player_droite_marche1_path = os.path.join(images_path, "Playercharacter", "persodroiteavance1.png")
 player_droite_marche2_path = os.path.join(images_path, "Playercharacter", "persodroiteavance2.png")
 
-bulette_img_path = os.path.join(images_path, "bulette.jpg")
+bulette_img_path = os.path.join(images_path, "bulette.png")
 player_img_path = os.path.join(images_path, "character", "test_img.png")
 fond_menu_path = os.path.join(boutons_path, "foret_pixel.png")
 bouton_jouer_path = os.path.join(boutons_path, "JOUER_1.png")
@@ -95,13 +96,22 @@ nombreRayon = 50
 distanceRayonMur = 0.1
 #endregion
 
-#region Ennemi (test)
-vitesseEnnemi = 1
-vieEnnemi = 100
-tailleCollisionEnnemi = (0.2, 0.17)
-degatEnnemi = 10
-tempsEntreDeuxAttaque = 1
-distanceVueEnnemi = 1
+#region Fantome
+vitesseFantome = 1
+vieFantome = 100
+tailleCollisionFantome = (0.2, 0.17)
+degatFantome = 10
+tempsEntreDeuxAttaqueFantome = 1
+distanceVueFantome = 1
+#endregion
+
+#region Monstre vert
+vitesseMonstreVert = 0.3
+vieMonstreVert = 200
+tailleCollisionMonstreVert = (0.2, 0.17)
+degatMonstreVert = 20
+tempsEntreDeuxAttaqueMonstreVert = 2
+distanceVueMonstreVert = 3
 #endregion
 
 #endregion
