@@ -12,7 +12,8 @@ from model.Items import Items
 
 
 class GameView:
-    def __init__(self, screen : pygame.surface.Surface, grille : list[list[int]], position : pygame.Vector2 = (0, 0), tailleRenduCase  : tuple[float, float] = (100, 100)):
+    def __init__(self, screen: pygame.surface.Surface, grille: list[list[int]], position: pygame.Vector2 = (0, 0),
+                 tailleRenduCase: tuple[float, float] = (100, 100)):
         """
         :param screen: fenêtre du jeu
         :param grille: grille généré par le labyrinthe
@@ -40,12 +41,12 @@ class GameView:
         surf5 = pygame.surface.Surface((100, 100))
         surf5.fill((200, 0, 0))
 
-        self.__imagesCaseLabyrinthe = {config.caseVide : surf1,
-                                       config.caseMur : surf2,
-                                       config.caseDebut : surf3,
-                                       config.caseFin : surf3,
-                                       config.caseObstacle : surf4,
-                                       config.caseApparitionEnnemi : surf5}
+        self.__imagesCaseLabyrinthe = {config.caseVide: surf1,
+                                       config.caseMur: surf2,
+                                       config.caseDebut: surf3,
+                                       config.caseFin: surf3,
+                                       config.caseObstacle: surf4,
+                                       config.caseApparitionEnnemi: surf5}
 
         self.remiseEchelle()
 
@@ -66,7 +67,7 @@ class GameView:
         for key, value in self.__imagesCaseLabyrinthe.items():
             self.__imagesCaseLabyrinthe[key] = pygame.transform.scale(value, self.__tailleRenduCase)
 
-    def changePosition(self, position : pygame.Vector2) -> None:
+    def changePosition(self, position: pygame.Vector2) -> None:
         """
         :param position: Nouvelle position de la caméra
         """
@@ -75,7 +76,7 @@ class GameView:
     def recupererPosition(self) -> pygame.Vector2:
         return pygame.Vector2(self.__position)
 
-    def changeGrille(self, grille : list[list[int]]) -> None:
+    def changeGrille(self, grille: list[list[int]]) -> None:
         """
         :param grille: Nouvelle grille
         """
@@ -84,7 +85,7 @@ class GameView:
     def recupererGrille(self) -> list[list[int]]:
         return self.__grille
 
-    def convertirCoordNumVersEcran(self, coord : pygame.Vector2) -> tuple[int, int]:
+    def convertirCoordNumVersEcran(self, coord: pygame.Vector2) -> tuple[int, int]:
         """
         :param coord: Coordonnées d'un point du labyrinthe
         :return: Coordonnées correspondantes sur l'écran
@@ -94,7 +95,7 @@ class GameView:
         positionEcranY = int(screenLargeur / 2 + (coord[1] - self.__position[1]) * (self.__tailleRenduCase[1] - 2))
         return positionEcranX, positionEcranY
 
-    def convertirCoordEcranVersNum(self, coord : tuple[int, int]) -> pygame.Vector2:
+    def convertirCoordEcranVersNum(self, coord: tuple[int, int]) -> pygame.Vector2:
         """
         :param coord: Coordonnées d'un point de l'écran
         :return: Coordonnées correspondantes dans le labyrinthe
@@ -112,10 +113,11 @@ class GameView:
 
         for i in range(len(self.__grille)):
             for j in range(len(self.__grille[0])):
-                self.__screen.blit(self.__imagesCaseLabyrinthe[self.__grille[i][j]], self.convertirCoordNumVersEcran(pygame.Vector2(i, j)))
+                self.__screen.blit(self.__imagesCaseLabyrinthe[self.__grille[i][j]],
+                                   self.convertirCoordNumVersEcran(pygame.Vector2(i, j)))
 
-    #region Entite
-    def dessinerEntiter(self, entite : Entite) -> None:
+    # region Entite
+    def dessinerEntiter(self, entite: Entite) -> None:
         """
         Dessine un charactère sur la grille en fonction de son image et de ses coordonnées
         :param entite: Character à dessiner
@@ -150,7 +152,8 @@ class GameView:
 
             if not isinstance(entite, Bullet):
                 # On dessine l'ombre sous l'entité
-                rectOmbre = pygame.Rect(0, 0, tailleX - 20 + 2 * math.sin(time.time() * config.vitesseOcsilation), config.hauteurOmbreItem)
+                rectOmbre = pygame.Rect(0, 0, tailleX - 20 + 2 * math.sin(time.time() * config.vitesseOcsilation),
+                                        config.hauteurOmbreItem)
                 surfaceOmbre = pygame.surface.Surface(rectOmbre.size, pygame.SRCALPHA)
                 pygame.draw.ellipse(surfaceOmbre, (0, 0, 0, 50), rectOmbre)
                 rectOmbre.center = (coordScreenX, coordScreenY + 30)
@@ -162,10 +165,11 @@ class GameView:
             # Dessin de la boite de collision
             if config.debug:
                 surfaceRectCollision = pygame.surface.Surface(entite.collisionRect.size, pygame.SRCALPHA)
-                pygame.draw.rect(surfaceRectCollision, (0, 0, 255, 150), (0, 0, surfaceRectCollision.get_width(), surfaceRectCollision.get_height()))
+                pygame.draw.rect(surfaceRectCollision, (0, 0, 255, 150),
+                                 (0, 0, surfaceRectCollision.get_width(), surfaceRectCollision.get_height()))
                 self.__screen.blit(surfaceRectCollision, (rectCollision.x, rectCollision.y))
 
-    def dessinerListeEntite(self, listEntite : list[Entite]) -> None:
+    def dessinerListeEntite(self, listEntite: list[Entite]) -> None:
         """
         Dessine une liste de charactère sur la grille
         :param listEntite: Charactères à dessiner
@@ -191,16 +195,17 @@ class GameView:
                     pygame.draw.rect(self.__screen, (0, 200, 0), remplissage)
                     pygame.draw.rect(self.__screen, (0, 0, 0), fond, width=1)
 
-                #affichage du rayon tiré vers le joueur
+                # affichage du rayon tiré vers le joueur
                 _, pointX, pointY = entite.jeterRayon(self.__grille, listEntite[0].getPosition())
                 pygame.draw.circle(self.__screen, (255, 255 * int(entite.voit(listEntite[0], self.__grille)), 255),
                                    self.convertirCoordNumVersEcran(pygame.Vector2(pointX, pointY)), 5)
                 pygame.draw.line(self.__screen, (100, 100, 100),
                                  self.convertirCoordNumVersEcran(pygame.Vector2(pointX, pointY)),
                                  self.convertirCoordNumVersEcran(entite.getPosition()), 2)
-    #endregion
 
-    #region Barre de vie
+    # endregion
+
+    # region Barre de vie
     def __majBarreVie(self) -> None:
         """
         Redimensionne l'image de la barre si la taille de la fenêtre a changé
@@ -251,9 +256,10 @@ class GameView:
         pygame.draw.rect(self.__screen, (0, 200, 0), (xInt, yInt, largeurVie, hauteurInt))
 
         self.__screen.blit(self.__imagesBarreVie, (x, y))
-    #endregion
 
-    #region Ombre
+    # endregion
+
+    # region Ombre
     def changerLongeurRayon(self, taille: float) -> None:
         self.__longueurRayon = taille
         self.updateTailleFenetre()
@@ -270,7 +276,7 @@ class GameView:
             pygame.draw.circle(self.__imageLampe, (0, 0, 0, i), self.__screen.get_rect().center,
                                self.__longueurRayon * config.tailleCaseRendu[0] * (255 - i) / 255)
 
-    def dessinerNoirLampe(self, character : Character, rayons : list[tuple[float, float, float]], opacite) -> None:
+    def dessinerNoirLampe(self, character: Character, rayons: list[tuple[float, float, float]], opacite) -> None:
         """
         :param character: Point de départ de la lumiere
         :param rayons: Liste des rayons envoyés par le joueur
@@ -288,7 +294,8 @@ class GameView:
         lampe = self.__imageLampe.copy()
 
         # On ajoute la forme balayée par la lampe
-        pointLampe = [self.convertirCoordNumVersEcran(pygame.Vector2(x, y)) for _,x,y in rayons] + [self.convertirCoordNumVersEcran(character.getPosition())]
+        pointLampe = [self.convertirCoordNumVersEcran(pygame.Vector2(x, y)) for _, x, y in rayons] + [
+            self.convertirCoordNumVersEcran(character.getPosition())]
         for i in range(0, 20, 2):
             pygame.draw.polygon(mask, (0, 0, 0, opacite * i / 20), pointLampe, config.epaisseurLumiereMur - i)
             for point in pointLampe:
@@ -301,7 +308,7 @@ class GameView:
         # On ajoute le cercle du joueur à l'ombre
         for i in range(0, config.opaciteCercleLumiereJoueur, 2):
             pygame.draw.circle(ombre, (0, 0, 0, 255 - i), self.convertirCoordNumVersEcran(character.getPosition()),
-                                       max(config.rayonLumiereJoueur - i * config.vitesseDegradeCerlceLumiere, 0))
+                               max(config.rayonLumiereJoueur - i * config.vitesseDegradeCerlceLumiere, 0))
 
         # On soustrait la lampe à l'ombre
         ombre.blit(lampe, (0, 0), special_flags=pygame.BLEND_RGBA_SUB)
@@ -310,17 +317,18 @@ class GameView:
         if config.debug:
             # On affiche seulement le contour
             pygame.draw.polygon(self.__screen, (0, 255, 255, 255), pointLampe, 3)
-        else :
+        else:
             self.__screen.blit(ombre, (0, 0))
-    #endregion
 
-    def dessiner(self, listCharactere : list[Character],
-                 listItem : list[Items],
-                 listBullet : list[Bullet],
-                 dessinerGrille : bool = True,
-                 dessinerEntite : bool = True,
-                 dessinerOmbre : bool = True,
-                 dessinerBarreVie : bool = True) -> None:
+    # endregion
+
+    def dessiner(self, listCharactere: list[Character],
+                 listItem: list[Items],
+                 listBullet: list[Bullet],
+                 dessinerGrille: bool = True,
+                 dessinerEntite: bool = True,
+                 dessinerOmbre: bool = True,
+                 dessinerBarreVie: bool = True) -> None:
         """
         Dessine l'ensemble de la fenêtre de jeu
         :param dessinerGrille: Dessiner la grille (True par default)
@@ -338,7 +346,9 @@ class GameView:
             self.dessinerListeEntite(listBullet)
             self.dessinerListeEntite(listItem)
         if dessinerOmbre:
-            self.dessinerNoirLampe(listCharactere[0], listCharactere[0].envoyerRayonLampe(self.__grille, config.nombreRayon, config.largeurLampe), listCharactere[0].opacite)
+            self.dessinerNoirLampe(listCharactere[0],
+                                   listCharactere[0].envoyerRayonLampe(self.__grille, config.nombreRayon,
+                                                                       config.largeurLampe), listCharactere[0].opacite)
         if dessinerBarreVie:
             self.dessinerBarreDeVie(listCharactere[0].health, listCharactere[0].healthMax)
 

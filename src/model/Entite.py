@@ -14,15 +14,15 @@ class Entite:
         # Assure de placer les collionsRest aux bons endroits
         self.setPosition(self.__position)
 
-    def generate_image(self) -> pygame.surface.Surface :
+    def generate_image(self) -> pygame.surface.Surface:
         player_img = pygame.image.load(self.image_path).convert_alpha()
         return player_img
 
     def recupererImage(self) -> pygame.surface.Surface:
-        #Coder les animations ici
+        # Coder les animations ici
         return self.generate_image()
 
-    def setPosition(self, position : pygame.Vector2) -> None:
+    def setPosition(self, position: pygame.Vector2) -> None:
         """
         Mets à jour les position de tous les éléments de charactère
         :param position: nouvelle position
@@ -35,7 +35,7 @@ class Entite:
         # Renvoie une copie : un Vector2 est modifiable, on évite de changer la position par erreur
         return pygame.Vector2(self.__position)
 
-    def toucheEntite(self, other : "Entite") -> bool:
+    def toucheEntite(self, other: "Entite") -> bool:
         """
         :param other: Deuxième character
         :return: Bolléen relatif à la collision de leurs rectangles de collision
