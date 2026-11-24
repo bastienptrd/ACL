@@ -147,8 +147,11 @@ class GameView:
                     remplissage = pygame.Rect(fond.left, fond.top, int(tailleX * progression), hauteurJauge)
                     pygame.draw.rect(self.__screen, (0, 200, 0), remplissage)
                     pygame.draw.rect(self.__screen, (0, 0, 0), fond, width=1)
-
                 tailleX += 20
+
+            if isinstance(entite, Ennemi) and entite.health <= 0:
+                tailleX += 20
+                coordScreenY -= 10
 
             if not isinstance(entite, Bullet):
                 # On dessine l'ombre sous l'entité

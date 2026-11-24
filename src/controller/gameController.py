@@ -140,8 +140,6 @@ class GameController:
         while running:
             dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
 
-            print(clock.get_fps())
-
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
