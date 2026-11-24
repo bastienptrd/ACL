@@ -1,8 +1,10 @@
 import math
+
 import pygame
 
 import config
 from model.Entite import Entite
+
 
 def voisin(x, sens):
     if math.floor(x) == x:

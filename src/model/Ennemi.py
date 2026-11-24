@@ -28,7 +28,7 @@ class Ennemi(Character):
             config.tailleCharacter
         )
 
-    def voit(self, other : Character, grille : list[list[int]]) -> bool:
+    def voit(self, other : Entite, grille : list[list[int]]) -> bool:
         """
         :param other: Deuxieme character
         :param grille: Obstacle

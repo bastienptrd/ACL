@@ -1,9 +1,7 @@
 import sys
 
-import config
 from controller.menuController import MenuController
 from model.Bullet import Bullet
-from model.Character import Character
 from model.Collision import Collisions
 from model.Ennemi import *
 from model.Items import Items, TypeItem
@@ -94,7 +92,7 @@ class GameController:
         positionInitiale = pygame.Vector2(debutLabyrinthe) + pygame.Vector2(0.5, 0.5)
         positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
 
-        # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
+        # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans Collision voir avec Ethan
         collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
 
         player = Player(positionInitiale)

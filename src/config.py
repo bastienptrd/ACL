@@ -38,7 +38,7 @@ monstre_vert_img3_path = os.path.join(images_path, "monsters", "monstre vert", "
 
 ennemi_img_path = os.path.join(images_path, "character", "test_img.png")
 ennemi_imgMort_path = os.path.join(images_path, "character", "test_img_mort.png")
-# Images du personnage - direction bas
+# Images du personnage — direction bas
 player_bas_path = os.path.join(images_path, "Playercharacter", "persodevant.png")
 player_bas_marche1_path = os.path.join(images_path, "Playercharacter", "persodevantavance1.png")
 player_bas_marche2_path = os.path.join(images_path, "Playercharacter", "persodevantavance2.png")
@@ -79,7 +79,7 @@ touches = {
 
 
 #region CONSTANTE
-#region FENETRE
+#region FENÊTRE
 screenSize = (1080, 720)
 imageParSeconde = 60
 
@@ -96,7 +96,7 @@ nombreRayon = 50
 distanceRayonMur = 0.1
 #endregion
 
-#region Fantome
+#region Fantom
 vitesseFantome = 1
 vieFantome = 100
 tailleCollisionFantome = (0.2, 0.17)
@@ -137,13 +137,9 @@ nombreBandage = 3
 nombrePile = 2
 nombreMunition = 3
 
-couleurBandage = (255, 255, 255)    #Coueleurs temporaires avant ajout d'image
-couleurPile =(0, 255, 0)
-couleurMunition =(0, 0, 0)
 
-
-opaciteMax = 244                #ICI BASTIEN -> Modifie comme bon te semble
-tempsReductionOpacite = 10      #En gros : on diminue toute les 30 sec, d'un montant de 40 et on augmente de 40 si on recup une pile
+opaciteMax = 244
+tempsReductionOpacite = 10
 montantReductionOpacite = 10
 montantAugmentationOpacite = 100
 

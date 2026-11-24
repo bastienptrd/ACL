@@ -47,7 +47,7 @@ class Bouton:
         return False
 
     def dessiner(self, surface):
-        survol = self.__rect.collidepoint(pygame.mouse.get_pos())  # collidepoint -> check si on est dans le bouton
+        survol = self.__rect.collidepoint(pygame.mouse.get_pos())  # collidepoint → check si on est dans le bouton
 
         if self.__enfonce:
             couleur = couleurBoutonClic
@@ -57,7 +57,7 @@ class Bouton:
             couleur = couleurBouton
 
         if survol:
-            rectAff = self.__rect.move(-4, -4)  # Decale de 4px si on survole
+            rectAff = self.__rect.move(-4, -4)  # Décale de 4px si on survole
         else:
             rectAff = self.__rect
 
@@ -89,7 +89,7 @@ class MenuView:
         self.__boutonParametre = Bouton("Paramètres", (0.85, 0.85), (260, 70), 30,
                             config.bouton_parametre_path, sonClic)
 
-        # Boutons des parametres
+        # Boutons des paramètres
         self.__boutonAudio = Bouton("Audio", (0.5, 0.5), (260, 70), 48,
                 config.bouton_audio_path, sonClic)
         self.__boutonCommande = Bouton("Commande", (0.5, 0.65), (260,70), 48,
@@ -97,7 +97,7 @@ class MenuView:
         self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (260, 70), 48,
             config.bouton_gameplay_path, sonClic)
 
-        # Boutons de l'ecran Audio (un "-" et un "+" pour chaque volume)
+        # Boutons de l'écran Audio (un "-" et un "+" pour chaque volume)
         self.__boutonMusiqueMoins = Bouton("-", (0.3, 0.5), (70, 70), 60, None, sonClic)
         self.__boutonMusiquePlus = Bouton("+", (0.7, 0.5), (70, 70), 60, None, sonClic)
         self.__boutonSonsMoins = Bouton("-", (0.3, 0.7), (70, 70), 60, None, sonClic)
@@ -221,6 +221,5 @@ class MenuView:
             bouton.dessiner(self.__screen)
 
     def dessinerFin(self):
-        #Ici DEYA
         self.__screen.fill((255, 0, 0))
         self.__dessinerTitre("FIN")

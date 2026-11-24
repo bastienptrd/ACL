@@ -6,6 +6,7 @@ import pygame
 import config
 from model.Bullet import Bullet
 from model.Character import Character
+from model.Ennemi import Ennemi
 from model.Entite import Entite
 from model.Items import Items
 
@@ -111,7 +112,7 @@ class GameView:
 
         for i in range(len(self.__grille)):
             for j in range(len(self.__grille[0])):
-                self.__screen.blit(self.__imagesCaseLabyrinthe[self.__grille[i][j]], self.convertirCoordNumVersEcran((i, j)))
+                self.__screen.blit(self.__imagesCaseLabyrinthe[self.__grille[i][j]], self.convertirCoordNumVersEcran(pygame.Vector2(i, j)))
 
     #region Entite
     def dessinerEntiter(self, entite : Entite) -> None:
@@ -172,7 +173,7 @@ class GameView:
         for entite in listEntite:
             self.dessinerEntiter(entite)
 
-            if config.debug and isinstance(entite, Character) and entite.name != "Player" and entite.name != "Fin":
+            if config.debug and isinstance(entite, Ennemi):
 
                 # Affichage barre de vie
                 progression = entite.health / entite.healthMax

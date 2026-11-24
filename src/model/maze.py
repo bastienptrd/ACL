@@ -162,26 +162,3 @@ class Maze:
         casesLibres = [(i,j) for i in range (1, self.__tailleX-1) for j in range(1,self.__tailleY-1) if self.grille[i][j] == config.caseVide]
         nombreItems = min(nombreItems, len(casesLibres))
         return random.sample(casesLibres, nombreItems)
-
-if __name__ == "__main__":
-    # Teste d'execution propre au fichier
-    l = Maze(21,11, fin= (19,9))
-    l.creerLabyrinthe()
-    l.remplacerMurObstacles(10)
-    l.ajouterApparitionEnnemi(5)
-    for ligne in l.grille:
-        txt = ""
-        for elt in ligne:
-            if elt == config.caseMur:
-                txt += "###"
-            elif elt == config.caseDebut:
-                txt += " D "
-            elif elt == config.caseFin:
-                txt += " F "
-            elif elt == config.caseObstacle:
-                txt += "#O#"
-            elif elt == config.caseApparitionEnnemi:
-                txt += " E "
-            else:
-                txt += "   "
-        print(txt)
