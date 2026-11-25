@@ -1,4 +1,5 @@
-import config
+import pygame
+
 from model.Bullet import Bullet
 from model.Collision import Collisions
 from model.Ennemi import *
@@ -11,16 +12,16 @@ from view.gameView import GameView
 class GameController:
     def __init__(self, vue : GameView):
         self.__vue = vue
-        self.__labyrinthe = None
-        self.__collision = None
+        self.__labyrinthe : Maze = None
+        self.__collision : Collisions = None
 
-        self.__player = None
-        self.__fin = None
+        self.__player : Player = None
+        self.__fin : Entite = None
 
-        self.__listEnnemi = []
-        self.__listItems = []
+        self.__listEnnemi : list[Ennemi] = []
+        self.__listItems : list[Items] = []
 
-        self.__bulletList = []
+        self.__bulletList : list[Bullet] = []
         self.__reaload_input_press_time = 0
         self.__temps_de_recharge = 0
         self.__relaod_button_pressed = False
@@ -108,7 +109,7 @@ class GameController:
                     self.__player.munition_barillet -= 1
                     print(f"nombre de munitions dans le barrilet :{self.__player.munition_barillet} ")
                     print(f"nombre de munitions de stockage :{self.__player.munition_total} ")
-                    bullet = Bullet(self.__player.getPosition(), self.__player.direction)
+                    bullet = Bullet(self.__player.getPosition(), self.__player.directionVue)
                     self.__bulletList.append(bullet)
                 else:
                     print("plus de munitions ! Recharger")
@@ -127,6 +128,10 @@ class GameController:
 
         elif event.type == pygame.VIDEORESIZE:
             self.__vue.updateTailleFenetre()
+        elif event.type == pygame.MOUSEMOTION:
+            vecteur = pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(self.__vue.recupererTailleEcran()) / 2
+            taille = math.sqrt(vecteur * vecteur)
+            self.__player.directionVue = vecteur / taille
 
         elif event.type == config.EVENT_DEGATS:
             if self.__player.estMort():

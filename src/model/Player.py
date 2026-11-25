@@ -1,4 +1,4 @@
-import pygame
+import pygame, math
 
 import config
 from model.Character import Character
@@ -16,7 +16,8 @@ class Player(Character):
         self.munition_total = config.nombreMaxBalles
         self.munition_barillet = config.barrilet_capacity
 
-        self.__direction = "down"
+        self.__directionAnimation = "down"
+        self.directionVue = pygame.Vector2(0, 1)
         self.__enMouvement = False
         self.__debutAnimation = pygame.time.get_ticks()
 
@@ -59,10 +60,10 @@ class Player(Character):
         if direction_input not in self.__animations:
             return
 
-        if not self.__enMouvement or direction_input != self.__direction:
+        if not self.__enMouvement or direction_input != self.__directionAnimation:
             self.__debutAnimation = pygame.time.get_ticks()
 
-        self.__direction = direction_input
+        self.__directionAnimation = direction_input
         self.__enMouvement = True
 
         # Déplacement
@@ -108,7 +109,7 @@ class Player(Character):
             self.munition_total = min(self.munition_total + config.nombreBallesAjouterItem, config.nombreMaxBalles)
 
     def recupererImage(self):
-        images = self.__animations[self.__direction]
+        images = self.__animations[self.__directionAnimation]
         if not self.__enMouvement:
             numeroImage = 0
         else:
@@ -125,3 +126,26 @@ class Player(Character):
         else:
             self.munition_barillet += self.munition_total
             self.munition_total = 0
+
+    def envoyerRayonLampe(self, grille: list[list[int]], nombreRayon: int, fov: float) -> list[
+        tuple[float, float, float]]:
+        """
+        :param grille: Grille des murs
+        :param nombreRayon: Nombre de rayons envoyé
+        :param fov: Ecartement des rayons
+        :return: liste des poinr de collision avec leurs disances respectives
+        """
+        # Calcul de la direction du joueur en radian
+        x, y = self.directionVue
+        angle = 0
+        if x != 0:
+            angle = math.atan(y / x) + int(x > 0) * math.pi + math.pi
+        elif y > 0:
+            angle = math.pi / 2
+        elif y < 0:
+            angle = - math.pi / 2
+
+        # Envoient des rayons dans toutes les directions du champ de vision
+        res = [self.jeterRayon(grille, angle - fov / 2 + i * fov / nombreRayon) for i in range(nombreRayon)]
+
+        return res

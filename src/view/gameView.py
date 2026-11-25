@@ -61,6 +61,9 @@ class GameView:
         self.__imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
         self.updateTailleFenetre()
 
+    def recupererTailleEcran(self) -> tuple[int, int]:
+        return self.__screen.get_size()
+
     def remiseEchelle(self) -> None:
         """
         Remet les images des murs à l'échelle choisie
