@@ -1,3 +1,4 @@
+import config
 from model.Bullet import Bullet
 from model.Collision import Collisions
 from model.Ennemi import *
@@ -29,10 +30,11 @@ class GameController:
         :param difficulte: Entier représentant la difficulté
         """
         # initialisation du Labyrinthe
-        self.__labyrinthe = Maze()
+        tailleLabyrintheX, tailleLabyrintheY = config.tailleLabyrintheDifficulte[difficulte]
+        self.__labyrinthe = Maze(tailleLabyrintheX, tailleLabyrintheY)
         self.__labyrinthe.creerLabyrinthe()
         self.__labyrinthe.remplacerMurObstacles(config.nombreObstacle)
-        self.__labyrinthe.ajouterApparitionEnnemi(config.nombreApparitionEnemi)
+        self.__labyrinthe.ajouterApparitionEnnemi(config.nombreApparitionEnemiDifficulte[difficulte])
 
         # initialisation du Player
         debutLabyrinthe = self.__labyrinthe.recupDebut()
@@ -42,8 +44,7 @@ class GameController:
         positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
 
         # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans Collision voir avec Ethan
-        collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0],
-                                            config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
+        collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
 
         self.__player = Player(positionInitiale)
         self.__fin = Entite("Fin", positionFin, config.player_bas_path, collisionRectFin)
@@ -61,8 +62,7 @@ class GameController:
             self.__listEnnemi.append(ennemi)
 
         # Création des items
-        typesItems = ([TypeItem.BANDAGE] * config.nombreBandage + [TypeItem.PILE] * config.nombrePile + [
-            TypeItem.MUNITION] * config.nombreMunition)
+        typesItems = ([TypeItem.BANDAGE] * config.nombreBandageDifficulte[difficulte] + [TypeItem.PILE] * config.nombrePileDifficulte[difficulte] + [TypeItem.MUNITION] * config.nombreMunitionDifficulte[difficulte])
 
         casesItems = self.__labyrinthe.choisirCaseItems(len(typesItems))
 
