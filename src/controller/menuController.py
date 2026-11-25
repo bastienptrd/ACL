@@ -19,6 +19,7 @@ class MenuController:
         self.__vue = vue
         self.__sonClic = sonClic
         self.__actionEnAttente = None
+        self.__difficulteChoisit = 0;
 
     def getActionEnAttente(self):
         return self.__actionEnAttente
@@ -97,3 +98,6 @@ class MenuController:
             self.__vue.dessinerCommande(self.getActionEnAttente())
         elif etat == "fin":
             self.__vue.dessinerFin()
+
+    def recupererDifficulte(self) -> int:
+        return self.__difficulteChoisit
