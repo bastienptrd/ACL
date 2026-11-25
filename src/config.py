@@ -133,9 +133,9 @@ soinBandage = 15
 tailleCollisionItem = (0.3, 0.3)
 tailleItem = (40, 40)
 
-nombreBandage = 3
-nombrePile = 2
-nombreMunition = 3
+nombreBandageDifficulte = [1, 3, 3]
+nombrePileDifficulte = [1, 2, 2]
+nombreMunitionDifficulte = [2, 3, 2]
 
 opaciteMax = 244
 tempsReductionOpacite = 10
@@ -167,8 +167,9 @@ vitesseOcsilation = 3
 # endregion
 
 # region MAZE
-nombreObstacle = 5
-nombreApparitionEnemi = 5
+tailleLabyrintheDifficulte = [(7, 7), (11, 11), (15, 15)]
+nombreObstacle = 0
+nombreApparitionEnemiDifficulte = [3, 5, 10]
 
 # Case
 caseVide = 0
@@ -178,5 +179,3 @@ caseFin = -3
 caseObstacle = -4
 caseApparitionEnnemi = -5
 # endregion
-
-# endreion

@@ -9,6 +9,7 @@ from model.Character import Character
 from model.Ennemi import Ennemi
 from model.Entite import Entite
 from model.Items import Items
+from model.Player import Player
 
 
 class GameView:
@@ -267,6 +268,9 @@ class GameView:
         self.__longueurRayon = taille
         self.updateTailleFenetre()
 
+    def changerLongueurRayonViePlayer(self, player : Player):
+        self.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
+
     def recupLongeurRayon(self) -> int:
         return self.__longueurRayon
 
@@ -325,9 +329,7 @@ class GameView:
 
     # endregion
 
-    def dessiner(self, listCharactere: list[Character],
-                 listItem: list[Items],
-                 listBullet: list[Bullet],
+    def dessiner(self, listEntite: list[Entite],
                  dessinerGrille: bool = True,
                  dessinerEntite: bool = True,
                  dessinerOmbre: bool = True,
@@ -338,22 +340,17 @@ class GameView:
         :param dessinerBarreVie: Dessiner la barre de vie (True par default)
         :param dessinerOmbre: Dessiner les ombres (True par default)
         :param dessinerEntite: Dessiner les entites (True par default)
-        :param listCharactere: Charactères à dessiner
-        :param listItem: Items à dessiner
-        :param listBullet: Bullet à dessiner
+        :param listEntite: Entite à dessiner
         """
+        player : Player = listEntite[0]
         if dessinerGrille:
             self.dessinerGrille()
         if dessinerEntite:
-            self.dessinerListeEntite(listCharactere)
-            self.dessinerListeEntite(listBullet)
-            self.dessinerListeEntite(listItem)
+            self.dessinerListeEntite(listEntite)
         if dessinerOmbre:
-            self.dessinerNoirLampe(listCharactere[0],
-                                   listCharactere[0].envoyerRayonLampe(self.__grille, config.nombreRayon,
-                                                                       config.largeurLampe), listCharactere[0].opacite)
+            self.dessinerNoirLampe(player, player.envoyerRayonLampe(self.__grille, config.nombreRayon, config.largeurLampe), player.opacite)
         if dessinerBarreVie:
-            self.dessinerBarreDeVie(listCharactere[0].health, listCharactere[0].healthMax)
+            self.dessinerBarreDeVie(player.health, player.healthMax)
 
     def updateTailleFenetre(self) -> None:
         """
