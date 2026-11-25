@@ -1,8 +1,11 @@
 import random
+
 import config
 
+
 class Maze:
-    def __init__(self, tailleX : int = 11, tailleY : int = 11, graine : int = None, debut : tuple[int, int] = (1, 1), fin : tuple[int, int] = None) -> None:
+    def __init__(self, tailleX: int = 11, tailleY: int = 11, graine: int = None, debut: tuple[int, int] = (1, 1),
+                 fin: tuple[int, int] = None) -> None:
         """
         :param tailleX : TailleX doit être impaire
         :param tailleY : TailleY doit être impaire
@@ -36,15 +39,15 @@ class Maze:
     def recupGraine(self) -> int:
         return self.__graine
 
-    def changeTaille(self, tailleX : int = 11, tailleY : int = 11) -> None:
+    def changeTaille(self, tailleX: int = 11, tailleY: int = 11) -> None:
         self.__tailleX = tailleX
         self.__tailleY = tailleY
         self.grille = [[-1 for _ in range(self.__tailleY)] for _ in range(self.__tailleX)]
 
-    def changeGraine(self, graine : int = 0) -> None:
+    def changeGraine(self, graine: int = 0) -> None:
         self.__graine = graine
 
-    def changeDebutFin(self, debut : tuple[int, int] = (0, 0), fin : tuple[int, int] = (0, 0)) -> None:
+    def changeDebutFin(self, debut: tuple[int, int] = (0, 0), fin: tuple[int, int] = (0, 0)) -> None:
         self.__debut = debut
         self.__fin = fin
 
@@ -57,10 +60,10 @@ class Maze:
     def recupCasesApparitionEnnemi(self) -> list[tuple[int, int]]:
         return self.__casesApparitionEnnemi
 
-    def changeCasesApparitionEnnemi(self, casesApparitionEnnemi : list[tuple[int, int]]) -> None:
+    def changeCasesApparitionEnnemi(self, casesApparitionEnnemi: list[tuple[int, int]]) -> None:
         self.__casesApparitionEnnemi = casesApparitionEnnemi
 
-    def __fusionnerClasse(self, classe1 : int, classe2 : int) -> None:
+    def __fusionnerClasse(self, classe1: int, classe2: int) -> None:
         """
         Fusionne deux classes en prenant le nombre de classes le plus petit comme nouvelle classe
         :param classe1:  à fusionner
@@ -109,7 +112,8 @@ class Maze:
                     if caseObserve >= 0:  # On observe une composante connexe
 
                         if dejaComposanteConnexe:
-                            if caseObserve != self.grille[i][j]:  # Si la case observée fait partie d'une autre composante connexe que la nôtre
+                            if caseObserve != self.grille[i][
+                                j]:  # Si la case observée fait partie d'une autre composante connexe que la nôtre
                                 # On supprime le mur entre les composantes connexes
                                 self.grille[i + deltaI // 2][j + deltaJ // 2] = caseObserve
 
@@ -139,47 +143,27 @@ class Maze:
         self.grille[debutX][debutY] = config.caseDebut
         self.grille[finX][finY] = config.caseFin
 
-    def remplacerMurObstacles(self, nombreObstacles : int = 1) -> None:
+    def remplacerMurObstacles(self, nombreObstacles: int = 1) -> None:
         # On récupère ensemble des case qui peuvent accueillir une apparition d'obstacle
-        ensembleCaseMur = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if self.grille[i][j] == -1]
+        ensembleCaseMur = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if
+                           self.grille[i][j] == -1]
         for _ in range(nombreObstacles):
             # On choisit une case aléatoire
             caseI, caseJ = random.choice(ensembleCaseMur)
             self.grille[caseI][caseJ] = config.caseObstacle
 
-    def ajouterApparitionEnnemi(self, nombreEnemi : int = 1) -> None:
+    def ajouterApparitionEnnemi(self, nombreEnemi: int = 1) -> None:
         # On récupère ensemble des case qui peuvent accueillir une apparition d'ennemi
-        ensembleCaseMur = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if self.grille[i][j] == 0]
+        ensembleCaseMur = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if
+                           self.grille[i][j] == 0]
         for _ in range(nombreEnemi):
             # On choisit une case aléatoire
             caseI, caseJ = random.choice(ensembleCaseMur)
             self.__casesApparitionEnnemi.append((caseI, caseJ))
             self.grille[caseI][caseJ] = config.caseApparitionEnnemi
 
-    def choisirCaseItems(self,nombreItems : int =1)->list[tuple[int, int]]:
-        casesLibres = [(i,j) for i in range (1, self.__tailleX-1) for j in range(1,self.__tailleY-1) if self.grille[i][j] == config.caseVide]
+    def choisirCaseItems(self, nombreItems: int = 1) -> list[tuple[int, int]]:
+        casesLibres = [(i, j) for i in range(1, self.__tailleX - 1) for j in range(1, self.__tailleY - 1) if
+                       self.grille[i][j] == config.caseVide]
         nombreItems = min(nombreItems, len(casesLibres))
         return random.sample(casesLibres, nombreItems)
-
-if __name__ == "__main__":
-    # Teste d'execution propre au fichier
-    l = Maze(21,11, fin= (19,9))
-    l.creerLabyrinthe()
-    l.remplacerMurObstacles(10)
-    l.ajouterApparitionEnnemi(5)
-    for ligne in l.grille:
-        txt = ""
-        for elt in ligne:
-            if elt == config.caseMur:
-                txt += "###"
-            elif elt == config.caseDebut:
-                txt += " D "
-            elif elt == config.caseFin:
-                txt += " F "
-            elif elt == config.caseObstacle:
-                txt += "#O#"
-            elif elt == config.caseApparitionEnnemi:
-                txt += " E "
-            else:
-                txt += "   "
-        print(txt)

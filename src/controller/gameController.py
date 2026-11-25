@@ -1,19 +1,14 @@
 import sys
-import pygame
-import math
 
-import config
-from model.Character import Character
-from model.Bullet import Bullet
-from model.EnnemiAnime import EnnemiAnime
-from model.maze import Maze
-from model.Player import Player
-from model.Collision import Collisions
-from view.menuView import MenuView
-from view.gameView import GameView
 from controller.menuController import MenuController
+from model.Bullet import Bullet
+from model.Collision import Collisions
+from model.Ennemi import *
 from model.Items import Items, TypeItem
-
+from model.Player import Player
+from model.maze import Maze
+from view.gameView import GameView
+from view.menuView import MenuView
 
 
 class GameController:
@@ -30,9 +25,9 @@ class GameController:
             if event.key == config.combinaisonToucheDebug[config.toucheValiderDebug]:
                 if config.toucheValiderDebug + 1 == len(config.combinaisonToucheDebug):
                     config.debug = not config.debug
-                else :
+                else:
                     config.toucheValiderDebug += 1
-            else :
+            else:
                 config.toucheValiderDebug = 0
         elif event.type == pygame.KEYUP:
             config.toucheValiderDebug = 0
@@ -62,8 +57,6 @@ class GameController:
         if not deplacement:
             player.arreter()
 
-
-
     @staticmethod
     def lancerJeu():
 
@@ -90,54 +83,35 @@ class GameController:
         labyrinthe.remplacerMurObstacles(config.nombreObstacle)
         labyrinthe.ajouterApparitionEnnemi(config.nombreApparitionEnemi)
 
-        #initialisation du Player
+        # initialisation du Player
         debutLabyrinthe = labyrinthe.recupDebut()
         finLabytinthe = labyrinthe.recupFin()
         # + 0.5 pour placer le personnage au centre de la case
         positionInitiale = pygame.Vector2(debutLabyrinthe) + pygame.Vector2(0.5, 0.5)
         positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
 
-        # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans collision cf Ethan
-        collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0], config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
+        # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans Collision voir avec Ethan
+        collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0],
+                                            config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
 
         player = Player(positionInitiale)
-        fin = Character("Fin", 0, 0, positionFin, config.player_bas_path, collisionRectFin, pygame.Vector2(0,1))
+        fin = Entite("Fin", positionFin, config.player_bas_path, collisionRectFin)
 
         listEnnemi: list[Ennemi] = []
-        
+
         for i, (x, y) in enumerate(labyrinthe.recupCasesApparitionEnnemi()):
-            print("TOTAL ENNEMIS :", len(listEnnemi))
             x += 0.5
             y += 0.5
-
             position = pygame.Vector2(x, y)
-
             if i % 2 == 0:
-                ennemi = EnnemiAnime(
-                    position,
-                    "Fantome",
-                    [
-                        config.fantome_img1_path,
-                        config.fantome_img2_path,
-                        config.fantome_img3_path
-                    ]
-                )
+                ennemi = Fantome(position)
             else:
-                ennemi = EnnemiAnime(
-                position,
-                "Monstre vert",
-                [   
-                    config.monstre_vert_img1_path,
-                    config.monstre_vert_img2_path,
-                    config.monstre_vert_img3_path
-                ]
-            )
+                ennemi = MonstreVert(position)
             listEnnemi.append(ennemi)
-        print("Ennemi créé :", ennemi.name if hasattr(ennemi, "name") else ennemi)
 
-
-        #Création des items
-        typesItems = ([TypeItem.BANDAGE]*config.nombreBandage +[TypeItem.PILE]*config.nombrePile + [TypeItem.MUNITION]*config.nombreMunition)
+        # Création des items
+        typesItems = ([TypeItem.BANDAGE] * config.nombreBandage + [TypeItem.PILE] * config.nombrePile + [
+            TypeItem.MUNITION] * config.nombreMunition)
 
         casesItems = labyrinthe.choisirCaseItems(len(typesItems))
 
@@ -165,10 +139,7 @@ class GameController:
         relaod_button_pressed = False
         while running:
             dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
-            if abs(reaload_input_press_time - pygame.time.get_ticks()) > temps_de_recharge and relaod_button_pressed:
-                player.recharger()
-                print(player.munition_barillet)
-                relaod_button_pressed = False
+
             # Gestion des event
             for event in pygame.event.get():
                 # Projectile
@@ -177,16 +148,14 @@ class GameController:
                     temps_de_recharge = config.temps_de_recharge
                     relaod_button_pressed = True
 
-
                 if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Tirer"]:
-                    if player.munition_barillet != 0 :
+                    if player.munition_barillet != 0:
                         player.munition_barillet -= 1
                         print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
                         print(f"nombre de munitions de stockage :{player.munition_total} ")
-                        taille_rect_bullet = pygame.rect.Rect(0, 0, config.tailleCollisionBullet[0] * config.tailleCaseRendu[0], config.tailleCollisionBullet[1] * config.tailleCaseRendu[1])
-                        bullet = Bullet(10, config.bulette_img_path, player.getPosition(), player.direction, speed=config.vitesseBullet, collisionRect=taille_rect_bullet)
+                        bullet = Bullet(player.getPosition(), player.direction)
                         bullet_list.append(bullet)
-                    else :
+                    else:
                         print("plus de munitions ! Recharger")
                 if event.type == pygame.QUIT:
                     running = False
@@ -201,19 +170,28 @@ class GameController:
                 if etat == "quitter":
                     running = False
 
+            # Gestion Update
             if etat == "jeu":
+                if abs(reaload_input_press_time - pygame.time.get_ticks()) > temps_de_recharge and relaod_button_pressed:
+                    player.recharger()
+                    print(player.munition_barillet)
+                    relaod_button_pressed = False
+
                 gameController.player_mouvement(dt, player, collision)
                 player.mettreAJourOpacite(dt)
-                if player.toucheCharacter(fin):
+
+                if player.toucheEntite(fin):
                     etat = "fin"
+
                 for ennemi in listEnnemi:
                     if ennemi.health <= 0:
                         continue
-                    if ennemi.toucheCharacter(player):
+                    if ennemi.toucheEntite(player):
                         # Attaque de l'ennemi
                         if ennemi.attaque(player):
                             gameView.dessinerDegat()
-                        gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
+                        gameView.changerLongeurRayon(player.health / player.healthMax * (
+                                    config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
                         pygame.event.post(pygame.event.Event(config.EVENT_DEGATS))
 
                     elif ennemi.voit(player, labyrinthe.grille):
@@ -229,15 +207,16 @@ class GameController:
                         if collision.touche_un_mur(ennemi.collisionRect):
                             ennemi.setPosition(anciennePosition)
                     for bullet in bullet_list[:]:
-                        if bullet.toucheEnnemi(ennemi) :
+                        if bullet.toucheEnnemi(ennemi):
                             ennemi.subirDegats(config.bullet_damage)
                             bullet_list.remove(bullet)
-                for item in listItems[:]:
-                    if item.mettreAJour(dt, item.toucheCharacter(player)):
-                        player.AppliquerItem(item)
-                        listItems.remove(item)
-                        gameView.changerLongeurRayon(player.health / player.healthMax * (config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
 
+                for item in listItems[:]:
+                    if item.mettreAJour(dt, item.toucheEntite(player)):
+                        player.appliquerItem(item)
+                        listItems.remove(item)
+                        gameView.changerLongeurRayon(player.health / player.healthMax * (
+                                    config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
 
             # Gestion affichage
             if etat == "menu":
@@ -255,7 +234,7 @@ class GameController:
                 gameView.dessiner(listCharacter, listItems, bullet_list)
                 for bullet in bullet_list[:]:
                     bullet.deplacer(dt)
-                    if collision.bullet_touche_mur(bullet.collisionRect) :
+                    if collision.bullet_touche_mur(bullet.collisionRect):
                         bullet_list.remove(bullet)
             elif etat == "fin":
                 menuView.dessinerFin()

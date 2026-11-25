@@ -1,5 +1,7 @@
 import pygame
+
 import config
+
 
 class Collisions:
     def __init__(self, murs=None):
@@ -12,13 +14,15 @@ class Collisions:
         for x in range(len(grille)):
             for y in range(len(grille[x])):
                 if grille[x][y] == config.caseMur or grille[x][y] == config.caseObstacle:
-                    self.murs.append(pygame.Rect(x * taille_case[0], y * taille_case[1], taille_case[0], taille_case[1]))
+                    self.murs.append(
+                        pygame.Rect(x * taille_case[0], y * taille_case[1], taille_case[0], taille_case[1]))
 
     def touche_un_mur(self, joueur_rect):
         for mur in self.murs:
             if joueur_rect.colliderect(mur):
                 return True
         return False
+
     def bullet_touche_mur(self, bullet_rect):
         for mur in self.murs:
             if bullet_rect.colliderect(mur):

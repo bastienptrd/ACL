@@ -1,6 +1,9 @@
-import pygame
 import math
+
+import pygame
+
 import config
+from model.Entite import Entite
 
 
 def voisin(x, sens):
@@ -9,25 +12,14 @@ def voisin(x, sens):
     return math.floor(x) + int(sens > 0)
 
 
-class Character :
-    def __init__(self, name : str, health : int , speed : float, position : pygame.Vector2, image_path :str, collisionRect : pygame.rect.Rect, direction : pygame.Vector2) :
-        self.name = name
+class Character(Entite):
+    def __init__(self, name: str, health: int, speed: float, position: pygame.Vector2, image_path: str,
+                 collisionRect: pygame.rect.Rect, direction: pygame.Vector2):
         self.health = health
         self.healthMax = health
         self.speed = speed
-        self.__position = pygame.Vector2(position)
-        self.image_path = image_path
-        self.collisionRect = collisionRect
         self.direction = pygame.Vector2(direction)
-
-
-        # Assure de placer les collionsRest aux bons endroits
-        self.setPosition(self.__position)
-
-
-    def generate_image(self) -> pygame.surface.Surface :
-        player_img = pygame.image.load(self.image_path).convert_alpha()
-        return player_img
+        super().__init__(name, position, image_path, collisionRect)
 
     def subirDegats(self, montant: int) -> None:
         self.health = max(0, self.health - montant)
@@ -38,47 +30,24 @@ class Character :
     def reinitialiserVie(self) -> None:
         self.health = self.healthMax
 
-    def soigner(self, montant: int)->None:
-        self.health = min(self.healthMax, self.health+montant)
+    def soigner(self, montant: int) -> None:
+        self.health = min(self.healthMax, self.health + montant)
 
-    def recupererImage(self):
-        #Coder les animations ici
-        return pygame.transform.scale(self.generate_image(), config.tailleCharacter)
-
-    def setPosition(self, position : pygame.Vector2) -> None:
-        """
-        Mets à jour les position de tous les éléments de charactère
-        :param position: nouvelle position
-        """
-        self.__position = pygame.Vector2(position)
-        self.collisionRect.centerx = int(self.__position.x * config.tailleCaseRendu[0])
-        self.collisionRect.centery = int(self.__position.y * config.tailleCaseRendu[1])
-
-    def getPosition(self) -> pygame.Vector2:
-        # Renvoie une copie : un Vector2 est modifiable, on évite de changer la position par erreur
-        return pygame.Vector2(self.__position)
-
-    def toucheCharacter(self, other : "Character") -> bool:
-        """
-        :param other: Deuxième character
-        :return: Bolléen relatif à la collision de leurs rectangles de collision
-        """
-        return self.collisionRect.colliderect(other.collisionRect)
-
-    def jeterRayon(self, grille : list[list[int]], direction : float | pygame.Vector2) -> tuple[float, float, float]:
+    def jeterRayon(self, grille: list[list[int]], direction: float | pygame.Vector2) -> tuple[float, float, float]:
         """
         :param grille: Grille du lancer de rayon
         :param direction: Direction en radians du rayon ou vecteur 2d du point visé
         :return: (distance rayon, coordonnées du point de contacte)
         """
-        #Départ du rayon
-        rayonX, rayonY = self.__position
+        # Départ du rayon
+        rayonX, rayonY = self.getPosition()
 
         if type(direction) == float:
             directionX = math.cos(direction)
             directionY = math.sin(direction)
         else:
-            directionX, directionY = (direction - self.__position) / math.sqrt((direction - self.__position) * (direction - self.__position))
+            directionX, directionY = (direction - self.getPosition()) / math.sqrt(
+                (direction - self.getPosition()) * (direction - self.getPosition()))
 
         deltaX = abs(1 / directionX) if directionX != 0 else float("inf")
         deltaY = abs(1 / directionY) if directionY != 0 else float("inf")
@@ -102,12 +71,14 @@ class Character :
             caseX = voisin(rayonX, pasX - int(pasX > 0))
             caseY = voisin(rayonY, pasY - int(pasY > 0))
 
-            conditions = 0 <= caseY < len(grille[0]) and 0 <= caseX < len(grille) and grille[caseX][caseY] != config.caseMur and  grille[caseX][caseY] != config.caseObstacle
+            conditions = 0 <= caseY < len(grille[0]) and 0 <= caseX < len(grille) and grille[caseX][
+                caseY] != config.caseMur and grille[caseX][caseY] != config.caseObstacle
 
-        distanceParcourue = math.sqrt((rayonX - self.__position[0]) ** 2 + (rayonY - self.__position[1]) ** 2)
+        distanceParcourue = math.sqrt((rayonX - self.getPosition()[0]) ** 2 + (rayonY - self.getPosition()[1]) ** 2)
         return distanceParcourue, rayonX, rayonY
 
-    def envoyerRayonLampe(self, grille : list[list[int]], nombreRayon : int, fov : float) -> list[tuple[float, float, float]]:
+    def envoyerRayonLampe(self, grille: list[list[int]], nombreRayon: int, fov: float) -> list[
+        tuple[float, float, float]]:
         """
         :param grille: Grille des murs
         :param nombreRayon: Nombre de rayons envoyé

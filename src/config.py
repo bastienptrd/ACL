@@ -1,32 +1,33 @@
 import math
 import os
+
 import pygame
 
 debug = False
 combinaisonToucheDebug = [pygame.K_LALT, pygame.K_d]
 toucheValiderDebug = 0
 
-#region CHEMIN
+# region CHEMIN
 assets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
 images_path = os.path.join(assets_path, "images")
 boutons_path = os.path.join(images_path, "Bouton")
 sounds_path = os.path.join(assets_path, "sounds")
-#endregion
+# endregion
 
-#region BARRE DE VIE
+# region BARRE DE VIE
 barre_vie_path = os.path.join(images_path, "Barre_de_vie")
 barre_vie_images = os.path.join(barre_vie_path, "Barre_de_vie_creuse.png")
 barreVieLargeurRel = 0.28
 barreVieMargeRel = (0.02, 0.03)
-#endregion
+# endregion
 
-#region EVENEMENTS
-EVENT_DEGATS = pygame.USEREVENT + 1   # événement personnalisé "le joueur prend des dégâts"
-toucheTestDegats = pygame.K_k         # touche de test
+# region EVENEMENTS
+EVENT_DEGATS = pygame.USEREVENT + 1  # événement personnalisé "le joueur prend des dégâts"
+toucheTestDegats = pygame.K_k  # touche de test
 degatsTest = 5
-#endregion
+# endregion
 
-#region IMAGES
+# region IMAGES
 fantome_img1_path = os.path.join(images_path, "monsters", "fantome", "monstre f 1.png")
 fantome_img2_path = os.path.join(images_path, "monsters", "fantome", "monstre f 2.png")
 fantome_img3_path = os.path.join(images_path, "monsters", "fantome", "monstre f 3.png")
@@ -37,7 +38,7 @@ monstre_vert_img3_path = os.path.join(images_path, "monsters", "monstre vert", "
 
 ennemi_img_path = os.path.join(images_path, "character", "test_img.png")
 ennemi_imgMort_path = os.path.join(images_path, "character", "test_img_mort.png")
-# Images du personnage - direction bas
+# Images du personnage — direction bas
 player_bas_path = os.path.join(images_path, "Playercharacter", "persodevant.png")
 player_bas_marche1_path = os.path.join(images_path, "Playercharacter", "persodevantavance1.png")
 player_bas_marche2_path = os.path.join(images_path, "Playercharacter", "persodevantavance2.png")
@@ -46,7 +47,7 @@ player_droite_path = os.path.join(images_path, "Playercharacter", "persodroite.p
 player_droite_marche1_path = os.path.join(images_path, "Playercharacter", "persodroiteavance1.png")
 player_droite_marche2_path = os.path.join(images_path, "Playercharacter", "persodroiteavance2.png")
 
-bulette_img_path = os.path.join(images_path, "bulette.jpg")
+bulette_img_path = os.path.join(images_path, "bulette.png")
 player_img_path = os.path.join(images_path, "character", "test_img.png")
 fond_menu_path = os.path.join(boutons_path, "foret_pixel.png")
 bouton_jouer_path = os.path.join(boutons_path, "JOUER_1.png")
@@ -55,17 +56,17 @@ bouton_parametre_path = os.path.join(boutons_path, "PARAMETRE_1.png")
 bouton_audio_path = os.path.join(boutons_path, "AUDIO_2.png")
 bouton_commande_path = os.path.join(boutons_path, "COMMANDE_2.png")
 bouton_gameplay_path = os.path.join(boutons_path, "GAMEPLAY_2.png")
-#endregion
+# endregion
 
-#region SONS
+# region SONS
 musique_foret_path = os.path.join(sounds_path, "Bruit_foret.mp3")
 son_clic_path = os.path.join(sounds_path, "clic_2.wav")
 
 volumeFond = 0.5
 volumeClic = 1
-#endregion
+# endregion
 
-#region TOUCHES
+# region TOUCHES
 touches = {
     "Haut": pygame.K_UP,
     "Bas": pygame.K_DOWN,
@@ -74,66 +75,70 @@ touches = {
     "Tirer": pygame.K_e,
     "Recharger": pygame.K_r,
 }
-#endregion
+# endregion
 
 
-#region CONSTANTE
-#region FENETRE
+# region CONSTANTE
+# region FENÊTRE
 screenSize = (1080, 720)
 imageParSeconde = 60
 
-#endregion
+# endregion
 
 
-#region PLAYER
+# region PLAYER
 vitesseJoueur = 2
 vieJoueur = 100
 tailleCollisionJoueur = (0.13, 0.15)
 tailleCollisionFin = (0.2, 0.2)
-largeurLampe = math.pi  * 3 / 4
+largeurLampe = math.pi * 3 / 4
 nombreRayon = 50
 distanceRayonMur = 0.1
-#endregion
+# endregion
 
-#region Ennemi (test)
-vitesseEnnemi = 1
-vieEnnemi = 100
-tailleCollisionEnnemi = (0.2, 0.17)
-degatEnnemi = 10
-tempsEntreDeuxAttaque = 1
-distanceVueEnnemi = 1
-#endregion
+# region Fantom
+vitesseFantome = 1
+vieFantome = 100
+tailleCollisionFantome = (0.2, 0.17)
+degatFantome = 10
+tempsEntreDeuxAttaqueFantome = 1
+distanceVueFantome = 1
+# endregion
 
-#endregion
+# region Monstre vert
+vitesseMonstreVert = 0.3
+vieMonstreVert = 200
+tailleCollisionMonstreVert = (0.2, 0.17)
+degatMonstreVert = 20
+tempsEntreDeuxAttaqueMonstreVert = 2
+distanceVueMonstreVert = 3
+# endregion
 
-#region BULLET
+# endregion
+
+# region BULLET
 vitesseBullet = 5
 barrilet_capacity = 6
 nombreMaxBalles = 18
 temps_de_recharge = 2000
 bullet_damage = 25
 tailleCollisionBullet = (0.05, 0.05)
-#endregion
+# endregion
 
 
-#region ITEMS
+# region ITEMS
 
-tempsRamassageItem = 5 #en seconde
+tempsRamassageItem = 5  # en seconde
 soinBandage = 15
 tailleCollisionItem = (0.3, 0.3)
-tailleItem = (40,40)
+tailleItem = (40, 40)
 
 nombreBandage = 3
 nombrePile = 2
 nombreMunition = 3
 
-couleurBandage = (255, 255, 255)    #Coueleurs temporaires avant ajout d'image
-couleurPile =(0, 255, 0)
-couleurMunition =(0, 0, 0)
-
-
-opaciteMax = 244                #ICI BASTIEN -> Modifie comme bon te semble
-tempsReductionOpacite = 10      #En gros : on diminue toute les 30 sec, d'un montant de 40 et on augmente de 40 si on recup une pile
+opaciteMax = 244
+tempsReductionOpacite = 10
 montantReductionOpacite = 10
 montantAugmentationOpacite = 100
 
@@ -141,12 +146,12 @@ nombreBallesAjouterItem = 6
 
 hauteurOmbreItem = 20
 
-#region RENDU
+# region RENDU
 tailleCaseRendu = (300, 300)
-tailleCharacter = (64, 50)
-tailleBullet =(100,100)
+tailleCharacter = (64, 64)
+tailleBullet = (100, 100)
 
-#region OMBRE
+# region OMBRE
 opaciteFond = 255
 rayonLumiereJoueur = 40
 opaciteCercleLumiereJoueur = 100
@@ -158,10 +163,10 @@ epaisseurLumiereMur = 40
 
 amplitudeOcsilations = 5
 vitesseOcsilation = 3
-#endregion
-#endregion
+# endregion
+# endregion
 
-#region MAZE
+# region MAZE
 nombreObstacle = 5
 nombreApparitionEnemi = 5
 
@@ -172,6 +177,6 @@ caseDebut = -2
 caseFin = -3
 caseObstacle = -4
 caseApparitionEnnemi = -5
-#endregion
+# endregion
 
-#endreion
+# endreion

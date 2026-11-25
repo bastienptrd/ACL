@@ -1,24 +1,27 @@
-import math
-
 import pygame
+
 import config
 from model.Character import Character
 from model.Items import Items, TypeItem
 
+
 class Player(Character):
-    def __init__(self, position : pygame.Vector2) -> None:
-        collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0], config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
+    def __init__(self, position: pygame.Vector2) -> None:
+
+        collisionRectJoueur = pygame.rect.Rect(0, 0, config.tailleCollisionJoueur[0] * config.tailleCaseRendu[0],
+                                               config.tailleCollisionJoueur[1] * config.tailleCaseRendu[1])
+        super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path,
+                         collisionRectJoueur, pygame.Vector2(0, 1))
+
         self.munition_total = config.nombreMaxBalles
         self.munition_barillet = config.barrilet_capacity
-        super().__init__("Player", config.vieJoueur, config.vitesseJoueur, position, config.player_img_path, collisionRectJoueur, pygame.Vector2(0,1))
 
-        self.healthMax = self.health
         self.__direction = "down"
         self.__enMouvement = False
         self.__debutAnimation = pygame.time.get_ticks()
+
         self.opacite = config.opaciteMax
         self.__tempsDepuisReductionOpacite = 0.0
-
 
         def charger_image(chemin):
             image = pygame.image.load(chemin).convert_alpha()
@@ -41,23 +44,20 @@ class Player(Character):
             charger_image(config.player_droite_marche2_path)
         ]
 
-
         gauche = [
             pygame.transform.flip(image, True, False)
             for image in droite
         ]
 
-
         self.__animations = {
             "down": bas,
             "right": droite,
             "left": gauche,
-            "up": bas  }
+            "up": bas}
 
-    def move(self, direction_input : str, dt : float) -> None:
+    def move(self, direction_input: str, dt: float) -> None:
         if direction_input not in self.__animations:
             return
-
 
         if not self.__enMouvement or direction_input != self.__direction:
             self.__debutAnimation = pygame.time.get_ticks()
@@ -89,7 +89,7 @@ class Player(Character):
     def arreter(self):
         self.__enMouvement = False
 
-    def mettreAJourOpacite(self, dt : float) -> None:
+    def mettreAJourOpacite(self, dt: float) -> None:
         self.__tempsDepuisReductionOpacite += dt
         if self.__tempsDepuisReductionOpacite >= config.tempsReductionOpacite:
             self.opacite = max(0, self.opacite - config.montantReductionOpacite)
@@ -99,13 +99,12 @@ class Player(Character):
         self.opacite = min(config.opaciteMax, self.opacite + config.montantAugmentationOpacite)
         self.__tempsDepuisReductionOpacite = 0.0
 
-
-    def AppliquerItem(self, item :Items)->None:
+    def appliquerItem(self, item: Items) -> None:
         if item.typeItem == TypeItem.BANDAGE:
             self.soigner(config.soinBandage)
-        elif item.typeItem ==TypeItem.PILE:
+        elif item.typeItem == TypeItem.PILE:
             self.augmenterOpacite()
-        elif item.typeItem == TypeItem.MUNITION :
+        elif item.typeItem == TypeItem.MUNITION:
             self.munition_total = min(self.munition_total + config.nombreBallesAjouterItem, config.nombreMaxBalles)
 
     def recupererImage(self):
@@ -118,12 +117,11 @@ class Player(Character):
 
         return images[int(numeroImage)]
 
-
-    def recharger(self) :
+    def recharger(self):
         besoin = config.barrilet_capacity - self.munition_barillet
-        if self.munition_total >= besoin :
+        if self.munition_total >= besoin:
             self.munition_total -= config.barrilet_capacity - self.munition_barillet
             self.munition_barillet = config.barrilet_capacity
-        else :
+        else:
             self.munition_barillet += self.munition_total
             self.munition_total = 0

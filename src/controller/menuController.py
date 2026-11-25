@@ -1,4 +1,5 @@
 import pygame
+
 import config
 
 
@@ -21,7 +22,7 @@ class MenuController:
     def getActionEnAttente(self):
         return self.__actionEnAttente
 
-    def gererEvenement(self, event, etat):  # Renvoie dans quel etat on se retrouve
+    def gererEvenement(self, event, etat):  # Renvoie dans quel état on se retrouve
 
         if etat == "menu":
             if self.__vue.getBoutonJouer().gererEvenement(event):
@@ -38,7 +39,7 @@ class MenuController:
                 return "audio"
             if self.__vue.getBoutonCommande().gererEvenement(event):
                 return "commande"
-            # Pour l'instant ces boutons ne menent a rien
+            # Pour l'instant ces boutons ne mènent à rien
             if self.__vue.getBoutonGameplay().gererEvenement(event):
                 pass
 
@@ -63,7 +64,7 @@ class MenuController:
                 self.__sonClic.set_volume(config.volumeClic)
 
         elif etat == "commande":
-            if self.__actionEnAttente != None:
+            if self.__actionEnAttente is not None:
                 if event.type == pygame.KEYDOWN:
                     if event.key != pygame.K_ESCAPE:
                         config.touches[self.__actionEnAttente] = event.key
