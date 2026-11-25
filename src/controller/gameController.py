@@ -1,6 +1,3 @@
-import sys
-
-from controller.menuController import MenuController
 from model.Bullet import Bullet
 from model.Collision import Collisions
 from model.Ennemi import *
@@ -8,20 +5,116 @@ from model.Items import Items, TypeItem
 from model.Player import Player
 from model.maze import Maze
 from view.gameView import GameView
-from view.menuView import MenuView
 
 
 class GameController:
-    def __init__(self, vue):
+    def __init__(self, vue : GameView):
         self.__vue = vue
+        self.__labyrinthe = None
+        self.__collision = None
 
-    @staticmethod
-    def gererEvenement(event, etat, player):
+        self.__player = None
+        self.__fin = None
+
+        self.__listEnnemi = []
+        self.__listItems = []
+
+        self.__bulletList = []
+        self.__reaload_input_press_time = 0
+        self.__temps_de_recharge = 0
+        self.__relaod_button_pressed = False
+
+    def initialiserVariable(self, difficulte : int = 0) -> None:
+        """
+        :param difficulte: Entier représentant la difficulté
+        """
+        # initialisation du Labyrinthe
+        self.__labyrinthe = Maze()
+        self.__labyrinthe.creerLabyrinthe()
+        self.__labyrinthe.remplacerMurObstacles(config.nombreObstacle)
+        self.__labyrinthe.ajouterApparitionEnnemi(config.nombreApparitionEnemi)
+
+        # initialisation du Player
+        debutLabyrinthe = self.__labyrinthe.recupDebut()
+        finLabytinthe = self.__labyrinthe.recupFin()
+        # + 0.5 pour placer le personnage au centre de la case
+        positionInitiale = pygame.Vector2(debutLabyrinthe) + pygame.Vector2(0.5, 0.5)
+        positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
+
+        # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans Collision voir avec Ethan
+        collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0],
+                                            config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
+
+        self.__player = Player(positionInitiale)
+        self.__fin = Entite("Fin", positionFin, config.player_bas_path, collisionRectFin)
+
+        self.__listEnnemi: list[Ennemi] = []
+
+        for i, (x, y) in enumerate(self.__labyrinthe.recupCasesApparitionEnnemi()):
+            x += 0.5
+            y += 0.5
+            position = pygame.Vector2(x, y)
+            if i % 2 == 0:
+                ennemi = Fantome(position)
+            else:
+                ennemi = MonstreVert(position)
+            self.__listEnnemi.append(ennemi)
+
+        # Création des items
+        typesItems = ([TypeItem.BANDAGE] * config.nombreBandage + [TypeItem.PILE] * config.nombrePile + [
+            TypeItem.MUNITION] * config.nombreMunition)
+
+        casesItems = self.__labyrinthe.choisirCaseItems(len(typesItems))
+
+        self.__listItems = []
+        for typeItem, (x, y) in zip(typesItems, casesItems):
+            self.__listItems.append(Items(typeItem, pygame.Vector2(x + 0.5, y + 0.5)))
+
+        self.__collision = Collisions()
+        self.__collision.murs_depuis_grille(self.__labyrinthe.grille, config.tailleCaseRendu)
+        self.__bulletList = []
+
+        self.__vue.changeGrille(self.__labyrinthe.grille)
+
+    def __player_mouvement(self, dt):
+        deplacement = False
+        mouvements = [("Haut", "up"), ("Bas", "down"), ("Gauche", "left"), ("Droite", "right")]
+        for action, direction in mouvements:
+            key = config.touches[action]
+            anciennePosition = self.__player.getPosition()
+
+            if pygame.key.get_pressed()[key]:
+                deplacement = True
+
+                self.__player.move(direction, dt)
+                if self.__collision.touche_un_mur(self.__player.collisionRect):
+                    self.__player.setPosition(anciennePosition)
+                    self.__player.arreter()
+
+        # Si aucune touche n'est pressée, le personnage s'arrête
+        if not deplacement:
+            self.__player.arreter()
+
+    def gererEvenement(self, event):
+        # Projectile
         if event.type == pygame.KEYDOWN:
+            if event.key == config.touches["Recharger"]:
+                self.__reaload_input_press_time = pygame.time.get_ticks()
+                self.__temps_de_recharge = config.temps_de_recharge
+                self.__relaod_button_pressed = True
+
+            if event.key == config.touches["Tirer"]:
+                if self.__player.munition_barillet != 0:
+                    self.__player.munition_barillet -= 1
+                    print(f"nombre de munitions dans le barrilet :{self.__player.munition_barillet} ")
+                    print(f"nombre de munitions de stockage :{self.__player.munition_total} ")
+                    bullet = Bullet(self.__player.getPosition(), self.__player.direction)
+                    self.__bulletList.append(bullet)
+                else:
+                    print("plus de munitions ! Recharger")
+
             if event.key == pygame.K_ESCAPE:
                 return "menu"
-            if event.key == config.toucheTestDegats:
-                pygame.event.post(pygame.event.Event(config.EVENT_DEGATS, montant=config.degatsTest))
             if event.key == config.combinaisonToucheDebug[config.toucheValiderDebug]:
                 if config.toucheValiderDebug + 1 == len(config.combinaisonToucheDebug):
                     config.debug = not config.debug
@@ -32,214 +125,68 @@ class GameController:
         elif event.type == pygame.KEYUP:
             config.toucheValiderDebug = 0
 
+        elif event.type == pygame.VIDEORESIZE:
+            self.__vue.updateTailleFenetre()
+
         elif event.type == config.EVENT_DEGATS:
-            if player.estMort():
+            if self.__player.estMort():
                 return "fin"
-        return etat
 
-    @staticmethod
-    def player_mouvement(dt, player, collision):
-        deplacement = False
-        mouvements = [("Haut", "up"), ("Bas", "down"), ("Gauche", "left"), ("Droite", "right")]
-        for action, direction in mouvements:
-            key = config.touches[action]
-            anciennePosition = player.getPosition()
+        if self.__player.toucheEntite(self.__fin):
+            return "fin"
 
-            if pygame.key.get_pressed()[key]:
-                deplacement = True
+        return "jeu"
 
-                player.move(direction, dt)
-                if collision.touche_un_mur(player.collisionRect):
-                    player.setPosition(anciennePosition)
-                    player.arreter()
+    def updateJeu(self, dt):
+        if abs(self.__reaload_input_press_time - pygame.time.get_ticks()) > self.__temps_de_recharge and self.__relaod_button_pressed:
+            self.__player.recharger()
+            print(self.__player.munition_barillet)
+            self.__relaod_button_pressed = False
 
-        # Si aucune touche n'est pressée, le personnage s'arrête
-        if not deplacement:
-            player.arreter()
+        self.__player_mouvement(dt)
+        self.__player.mettreAJourOpacite(dt)
 
-    @staticmethod
-    def lancerJeu():
+        for ennemi in self.__listEnnemi:
+            if ennemi.health <= 0:
+                continue
+            if ennemi.toucheEntite(self.__player):
+                # Attaque de l'ennemi
+                if ennemi.attaque(self.__player):
+                    pygame.event.post(pygame.event.Event(config.EVENT_DEGATS))
+                    self.__vue.dessinerDegat()
+                    self.__vue.changerLongueurRayonViePlayer(self.__player)
 
-        pygame.init()
+            elif ennemi.voit(self.__player, self.__labyrinthe.grille):
+                # Déplacement de l'ennemi
+                anciennePosition = ennemi.getPosition()
+                direction = self.__player.getPosition() - ennemi.getPosition()
+                direction = direction / math.sqrt(direction * direction)
 
-        # Initialisation de la musique et des sons
-        pygame.mixer.init()
+                ennemi.move(pygame.Vector2(direction[0], 0), dt)
+                if self.__collision.touche_un_mur(ennemi.collisionRect):
+                    ennemi.setPosition(anciennePosition)
+                ennemi.move(pygame.Vector2(0, direction[1]), dt)
+                if self.__collision.touche_un_mur(ennemi.collisionRect):
+                    ennemi.setPosition(anciennePosition)
 
-        pygame.mixer.music.load(config.musique_foret_path)
-        pygame.mixer.music.set_volume(config.volumeFond)
-        pygame.mixer.music.play(-1)
+            for bullet in self.__bulletList[:]:
+                if bullet.toucheEnnemi(ennemi):
+                    ennemi.subirDegats(config.bullet_damage)
+                    self.__bulletList.remove(bullet)
 
-        sonClic = pygame.mixer.Sound(config.son_clic_path)
-        sonClic.set_volume(config.volumeClic)
+        for item in self.__listItems[:]:
+            if item.mettreAJour(dt, item.toucheEntite(self.__player)):
+                self.__player.appliquerItem(item)
+                self.__listItems.remove(item)
+                self.__vue.changerLongueurRayonViePlayer(self.__player)
 
-        # Initialisation de la fenêtre
-        screen = pygame.display.set_mode(config.screenSize, pygame.RESIZABLE)
-        pygame.display.set_caption("Interface Provisoire")
-        clock = pygame.time.Clock()
+        for bullet in self.__bulletList[:]:
+            bullet.deplacer(dt)
+            if self.__collision.bullet_touche_mur(bullet.collisionRect):
+                self.__bulletList.remove(bullet)
 
-        # initialisation du Labyrinthe
-        labyrinthe = Maze()
-        labyrinthe.creerLabyrinthe()
-        labyrinthe.remplacerMurObstacles(config.nombreObstacle)
-        labyrinthe.ajouterApparitionEnnemi(config.nombreApparitionEnemi)
-
-        # initialisation du Player
-        debutLabyrinthe = labyrinthe.recupDebut()
-        finLabytinthe = labyrinthe.recupFin()
-        # + 0.5 pour placer le personnage au centre de la case
-        positionInitiale = pygame.Vector2(debutLabyrinthe) + pygame.Vector2(0.5, 0.5)
-        positionFin = pygame.Vector2(finLabytinthe) + pygame.Vector2(0.5, 0.5)
-
-        # Attention les rectangle doivent être de la taille de rendu pour fonctionner dans Collision voir avec Ethan
-        collisionRectFin = pygame.rect.Rect(0, 0, config.tailleCollisionFin[0] * config.tailleCaseRendu[0],
-                                            config.tailleCollisionFin[1] * config.tailleCaseRendu[1])
-
-        player = Player(positionInitiale)
-        fin = Entite("Fin", positionFin, config.player_bas_path, collisionRectFin)
-
-        listEnnemi: list[Ennemi] = []
-
-        for i, (x, y) in enumerate(labyrinthe.recupCasesApparitionEnnemi()):
-            x += 0.5
-            y += 0.5
-            position = pygame.Vector2(x, y)
-            if i % 2 == 0:
-                ennemi = Fantome(position)
-            else:
-                ennemi = MonstreVert(position)
-            listEnnemi.append(ennemi)
-
-        # Création des items
-        typesItems = ([TypeItem.BANDAGE] * config.nombreBandage + [TypeItem.PILE] * config.nombrePile + [
-            TypeItem.MUNITION] * config.nombreMunition)
-
-        casesItems = labyrinthe.choisirCaseItems(len(typesItems))
-
-        listItems = []
-        for typeItem, (x, y) in zip(typesItems, casesItems):
-            listItems.append(Items(typeItem, pygame.Vector2(x + 0.5, y + 0.5)))
-
-        listCharacter = [player, fin] + listEnnemi
-
-        collision = Collisions()
-        collision.murs_depuis_grille(labyrinthe.grille, config.tailleCaseRendu)
-
-        # Appels des classes dans les autres fichiers
-        menuView = MenuView(screen, sonClic)
-        gameView = GameView(screen, labyrinthe.grille, tailleRenduCase=config.tailleCaseRendu)
-        menuController = MenuController(menuView, sonClic)
-        gameController = GameController(gameView)
-
-        # Boucle principale
-        etat = "menu"
-        running = True
-        bullet_list = []
-        reaload_input_press_time = 0
-        temps_de_recharge = 0
-        relaod_button_pressed = False
-        while running:
-            dt = clock.tick(config.imageParSeconde) / 1000.0  # Temps écoulé depuis la dernière frame en secondes
-
-            # Gestion des event
-            for event in pygame.event.get():
-                # Projectile
-                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Recharger"]:
-                    reaload_input_press_time = pygame.time.get_ticks()
-                    temps_de_recharge = config.temps_de_recharge
-                    relaod_button_pressed = True
-
-                if etat == "jeu" and event.type == pygame.KEYDOWN and event.key == config.touches["Tirer"]:
-                    if player.munition_barillet != 0:
-                        player.munition_barillet -= 1
-                        print(f"nombre de munitions dans le barrilet :{player.munition_barillet} ")
-                        print(f"nombre de munitions de stockage :{player.munition_total} ")
-                        bullet = Bullet(player.getPosition(), player.direction)
-                        bullet_list.append(bullet)
-                    else:
-                        print("plus de munitions ! Recharger")
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.VIDEORESIZE:
-                    menuView.redimensionner(event.w, event.h)
-                    gameView.updateTailleFenetre()
-
-                if etat in ("menu", "parametre", "audio", "commande", "fin"):
-                    etat = menuController.gererEvenement(event, etat)
-                elif etat == "jeu":
-                    etat = gameController.gererEvenement(event, etat, player)
-                if etat == "quitter":
-                    running = False
-
-            # Gestion Update
-            if etat == "jeu":
-                if abs(reaload_input_press_time - pygame.time.get_ticks()) > temps_de_recharge and relaod_button_pressed:
-                    player.recharger()
-                    print(player.munition_barillet)
-                    relaod_button_pressed = False
-
-                gameController.player_mouvement(dt, player, collision)
-                player.mettreAJourOpacite(dt)
-
-                if player.toucheEntite(fin):
-                    etat = "fin"
-
-                for ennemi in listEnnemi:
-                    if ennemi.health <= 0:
-                        continue
-                    if ennemi.toucheEntite(player):
-                        # Attaque de l'ennemi
-                        if ennemi.attaque(player):
-                            gameView.dessinerDegat()
-                        gameView.changerLongeurRayon(player.health / player.healthMax * (
-                                    config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
-                        pygame.event.post(pygame.event.Event(config.EVENT_DEGATS))
-
-                    elif ennemi.voit(player, labyrinthe.grille):
-                        # Déplacement de l'ennemi
-                        anciennePosition = ennemi.getPosition()
-                        direction = player.getPosition() - ennemi.getPosition()
-                        direction = direction / math.sqrt(direction * direction)
-
-                        ennemi.move(pygame.Vector2(direction[0], 0), dt)
-                        if collision.touche_un_mur(ennemi.collisionRect):
-                            ennemi.setPosition(anciennePosition)
-                        ennemi.move(pygame.Vector2(0, direction[1]), dt)
-                        if collision.touche_un_mur(ennemi.collisionRect):
-                            ennemi.setPosition(anciennePosition)
-                    for bullet in bullet_list[:]:
-                        if bullet.toucheEnnemi(ennemi):
-                            ennemi.subirDegats(config.bullet_damage)
-                            bullet_list.remove(bullet)
-
-                for item in listItems[:]:
-                    if item.mettreAJour(dt, item.toucheEntite(player)):
-                        player.appliquerItem(item)
-                        listItems.remove(item)
-                        gameView.changerLongeurRayon(player.health / player.healthMax * (
-                                    config.longueurMaxRayon - config.longueurMinRayon) + config.longueurMinRayon)
-
-            # Gestion affichage
-            if etat == "menu":
-                menuView.dessinerMenu()
-            elif etat == "parametre":
-                menuView.dessinerParametres()
-            elif etat == "audio":
-                menuView.dessinerAudio()
-            elif etat == "commande":
-                menuView.dessinerCommande(menuController.getActionEnAttente())
-            elif etat == "jeu":
-                # Place la caméra sur le joueur
-                gameView.changePosition(player.getPosition())
-                # Dessine le plateau de jeu avec les character
-                gameView.dessiner(listCharacter, listItems, bullet_list)
-                for bullet in bullet_list[:]:
-                    bullet.deplacer(dt)
-                    if collision.bullet_touche_mur(bullet.collisionRect):
-                        bullet_list.remove(bullet)
-            elif etat == "fin":
-                menuView.dessinerFin()
-
-            pygame.display.flip()
-
-        pygame.quit()
-        sys.exit()
+    def dessiner(self) -> None:
+        # Place la caméra sur le joueur
+        self.__vue.changePosition(self.__player.getPosition())
+        # Dessine le plateau de jeu avec les character
+        self.__vue.dessiner([self.__player, self.__fin] + self.__listItems + self.__bulletList + self.__listEnnemi)

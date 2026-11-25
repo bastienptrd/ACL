@@ -1,6 +1,7 @@
 import pygame
 
 import config
+from view.menuView import MenuView
 
 
 def changerVolume(volume, pas):
@@ -14,7 +15,7 @@ def changerVolume(volume, pas):
 
 
 class MenuController:
-    def __init__(self, vue, sonClic):
+    def __init__(self, vue : MenuView, sonClic):
         self.__vue = vue
         self.__sonClic = sonClic
         self.__actionEnAttente = None
@@ -83,3 +84,16 @@ class MenuController:
                 return "menu"
 
         return etat
+
+    def dessiner(self, etat):
+        # Gestion affichage
+        if etat == "menu":
+            self.__vue.dessinerMenu()
+        elif etat == "parametre":
+            self.__vue.dessinerParametres()
+        elif etat == "audio":
+            self.__vue.dessinerAudio()
+        elif etat == "commande":
+            self.__vue.dessinerCommande(self.getActionEnAttente())
+        elif etat == "fin":
+            self.__vue.dessinerFin()
