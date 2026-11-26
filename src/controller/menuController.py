@@ -33,6 +33,11 @@ class MenuController:
                 return "quitter"
             if self.__vue.getBoutonParametre().gererEvenement(event):
                 return "parametre"
+            if self.__vue.getBoutonPlus().gererEvenement(event):
+                self.__difficulteChoisit=min(2,1+self.__difficulteChoisit)
+            if self.__vue.getBoutonMoins().gererEvenement(event):
+                self.__difficulteChoisit=max(0,self.__difficulteChoisit-1)
+
 
         elif etat == "parametre":
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -41,7 +46,7 @@ class MenuController:
                 return "audio"
             if self.__vue.getBoutonCommande().gererEvenement(event):
                 return "commande"
-            # Pour l'instant ces boutons ne mènent à rien
+            # Pour l'instant ce boutons ne mènent à rien
             if self.__vue.getBoutonGameplay().gererEvenement(event):
                 pass
 
@@ -81,15 +86,16 @@ class MenuController:
                     self.__actionEnAttente = action
 
         elif etat == "fin":
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            if self.__vue.getBoutonMenu().gererEvenement(event):
                 return "menu"
-
+            if self.__vue.getBoutonRejouer().gererEvenement(event):
+                return "jeu"
         return etat
 
     def dessiner(self, etat):
         # Gestion affichage
         if etat == "menu":
-            self.__vue.dessinerMenu()
+            self.__vue.dessinerMenu(self.__difficulteChoisit)
         elif etat == "parametre":
             self.__vue.dessinerParametres()
         elif etat == "audio":

@@ -56,6 +56,10 @@ bouton_parametre_path = os.path.join(boutons_path, "PARAMETRE_1.png")
 bouton_audio_path = os.path.join(boutons_path, "AUDIO_2.png")
 bouton_commande_path = os.path.join(boutons_path, "COMMANDE_2.png")
 bouton_gameplay_path = os.path.join(boutons_path, "GAMEPLAY_2.png")
+bouton_rejouer_path = os.path.join(boutons_path, "REJOUER.png")
+bouton_menu_path = os.path.join(boutons_path, "MENU.png")
+bouton_plus_path = os.path.join(boutons_path, "PLUS_petit.png")
+bouton_moins_path = os.path.join(boutons_path, "MOINS_petit.png")
 # endregion
 
 # region SONS

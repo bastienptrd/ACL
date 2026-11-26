@@ -76,7 +76,6 @@ class Bouton:
 class MenuView:
     def __init__(self, screen, sonClic):
         self.__screen = screen
-
         self.__fondOriginal = pygame.image.load(config.fond_menu_path).convert()
         self.__fond = pygame.transform.scale(self.__fondOriginal, screen.get_size())
 
@@ -97,6 +96,22 @@ class MenuView:
         self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (260, 70), 48,
                                        config.bouton_gameplay_path, sonClic)
 
+        #Boutons pour le menu de fin
+
+        self.__boutonRejouer = Bouton("Menu", (0.5, 0.5), (260, 70), 48,
+                                    config.bouton_rejouer_path, sonClic)
+
+        self.__boutonMenu = Bouton("Rejouer", (0.5, 0.65), (260, 70), 48,
+                                    config.bouton_menu_path, sonClic)
+
+        #Boutons pour la difficulté
+
+        self.__boutonPlus = Bouton("Plus", (0.8, 0.5), (50, 50), 48,
+                                    config.bouton_plus_path, sonClic)
+
+        self.__boutonMoins = Bouton("Moins", (0.7, 0.5), (50, 50), 48,
+                                    config.bouton_moins_path, sonClic)
+
         # Boutons de l'écran Audio (un "-" et un "+" pour chaque volume)
         self.__boutonMusiqueMoins = Bouton("-", (0.3, 0.5), (70, 70), 60, None, sonClic)
         self.__boutonMusiquePlus = Bouton("+", (0.7, 0.5), (70, 70), 60, None, sonClic)
@@ -112,6 +127,8 @@ class MenuView:
         self.__tousLesBoutons = [
             self.__boutonJouer, self.__boutonQuitter, self.__boutonParametre,
             self.__boutonAudio, self.__boutonCommande, self.__boutonGameplay,
+            self.__boutonMenu, self.__boutonRejouer,
+            self.__boutonPlus,self.__boutonMoins,
             self.__boutonMusiqueMoins, self.__boutonMusiquePlus,
             self.__boutonSonsMoins, self.__boutonSonsPlus,
         ]
@@ -136,6 +153,18 @@ class MenuView:
 
     def getBoutonGameplay(self):
         return self.__boutonGameplay
+
+    def getBoutonMenu(self):
+        return self.__boutonMenu
+
+    def getBoutonRejouer(self):
+        return self.__boutonRejouer
+
+    def getBoutonPlus(self):
+        return self.__boutonPlus
+
+    def getBoutonMoins(self):
+        return self.__boutonMoins
 
     def getBoutonMusiqueMoins(self):
         return self.__boutonMusiqueMoins
@@ -173,13 +202,17 @@ class MenuView:
         titre = self.__titreFont.render(texte, True, couleurTexte)
         self.__screen.blit(titre, titre.get_rect(center=(largeur // 2, int(hauteur * 0.25))))
 
-    def dessinerMenu(self):
+    def dessinerMenu(self,difficulte):
         self.__placerBoutons()
         self.__screen.blit(self.__fond, (0, 0))
         self.__dessinerTitre("JEU PROJET ACL")
         self.__boutonJouer.dessiner(self.__screen)
         self.__boutonQuitter.dessiner(self.__screen)
         self.__boutonParametre.dessiner(self.__screen)
+        self.__boutonPlus.dessiner(self.__screen)
+        self.__boutonMoins.dessiner(self.__screen)
+        print("test"+ str(difficulte))
+        self.__dessinerTexte("Difficulté : " + str(difficulte), 0.75, 0.40)
 
     def dessinerParametres(self):
         self.__placerBoutons()
@@ -188,6 +221,13 @@ class MenuView:
         self.__boutonAudio.dessiner(self.__screen)
         self.__boutonCommande.dessiner(self.__screen)
         self.__boutonGameplay.dessiner(self.__screen)
+
+    def dessinerFin(self):
+        self.__placerBoutons()
+        self.__screen.blit(self.__fond, (0, 0))
+        self.__dessinerTitre("Fin de la partie")
+        self.__boutonMenu.dessiner(self.__screen)
+        self.__boutonRejouer.dessiner(self.__screen)
 
     def dessinerAudio(self):
         self.__placerBoutons()
@@ -220,6 +260,7 @@ class MenuView:
                 bouton.changerTexte(action + " : " + nomTouche)
             bouton.dessiner(self.__screen)
 
-    def dessinerFin(self):
+    '''def dessinerFin(self):
         self.__screen.fill((255, 0, 0))
         self.__dessinerTitre("FIN")
+'''
