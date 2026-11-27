@@ -10,6 +10,21 @@ toucheValiderDebug = 0
 # region CHEMIN
 assets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
 images_path = os.path.join(assets_path, "images")
+maze_path = os.path.join(images_path, "maze")
+
+# Textures du labyrinthe
+floor_path = os.path.join(maze_path, "floor.png")
+brown_wall_path = os.path.join(maze_path, "brown-wall.png")
+grey_wall_path = os.path.join(maze_path, "grey-wall.png")
+grass_grey_block_path = os.path.join(maze_path, "grass-grey-block.png")
+glass_block_path = os.path.join(maze_path, "glass-block.png")
+#images des Items
+items_path = os.path.join(images_path, "items")
+bandage_img_path = os.path.join(items_path, "bandage_game_sprite.png")
+torche_img_path = os.path.join(items_path, "torche_game_sprite.png")
+munition_img_path = os.path.join(items_path, "munition_game_sprite.png")
+
+
 boutons_path = os.path.join(images_path, "Bouton")
 sounds_path = os.path.join(assets_path, "sounds")
 # endregion
