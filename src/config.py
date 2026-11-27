@@ -60,6 +60,8 @@ bouton_rejouer_path = os.path.join(boutons_path, "REJOUER.png")
 bouton_menu_path = os.path.join(boutons_path, "MENU.png")
 bouton_plus_path = os.path.join(boutons_path, "PLUS_petit.png")
 bouton_moins_path = os.path.join(boutons_path, "MOINS_petit.png")
+bouton_defaite_path = os.path.join(boutons_path, "DEFAITE.png")
+bouton_victoire_path = os.path.join(boutons_path, "VICTOIRE.png")
 # endregion
 
 # region SONS

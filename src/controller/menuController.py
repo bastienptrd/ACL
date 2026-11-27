@@ -85,7 +85,13 @@ class MenuController:
                 if boutons[action].gererEvenement(event):
                     self.__actionEnAttente = action
 
-        elif etat == "fin":
+        elif etat == "finVictoire":
+            if self.__vue.getBoutonMenu().gererEvenement(event):
+                return "menu"
+            if self.__vue.getBoutonRejouer().gererEvenement(event):
+                return "jeu"
+
+        elif etat == "finDefaite":
             if self.__vue.getBoutonMenu().gererEvenement(event):
                 return "menu"
             if self.__vue.getBoutonRejouer().gererEvenement(event):
@@ -102,8 +108,10 @@ class MenuController:
             self.__vue.dessinerAudio()
         elif etat == "commande":
             self.__vue.dessinerCommande(self.getActionEnAttente())
-        elif etat == "fin":
-            self.__vue.dessinerFin()
+        elif etat == "finVictoire":
+            self.__vue.dessinerFinVictoire()
+        elif etat == "finDefaite":
+            self.__vue.dessinerFinDefaite()
 
     def recupererDifficulte(self) -> int:
         return self.__difficulteChoisit

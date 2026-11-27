@@ -3,8 +3,8 @@ import pygame
 import config
 
 couleurTexte = (240, 240, 240)
-couleurBouton = (94, 38, 38)
-couleurBoutonSurvol = (130, 52, 52)
+couleurBouton = (240,180,125)
+couleurBoutonSurvol = (60, 36, 20)
 couleurBoutonClic = (130, 52, 52)
 
 
@@ -111,12 +111,20 @@ class MenuView:
 
         self.__boutonMoins = Bouton("Moins", (0.7, 0.5), (50, 50), 48,
                                     config.bouton_moins_path, sonClic)
+        #Boutons de victoire et de defaite
+
+
+        self.__boutonVictoire = Bouton("Victoire", (0.5, 0.2), (600, 250), 48,
+                                    config.bouton_victoire_path, sonClic)
+
+        self.__boutonDefaite = Bouton("Defaite", (0.3, 0.5), (1000, 500), 48,
+                                    config.bouton_defaite_path, sonClic)
 
         # Boutons de l'écran Audio (un "-" et un "+" pour chaque volume)
-        self.__boutonMusiqueMoins = Bouton("-", (0.3, 0.5), (70, 70), 60, None, sonClic)
-        self.__boutonMusiquePlus = Bouton("+", (0.7, 0.5), (70, 70), 60, None, sonClic)
-        self.__boutonSonsMoins = Bouton("-", (0.3, 0.7), (70, 70), 60, None, sonClic)
-        self.__boutonSonsPlus = Bouton("+", (0.7, 0.7), (70, 70), 60, None, sonClic)
+        self.__boutonMusiqueMoins = Bouton("-", (0.3, 0.5), (70, 70), 60, config.bouton_moins_path, sonClic)
+        self.__boutonMusiquePlus = Bouton("+", (0.7, 0.5), (70, 70), 60, config.bouton_plus_path, sonClic)
+        self.__boutonSonsMoins = Bouton("-", (0.3, 0.7), (70, 70), 60, config.bouton_moins_path, sonClic)
+        self.__boutonSonsPlus = Bouton("+", (0.7, 0.7), (70, 70), 60, config.bouton_plus_path, sonClic)
 
         self.__boutonsCommande = {}
         y = 0.38
@@ -130,6 +138,7 @@ class MenuView:
             self.__boutonMenu, self.__boutonRejouer,
             self.__boutonPlus,self.__boutonMoins,
             self.__boutonMusiqueMoins, self.__boutonMusiquePlus,
+            self.__boutonVictoire, self.__boutonDefaite,
             self.__boutonSonsMoins, self.__boutonSonsPlus,
         ]
         for action in self.__boutonsCommande:
@@ -175,8 +184,10 @@ class MenuView:
     def getBoutonSonsMoins(self):
         return self.__boutonSonsMoins
 
+
     def getBoutonSonsPlus(self):
         return self.__boutonSonsPlus
+
 
     def getBoutonsCommande(self):
         return self.__boutonsCommande
@@ -211,7 +222,6 @@ class MenuView:
         self.__boutonParametre.dessiner(self.__screen)
         self.__boutonPlus.dessiner(self.__screen)
         self.__boutonMoins.dessiner(self.__screen)
-        print("test"+ str(difficulte))
         self.__dessinerTexte("Difficulté : " + str(difficulte), 0.75, 0.40)
 
     def dessinerParametres(self):
@@ -220,14 +230,26 @@ class MenuView:
         self.__dessinerTitre("Paramètres du Jeu")
         self.__boutonAudio.dessiner(self.__screen)
         self.__boutonCommande.dessiner(self.__screen)
-        self.__boutonGameplay.dessiner(self.__screen)
+        #self.__boutonGameplay.dessiner(self.__screen)
 
-    def dessinerFin(self):
+    def dessinerFinVictoire(self):
         self.__placerBoutons()
         self.__screen.blit(self.__fond, (0, 0))
-        self.__dessinerTitre("Fin de la partie")
+        self.__dessinerTitre("Bravo, vous avez gagné")
         self.__boutonMenu.dessiner(self.__screen)
         self.__boutonRejouer.dessiner(self.__screen)
+        #self.__boutonVictoire.dessiner(self.__screen)
+
+
+    def dessinerFinDefaite(self):
+        self.__placerBoutons()
+        self.__screen.blit(self.__fond, (0, 0))
+        self.__dessinerTitre("Vous avez perdu")
+        self.__boutonMenu.dessiner(self.__screen)
+        self.__boutonRejouer.dessiner(self.__screen)
+        #self.__boutonDefaite.dessiner(self.__screen)
+
+
 
     def dessinerAudio(self):
         self.__placerBoutons()

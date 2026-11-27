@@ -45,7 +45,6 @@ while running:
             etat = gameController.gererEvenement(event)
         else:
             etat = menuController.gererEvenement(event, etat)
-            print(menuController.recupererDifficulte())
 
     if ancienneFenetre != etat and etat == "jeu":
         gameController.initialiserVariable(menuController.recupererDifficulte())

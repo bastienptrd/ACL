@@ -130,10 +130,10 @@ class GameController:
 
         elif event.type == config.EVENT_DEGATS:
             if self.__player.estMort():
-                return "fin"
+                return "finDefaite"
 
         if self.__player.toucheEntite(self.__fin):
-            return "fin"
+            return "finVictoire"
 
         return "jeu"
 
