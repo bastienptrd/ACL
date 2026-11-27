@@ -63,8 +63,9 @@ class Bouton:
 
         rayon = 16
 
-        pygame.draw.rect(surface, couleur, rectAff, border_radius=rayon)
-        pygame.draw.rect(surface, couleurTexte, rectAff, width=3, border_radius=rayon)
+        if not self.__image:
+            pygame.draw.rect(surface, couleur, rectAff, border_radius=rayon)
+            pygame.draw.rect(surface, couleurTexte, rectAff, width=3, border_radius=rayon)
 
         if self.__image:
             surface.blit(self.__image, self.__image.get_rect(center=rectAff.center))
@@ -96,7 +97,16 @@ class MenuView:
                                        config.bouton_commande_path, sonClic)
         self.__boutonGameplay = Bouton("Gameplay", (0.5, 0.80), (260, 70), 48,
                                        config.bouton_gameplay_path, sonClic)
-
+        # Bouton de retour dans les sous-menus
+        self.__boutonRetour = Bouton(
+            None,
+            (0.88, 0.92),
+            (300, 80),
+            36,
+            #config.IMG_BOUTON_RETOUR,
+            config.bouton_retour_path,
+            sonClic
+        )
         # Boutons de l'écran Audio (un "-" et un "+" pour chaque volume)
         self.__boutonMusiqueMoins = Bouton("-", (0.3, 0.5), (70, 70), 60, None, sonClic)
         self.__boutonMusiquePlus = Bouton("+", (0.7, 0.5), (70, 70), 60, None, sonClic)
@@ -114,6 +124,7 @@ class MenuView:
             self.__boutonAudio, self.__boutonCommande, self.__boutonGameplay,
             self.__boutonMusiqueMoins, self.__boutonMusiquePlus,
             self.__boutonSonsMoins, self.__boutonSonsPlus,
+            self.__boutonRetour,
         ]
         for action in self.__boutonsCommande:
             self.__tousLesBoutons.append(self.__boutonsCommande[action])
@@ -136,6 +147,10 @@ class MenuView:
 
     def getBoutonGameplay(self):
         return self.__boutonGameplay
+    
+    def getBoutonRetour(self):
+        """Retourne le bouton de navigation."""
+        return self.__boutonRetour
 
     def getBoutonMusiqueMoins(self):
         return self.__boutonMusiqueMoins
@@ -188,11 +203,13 @@ class MenuView:
         self.__boutonAudio.dessiner(self.__screen)
         self.__boutonCommande.dessiner(self.__screen)
         self.__boutonGameplay.dessiner(self.__screen)
+        self.__boutonRetour.dessiner(self.__screen)
 
     def dessinerAudio(self):
         self.__placerBoutons()
         self.__screen.blit(self.__fond, (0, 0))
         self.__dessinerTitre("Audio")
+        self.__boutonRetour.dessiner(self.__screen)
 
         # On transforme le volume (entre 0 et 1) en pourcentage
         pourcentageMusique = round(config.volumeFond * 100)
@@ -210,6 +227,7 @@ class MenuView:
         self.__placerBoutons()
         self.__screen.blit(self.__fond, (0, 0))
         self.__dessinerTitre("Commandes")
+        self.__boutonRetour.dessiner(self.__screen)
 
         for action in self.__boutonsCommande:
             bouton = self.__boutonsCommande[action]

@@ -37,6 +37,8 @@ class MenuController:
         elif etat == "parametre":
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return "menu"
+            if self.__vue.getBoutonRetour().gererEvenement(event):
+                return "menu"
             if self.__vue.getBoutonAudio().gererEvenement(event):
                 return "audio"
             if self.__vue.getBoutonCommande().gererEvenement(event):
@@ -47,6 +49,8 @@ class MenuController:
 
         elif etat == "audio":
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return "parametre"
+            if self.__vue.getBoutonRetour().gererEvenement(event):
                 return "parametre"
 
             # Volume de la musique de fond
@@ -66,6 +70,9 @@ class MenuController:
                 self.__sonClic.set_volume(config.volumeClic)
 
         elif etat == "commande":
+            if self.__vue.getBoutonRetour().gererEvenement(event):
+                self.__actionEnAttente = None
+                return "parametre"
             if self.__actionEnAttente is not None:
                 if event.type == pygame.KEYDOWN:
                     if event.key != pygame.K_ESCAPE:
