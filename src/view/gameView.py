@@ -31,35 +31,63 @@ class GameView:
         self.__position = pygame.Vector2(position)
 
         # Changer les images du labyrinthe ici config.imagesMurs1 ...
-        surf1 = pygame.surface.Surface((100, 100))
-        surf1.fill((255, 0, 0))
-        surf2 = pygame.surface.Surface((100, 100))
-        surf2.fill((0, 255, 0))
-        surf3 = pygame.surface.Surface((100, 100))
+        # Chargement des textures du labyrinthe
+        surf1 = pygame.image.load(config.floor_path).convert_alpha()
+        surf2 = pygame.image.load(config.brown_wall_path).convert_alpha()
+        self.__textureMurMarron = surf2
+        self.__textureMurGrise = pygame.image.load(
+            config.grey_wall_path
+        ).convert_alpha()
+        # Surfaces temporaires pour les autres cases
+        surf3 = pygame.Surface((100, 100))
         surf3.fill((255, 255, 0))
-        surf4 = pygame.surface.Surface((100, 100))
+
+        surf4 = pygame.Surface((100, 100))
         surf4.fill((0, 200, 0))
-        surf5 = pygame.surface.Surface((100, 100))
+
+        surf5 = pygame.Surface((100, 100))
         surf5.fill((200, 0, 0))
 
-        self.__imagesCaseLabyrinthe = {config.caseVide: surf1,
-                                       config.caseMur: surf2,
-                                       config.caseDebut: surf3,
-                                       config.caseFin: surf3,
-                                       config.caseObstacle: surf4,
-                                       config.caseApparitionEnnemi: surf5}
-
+        self.__imagesCaseLabyrinthe = {
+                            config.caseVide: surf1,
+                            config.caseMur: surf2,
+                            config.caseDebut: surf1,
+                            config.caseFin: surf1,
+                            config.caseObstacle: surf4,
+                            config.caseApparitionEnnemi: surf1
+                        }
+        
         self.remiseEchelle()
 
+        # Préparation des textures de murs à la taille des cases
+
+        self.__textureMurMarron = self.__imagesCaseLabyrinthe[config.caseMur]
+        self.__textureMurGrise = pygame.transform.scale(
+        self.__textureMurGrise,
+        self.__tailleRenduCase
+    )
+
+        
         self.__barreOriginale = pygame.image.load(config.barre_vie_images).convert()
         self.__barreOriginale.set_colorkey((63, 72, 204))
         self.__imagesBarreVie = None
         self.__tailleFenetreBarre = None
         self.__majBarreVie()
-
+        
         self.__longueurRayon = config.longueurMaxRayon
         self.__imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
         self.updateTailleFenetre()
+
+    def choisirTextureMur(self, ligne: int, colonne: int) -> pygame.Surface:
+        """
+        Choisit une texture de mur selon sa position dans le labyrinthe.
+        """
+        if (ligne + colonne) % 4 == 0:
+            return self.__textureMurGrise
+
+        return self.__textureMurMarron
+    
+        
 
     def remiseEchelle(self) -> None:
         """
@@ -114,8 +142,14 @@ class GameView:
 
         for i in range(len(self.__grille)):
             for j in range(len(self.__grille[0])):
-                self.__screen.blit(self.__imagesCaseLabyrinthe[self.__grille[i][j]],
-                                   self.convertirCoordNumVersEcran(pygame.Vector2(i, j)))
+                if self.__grille[i][j] == config.caseMur:
+                    image = self.choisirTextureMur(i, j)
+                else:
+                    image = self.__imagesCaseLabyrinthe[self.__grille[i][j]]
+                self.__screen.blit(
+                                    image,
+                                    self.convertirCoordNumVersEcran(pygame.Vector2(i, j))
+                    )
 
     # region Entite
     def dessinerEntiter(self, entite: Entite) -> None:
@@ -138,7 +172,26 @@ class GameView:
             if isinstance(entite, Items):
                 # On fait la petite animation haut-bas
                 rectImage.y += math.sin(time.time() * config.vitesseOcsilation) * config.amplitudeOcsilations
+                    # Halo lumineux autour des objets
+                rayon = max(tailleX, tailleY) // 2 + 12
+                diametre = rayon * 2
 
+                halo = pygame.Surface((diametre, diametre), pygame.SRCALPHA)
+
+                for i in range(4):
+                    transparence = 15 + i * 8
+                    pygame.draw.circle(
+                        halo,
+                        (255, 190, 90, transparence),
+                        (rayon, rayon),
+                        rayon - i * 4
+                    )
+
+                self.__screen.blit(
+                        halo,
+                        (rectImage.centerx - rayon, rectImage.centery - rayon)
+                )
+                
                 # On dessine la barre de progression
                 progression = entite.progression()
                 if progression > 0:

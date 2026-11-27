@@ -9,18 +9,16 @@ class Entite:
         self.name = name
         self.__position = pygame.Vector2(position)
         self.image_path = image_path
+        self.__image = self.generate_image()
         self.collisionRect = collisionRect
 
         # Assure de placer les collionsRest aux bons endroits
         self.setPosition(self.__position)
 
     def generate_image(self) -> pygame.surface.Surface:
-        player_img = pygame.image.load(self.image_path).convert_alpha()
-        return player_img
-
+        return pygame.image.load(self.image_path).convert_alpha()
     def recupererImage(self) -> pygame.surface.Surface:
-        # Coder les animations ici
-        return self.generate_image()
+        return self.__image
 
     def setPosition(self, position: pygame.Vector2) -> None:
         """
