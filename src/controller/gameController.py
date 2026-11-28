@@ -1,4 +1,5 @@
 import config
+import sons
 from model.Bullet import Bullet
 from model.Collision import Collisions
 from model.Ennemi import *
@@ -75,6 +76,7 @@ class GameController:
         self.__bulletList = []
 
         self.__vue.changeGrille(self.__labyrinthe.grille)
+        pygame.mixer.stop()  # nouvelle partie : on coupe les sons de la précédente
 
     def __player_mouvement(self, dt):
         deplacement = False
@@ -94,6 +96,8 @@ class GameController:
         # Si aucune touche n'est pressée, le personnage s'arrête
         if not deplacement:
             self.__player.arreter()
+        else:
+            sons.repeter("pas")
 
     def gererEvenement(self, event):
         # Projectile
@@ -102,6 +106,7 @@ class GameController:
                 self.__reaload_input_press_time = pygame.time.get_ticks()
                 self.__temps_de_recharge = config.temps_de_recharge
                 self.__relaod_button_pressed = True
+                sons.jouer("recharge" if self.__player.munition_total > 0 else "vide")
 
             if event.key == config.touches["Tirer"]:
                 if self.__player.munition_barillet != 0:
@@ -110,8 +115,12 @@ class GameController:
                     print(f"nombre de munitions de stockage :{self.__player.munition_total} ")
                     bullet = Bullet(self.__player.getPosition(), self.__player.direction)
                     self.__bulletList.append(bullet)
+                    sons.jouer("tir")
+                    if self.__player.munition_barillet == 0:
+                        sons.jouer("dernier_tir")
                 else:
                     print("plus de munitions ! Recharger")
+                    sons.jouer("vide")
 
             if event.key == pygame.K_ESCAPE:
                 return "menu"
@@ -130,9 +139,11 @@ class GameController:
 
         elif event.type == config.EVENT_DEGATS:
             if self.__player.estMort():
+                sons.jouer("mort")
                 return "fin"
 
         if self.__player.toucheEntite(self.__fin):
+            sons.jouer("victoire")
             return "fin"
 
         return "jeu"
@@ -145,6 +156,7 @@ class GameController:
 
         self.__player_mouvement(dt)
         self.__player.mettreAJourOpacite(dt)
+        sons.jouerSonsJeu(self.__player, self.__listEnnemi, self.__fin)
 
         for ennemi in self.__listEnnemi:
             if ennemi.health <= 0:
@@ -154,10 +166,12 @@ class GameController:
                 if ennemi.attaque(self.__player):
                     pygame.event.post(pygame.event.Event(config.EVENT_DEGATS))
                     self.__vue.dessinerDegat()
+                    sons.jouer("degat", 1, sons.cote(self.__player, ennemi))
                     self.__vue.changerLongueurRayonViePlayer(self.__player)
 
             elif ennemi.voit(self.__player, self.__labyrinthe.grille):
                 # Déplacement de l'ennemi
+                sons.repeter("poursuite", 1, sons.cote(self.__player, ennemi))
                 anciennePosition = ennemi.getPosition()
                 direction = self.__player.getPosition() - ennemi.getPosition()
                 direction = direction / math.sqrt(direction * direction)
@@ -172,17 +186,22 @@ class GameController:
             for bullet in self.__bulletList[:]:
                 if bullet.toucheEnnemi(ennemi):
                     ennemi.subirDegats(config.bullet_damage)
+                    sons.jouer("monstre_mort" if ennemi.estMort() else "monstre_touche", 1, sons.cote(self.__player, ennemi))
                     self.__bulletList.remove(bullet)
 
         for item in self.__listItems[:]:
             if item.mettreAJour(dt, item.toucheEntite(self.__player)):
+                sons.jouer(item.typeItem.value)
                 self.__player.appliquerItem(item)
                 self.__listItems.remove(item)
                 self.__vue.changerLongueurRayonViePlayer(self.__player)
+            elif item.progression() > 0:
+                sons.repeter("ramassage")
 
         for bullet in self.__bulletList[:]:
             bullet.deplacer(dt)
             if self.__collision.bullet_touche_mur(bullet.collisionRect):
+                sons.jouer("impact")
                 self.__bulletList.remove(bullet)
 
     def dessiner(self) -> None:

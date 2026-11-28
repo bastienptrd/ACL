@@ -75,11 +75,15 @@ bouton_retour_path = os.path.join(boutons_path, "retour.png")
 # endregion
 
 # region SONS
-musique_foret_path = os.path.join(sounds_path, "Bruit_foret.mp3")
+musique_fond_path = os.path.join(sounds_path, "ambiance.ogg")
+sons_jeu_path = os.path.join(sounds_path, "jeu")
 son_clic_path = os.path.join(sounds_path, "clic_2.wav")
 
 volumeFond = 0.5
 volumeClic = 1
+distanceSon = 3  # distance (en cases) à laquelle on entend les monstres et la sortie
+volumeBruits = 0.35  # volume des bruits d'ambiance par rapport aux sons du jeu
+tempsEntreBruits = 8  # temps moyen (en secondes) entre deux bruits effrayants
 # endregion
 
 # region TOUCHES

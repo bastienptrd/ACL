@@ -1,6 +1,7 @@
 import pygame, sys
 
 import config
+import sons
 from view.gameView import GameView
 from view.menuView import MenuView
 from controller.gameController import GameController
@@ -11,12 +12,13 @@ pygame.init()
 # Initialisation de la musique et des sons
 pygame.mixer.init()
 
-pygame.mixer.music.load(config.musique_foret_path)
+pygame.mixer.music.load(config.musique_fond_path)
 pygame.mixer.music.set_volume(config.volumeFond)
 pygame.mixer.music.play(-1)
 
 sonClic = pygame.mixer.Sound(config.son_clic_path)
 sonClic.set_volume(config.volumeClic)
+sons.charger()
 
 # Initialisation de la fenêtre
 screen = pygame.display.set_mode(config.screenSize, pygame.RESIZABLE)
