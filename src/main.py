@@ -22,6 +22,9 @@ sonClic.set_volume(config.volumeClic)
 screen = pygame.display.set_mode(config.screenSize, pygame.RESIZABLE)
 pygame.display.set_caption("Interface Provisoire")
 clock = pygame.time.Clock()
+# Gestion du mode plein écran
+pleinEcran = False
+tailleFenetre = config.screenSize
 
 # Appels des classes dans les autres fichiers
 menuView = MenuView(screen, sonClic)
@@ -37,10 +40,20 @@ while running:
 
     ancienneFenetre = etat
 
-    # Gestion des event
+   
+    # Gestion des événements
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+        # Redimensionnement de la fenêtre du menu
+        if event.type == pygame.VIDEORESIZE and etat != "jeu":
+            screen = pygame.display.set_mode(
+                (event.w, event.h),
+                pygame.RESIZABLE
+            )
+            menuView.changerScreen(screen)
+
         if etat == "jeu":
             etat = gameController.gererEvenement(event)
         else:

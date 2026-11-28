@@ -155,6 +155,14 @@ class MenuView:
     def redimensionner(self, largeur, hauteur):
         self.__fond = pygame.transform.scale(self.__fondOriginal, (largeur, hauteur))
 
+    def changerScreen(self, screen):
+        """
+        Met à jour la surface d'affichage du menu.
+        """
+        self.__screen = screen
+        largeur, hauteur = screen.get_size()
+        self.redimensionner(largeur, hauteur)
+        
     def __placerBoutons(self):
         largeur, hauteur = self.__screen.get_size()
         for b in self.__tousLesBoutons:
