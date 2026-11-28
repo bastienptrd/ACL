@@ -20,7 +20,7 @@ sonClic.set_volume(config.volumeClic)
 
 # Initialisation de la fenêtre
 screen = pygame.display.set_mode(config.screenSize, pygame.RESIZABLE)
-pygame.display.set_caption("Interface Provisoire")
+pygame.display.set_caption("Interface de Jeu ACL ")
 clock = pygame.time.Clock()
 
 # Appels des classes dans les autres fichiers
