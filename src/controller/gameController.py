@@ -114,7 +114,7 @@ class GameController:
                     print("plus de munitions ! Recharger")
 
             if event.key == pygame.K_ESCAPE:
-                return "menu"
+                return "pause"
             if event.key == config.combinaisonToucheDebug[config.toucheValiderDebug]:
                 if config.toucheValiderDebug + 1 == len(config.combinaisonToucheDebug):
                     config.debug = not config.debug

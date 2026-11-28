@@ -46,7 +46,7 @@ while running:
         else:
             etat = menuController.gererEvenement(event, etat)
 
-    if ancienneFenetre != etat and etat == "jeu":
+    if ancienneFenetre != etat and etat == "jeu" and ancienneFenetre != "pause":
         gameController.initialiserVariable(menuController.recupererDifficulte())
 
     # Gestion Update

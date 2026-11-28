@@ -87,6 +87,14 @@ class MenuController:
                 if boutons[action].gererEvenement(event):
                     self.__actionEnAttente = action
 
+        elif etat == "pause":
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                return "jeu"
+            if self.__vue.getBoutonReprendre().gererEvenement(event):
+                return "jeu"
+            if self.__vue.getBoutonMenuPrincipal().gererEvenement(event):
+                return "menu"
+
         elif etat == "fin":
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return "menu"
@@ -103,6 +111,8 @@ class MenuController:
             self.__vue.dessinerAudio()
         elif etat == "commande":
             self.__vue.dessinerCommande(self.getActionEnAttente())
+        elif etat == "pause":
+            self.__vue.dessinerPause()
         elif etat == "fin":
             self.__vue.dessinerFin()
 

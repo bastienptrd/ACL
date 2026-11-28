@@ -107,6 +107,9 @@ class MenuView:
             config.bouton_retour_path,
             sonClic
         )
+        # Bouton du menu pause
+        self.__boutonReprendre = Bouton("Reprendre", (0.5, 0.5), (300, 70), 48, None, sonClic)
+        self.__boutonMenuPrincipal = Bouton("Menu principal", (0.5, 0.65), (300, 70), 48, None, sonClic)
         # Boutons de l'écran Audio (un "-" et un "+" pour chaque volume)
         self.__boutonMusiqueMoins = Bouton("-", (0.3, 0.5), (70, 70), 60, None, sonClic)
         self.__boutonMusiquePlus = Bouton("+", (0.7, 0.5), (70, 70), 60, None, sonClic)
@@ -124,7 +127,7 @@ class MenuView:
             self.__boutonAudio, self.__boutonCommande, self.__boutonGameplay,
             self.__boutonMusiqueMoins, self.__boutonMusiquePlus,
             self.__boutonSonsMoins, self.__boutonSonsPlus,
-            self.__boutonRetour,
+            self.__boutonRetour,self.__boutonReprendre, self.__boutonMenuPrincipal,
         ]
         for action in self.__boutonsCommande:
             self.__tousLesBoutons.append(self.__boutonsCommande[action])
@@ -145,9 +148,15 @@ class MenuView:
     def getBoutonCommande(self):
         return self.__boutonCommande
 
+    def getBoutonReprendre(self):
+        return self.__boutonReprendre
+
+    def getBoutonMenuPrincipal(self):
+        return self.__boutonMenuPrincipal
+
     def getBoutonGameplay(self):
         return self.__boutonGameplay
-    
+
     def getBoutonRetour(self):
         """Retourne le bouton de navigation."""
         return self.__boutonRetour
@@ -237,6 +246,13 @@ class MenuView:
                 nomTouche = pygame.key.name(config.touches[action])
                 bouton.changerTexte(action + " : " + nomTouche)
             bouton.dessiner(self.__screen)
+
+    def dessinerPause(self):
+        self.__placerBoutons()
+        self.__screen.blit(self.__fond, (0, 0))
+        self.__dessinerTitre("Pause")
+        self.__boutonReprendre.dessiner(self.__screen)
+        self.__boutonMenuPrincipal.dessiner(self.__screen)
 
     def dessinerFin(self):
         self.__screen.fill((255, 0, 0))
