@@ -23,6 +23,17 @@ class GameView:
         """
 
         self.__screen = screen
+
+        # Taille de référence du jeu
+        self.__tailleFenetreReference = config.screenSize
+        self.__tailleRenduCaseReference = tailleRenduCase
+
+        # Facteurs de mise à l'échelle
+        self.__echelleAffichage = 1.0
+        self.__zoomPersonnage = 1.25
+        self.__zoomAutresElements = 1.0
+
+        # Taille actuelle des cases affichées
         self.__tailleRenduCase = tailleRenduCase
 
         # Grille du labyrinthe
@@ -48,6 +59,9 @@ class GameView:
                                        config.caseFin: surf3,
                                        config.caseObstacle: surf4,
                                        config.caseApparitionEnnemi: surf5}
+        
+        # Conservation des images originales
+        self.__imagesCaseLabyrintheOriginales = self.__imagesCaseLabyrinthe.copy()
 
         self.remiseEchelle()
 
@@ -61,12 +75,62 @@ class GameView:
         self.__imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
         self.updateTailleFenetre()
 
+
+    def __calculerEchelleAffichage(self) -> None:
+        """
+        Calcule le facteur de mise à l'échelle selon
+        les dimensions actuelles de la fenêtre.
+        """
+
+        # Récupération des dimensions de la fenêtre
+        largeurFenetre, hauteurFenetre = self.__screen.get_size()
+
+        # Récupération des dimensions de référence
+        largeurReference, hauteurReference = self.__tailleFenetreReference
+
+        # Calcul du rapport entre la fenêtre actuelle
+        # et la fenêtre de référence
+        rapportLargeur = largeurFenetre / largeurReference
+        rapportHauteur = hauteurFenetre / hauteurReference
+
+        # On choisit le plus petit rapport pour conserver
+        # les proportions du jeu
+        self.__echelleAffichage = min(rapportLargeur, rapportHauteur)
+
+        # Calcul de la nouvelle taille des cases
+        largeurCase = int(
+        self.__tailleRenduCaseReference[0] * self.__echelleAffichage
+        )
+
+        hauteurCase = int(
+        self.__tailleRenduCaseReference[1] * self.__echelleAffichage
+        )
+
+        #évite taille nulle
+        largeurCase = max(1, largeurCase)
+        hauteurCase = max(1, hauteurCase)
+
+        self.__tailleRenduCase = (largeurCase, hauteurCase)
+
+
     def remiseEchelle(self) -> None:
         """
-        Remet les images des murs à l'échelle choisie
+        Redimensionne les images du labyrinthe selon
+        le facteur d'échelle actuel.
         """
-        for key, value in self.__imagesCaseLabyrinthe.items():
-            self.__imagesCaseLabyrinthe[key] = pygame.transform.scale(value, self.__tailleRenduCase)
+
+        # Calcul de la nouvelle échelle
+        self.__calculerEchelleAffichage()
+
+        # Redimensionnement de chaque texture depuis son original
+        for key, imageOriginale in self.__imagesCaseLabyrintheOriginales.items():
+
+            nouvelleImage = pygame.transform.scale(
+                imageOriginale,
+                self.__tailleRenduCase
+            )
+
+            self.__imagesCaseLabyrinthe[key] = nouvelleImage
 
     def changePosition(self, position: pygame.Vector2) -> None:
         """
@@ -105,7 +169,40 @@ class GameView:
         positionNumX = (coord[0] - screenLongueur / 2) / (self.__tailleRenduCase[0] - 2) + self.__position[0]
         positionNumY = (coord[1] - screenLargeur / 2) / (self.__tailleRenduCase[1] - 2) + self.__position[1]
         return pygame.Vector2(positionNumX, positionNumY)
+    
+    
+    def __redimensionnerImageEntite(self, entite: Entite,
+                                    image: pygame.Surface) -> pygame.Surface:
+        """
+        Adapte la taille d'une image selon l'échelle actuelle du jeu.
 
+        Les personnages et les monstres bénéficient d'un zoom supplémentaire.
+        Les autres entités suivent uniquement l'échelle générale.
+        """
+
+        # Échelle générale appliquée à toutes les entités
+        facteurEchelle = self.__echelleAffichage * self.__zoomAutresElements
+
+        # Zoom supplémentaire pour le joueur et les monstres
+        if isinstance(entite, Character):
+            facteurEchelle *= self.__zoomPersonnage
+
+         # Récupération des dimensions originales de l'image
+        largeurOriginale, hauteurOriginale = image.get_size()
+
+        # Calcul des nouvelles dimensions
+        nouvelleLargeur = max(1, int(largeurOriginale * facteurEchelle))
+        nouvelleHauteur = max(1, int(hauteurOriginale * facteurEchelle))
+
+        # Redimensionnement de l'image
+        imageRedimensionnee = pygame.transform.scale(
+            image,
+            (nouvelleLargeur, nouvelleHauteur)
+        )
+
+        return imageRedimensionnee
+
+    
     def dessinerGrille(self) -> None:
         """
         Dessine la grille du labyrinthe
@@ -131,6 +228,13 @@ class GameView:
         # Si l'objet est dans l'écran
         if rectCollision.colliderect(self.__screen.get_rect()):
             imageCharacter = entite.recupererImage()
+
+            # Adaptation de la taille de l'image selon le zoom du jeu
+            imageCharacter = self.__redimensionnerImageEntite(
+                entite,
+                imageCharacter
+            )
+            
             tailleX, tailleY = imageCharacter.get_rect().size
             rectImage = pygame.rect.Rect(0, 0, tailleX, tailleY)
             rectImage.center = coordScreenX, coordScreenY
@@ -155,15 +259,32 @@ class GameView:
                 coordScreenY -= 10
 
             if not isinstance(entite, Bullet):
-                # On dessine l'ombre sous l'entité
-                rectOmbre = pygame.Rect(0, 0, tailleX - 20 + 2 * math.sin(time.time() * config.vitesseOcsilation),
-                                        config.hauteurOmbreItem)
-                surfaceOmbre = pygame.surface.Surface(rectOmbre.size, pygame.SRCALPHA)
-                pygame.draw.ellipse(surfaceOmbre, (0, 0, 0, 50), rectOmbre)
-                rectOmbre.center = (coordScreenX, coordScreenY + 30)
-                self.__screen.blit(surfaceOmbre, (rectOmbre.x, rectOmbre.y))
+                 # On adapte également l'ombre à l'échelle de l'entité
+                facteurOmbre = self.__echelleAffichage
 
-            # On dessine l'entité
+                if isinstance(entite, Character):
+                    facteurOmbre *= self.__zoomPersonnage
+
+                # Dimensions de l'ombre
+                largeurOmbre = max(1, int((tailleX - 20) * facteurOmbre))
+                hauteurOmbre = max(1, int(config.hauteurOmbreItem * facteurOmbre))
+
+                rectOmbre = pygame.Rect(
+                    0, 0,
+                    largeurOmbre,
+                    hauteurOmbre
+                )
+
+                surfaceOmbre = pygame.Surface(rectOmbre.size, pygame.SRCALPHA)
+                pygame.draw.ellipse(surfaceOmbre, (0, 0, 0, 50), surfaceOmbre.get_rect())
+
+                # Décalage de l'ombre adapté à l'échelle
+                decalageOmbre = int(30 * facteurOmbre)
+                rectOmbre.center = (coordScreenX, coordScreenY + decalageOmbre)
+
+                self.__screen.blit(surfaceOmbre, rectOmbre.topleft)
+
+                 # On dessine l'entité
             self.__screen.blit(imageCharacter, (rectImage.x, rectImage.y))
 
             # Dessin de la boite de collision
@@ -281,7 +402,7 @@ class GameView:
         self.__imageLampe.fill((0, 0, 0, 0))
         for i in range(255):
             pygame.draw.circle(self.__imageLampe, (0, 0, 0, i), self.__screen.get_rect().center,
-                               self.__longueurRayon * config.tailleCaseRendu[0] * (255 - i) / 255)
+                               self.__longueurRayon * self.__tailleRenduCase[0] * (255 - i) / 255)
 
     def dessinerNoirLampe(self, character: Character, rayons: list[tuple[float, float, float]], opacite) -> None:
         """
@@ -354,7 +475,21 @@ class GameView:
 
     def updateTailleFenetre(self) -> None:
         """
-        Change les dispositions en fonction de lataille de la fenêtre
+        Actualise les éléments graphiques lorsque
+        les dimensions de la fenêtre changent.
         """
-        self.__imageLampe = pygame.Surface(self.__screen.get_size(), pygame.SRCALPHA)
+
+        # Mise à jour de la taille des textures du labyrinthe
+        self.remiseEchelle()
+
+        # Récupération des dimensions actuelles de la fenêtre
+        largeurFenetre, hauteurFenetre = self.__screen.get_size()
+
+        # Recréation de la surface utilisée pour l'éclairage
+        self.__imageLampe = pygame.Surface(
+            (largeurFenetre, hauteurFenetre),
+            pygame.SRCALPHA
+        )
+
+        # Actualisation du rayon lumineux
         self.updateRayon()
